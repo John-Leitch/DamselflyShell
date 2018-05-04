@@ -75,9 +75,6 @@ namespace Damselfly.ViewModels
         {
             Query = "";
             SelectedMatch = _matches.FirstOrDefault();
-
-            //Query = "Aphid";
-            //Query = "c:\\source\\fuzzing";
         }
 
         private void QueryChanged()
@@ -107,22 +104,6 @@ namespace Damselfly.ViewModels
             {
                 QueryError = e.Message;
             }
-
-            //try
-            //{
-            //    var queryMatches = _search.Search(Query);
-
-            //    foreach (var m in queryMatches)
-            //    {
-            //        _matches.Add(m);
-            //    }
-            //}
-            //catch (UnauthorizedAccessException e)
-            //{
-            //    QueryError = e.Message;
-            //}
-
-            //SelectedMatch = _matches.FirstOrDefault();
         }
 
         private void MoveMatch(Func<int, bool> check, Func<int, SearchItem> getOther)
@@ -361,11 +342,6 @@ namespace Damselfly.ViewModels
 
                     break;
 
-                //case Key.Delete:
-                //    DeleteSelectedMatch();
-
-                //    break;
-
                 case Key.PageUp:
                 case Key.PageDown:
                     FocusSelectedItem();
@@ -419,7 +395,6 @@ namespace Damselfly.ViewModels
 
         public void Control_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            //if (_window.Handle != IntPtr.Zero && _window.IsVisible)
             if (_window.IsVisible)
             {
                 var h = ((HwndSource)PresentationSource.FromVisual(_window)).Handle;
@@ -429,29 +404,10 @@ namespace Damselfly.ViewModels
                     throw new InvalidOperationException();
                 }
 
-                //if (User32.SetWindowPos(h, User32.HWND_TOPMOST, 0, 0, 0, 0, User32.SetWindowPosFlags.IgnoreMove | User32.SetWindowPosFlags.IgnoreResize))
-                //{
-                //    Console.WriteLine("SetWindowPos() failed");
-                //}
-
-                //User32.AttachThreadInput((uint)Process.GetCurrentProcess().Id, GetCurrentThreadId(), true);
-
-                //h = Process.GetCurrentProcess().MainWindowHandle;
-
-                //if (h == IntPtr.Zero)
-                //{
-                //    Console.WriteLine("No window handle");
-                //    return;
-                //}
-
-                //if (!User32.BringWindowToTop(h))
-                //{
-                //    Console.WriteLine("BringWindowToTop() failed");
-                //}
-
                 uint foreThread = User32.GetWindowThreadProcessId(User32.GetForegroundWindow(), IntPtr.Zero);
                 uint appThread = Kernel32.GetCurrentThreadId();
                 const uint SW_SHOW = 5;
+
                 if (foreThread != appThread)
                 {
                     Console.WriteLine("Using AttachThreadInput()");
@@ -485,34 +441,6 @@ namespace Damselfly.ViewModels
                 _queryTextBox.Focus();
                 _queryTextBox.CaretIndex = _queryTextBox.Text.Length;
                 _queryTextBox.ScrollToEnd();
-
-                return;
-
-                if (!User32.SetForegroundWindow(h))
-                {
-                    Console.WriteLine("SetForegroundWindow() failed");
-                }
-
-                if (User32.SetActiveWindow(h) == IntPtr.Zero)
-                {
-                    Console.WriteLine("SetActiveWindow() failed");
-                }
-
-                if (User32.SetFocus(h) == IntPtr.Zero)
-                {
-                    Console.WriteLine("SetFocus() failed");
-                }
-
-                //try
-                //{
-                _window.Focus();
-                _queryTextBox.Focus();
-                _queryTextBox.CaretIndex = _queryTextBox.Text.Length;
-                _queryTextBox.ScrollToEnd();
-                //}
-                //catch
-                //{
-                //}
             }
         }
     }

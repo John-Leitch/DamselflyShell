@@ -26,13 +26,7 @@ namespace Damselfly
             DataContext = _searchViewModel;
         }
 
-        //protected override void OnSourceInitialized(EventArgs e)
-        //{
-        //    base.OnSourceInitialized(e);
-        //    _handle = ((HwndSource)PresentationSource.FromVisual(this)).Handle;
-        //}
-
-        void SearchWindow_Loaded(object sender, RoutedEventArgs e)
+        private void SearchWindow_Loaded(object sender, RoutedEventArgs e)
         {
             _searchViewModel.Control_IsVisibleChanged(sender, new DependencyPropertyChangedEventArgs());
         }

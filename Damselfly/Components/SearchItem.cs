@@ -7,8 +7,6 @@ namespace Damselfly.Components
 {
     public class SearchItem
     {
-        //public FrameworkElement ParentElement { get; set; }
-
         public string Name { get; set; }
 
         public string Path { get; set; }
@@ -23,26 +21,6 @@ namespace Damselfly.Components
         {
             get { return _source.Value; }
         }
-
-        //private ImageSource _source;
-
-        //public ImageSource Source
-        //{
-        //    get 
-        //    {
-        //        if (_source == null)
-        //        {
-        //            ParentElement.Dispatcher.BeginInvoke((Action)(() =>
-        //            {
-        //                Source = GetIconImageSource();
-        //            }), null);
-       
-        //        }
- 
-        //        return _source; 
-        //    }
-        //    set { _source = value; }
-        //}
 
         public SearchItem()
         {

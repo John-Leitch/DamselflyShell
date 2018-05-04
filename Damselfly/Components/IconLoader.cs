@@ -12,8 +12,6 @@ namespace Damselfly.Components
 {
     public static class IconLoader
     {
-        //private static Dictionary<IntPtr, BitmapSource> _iconTable = new Dictionary<IntPtr, BitmapSource>();
-
         private static Memoizer<IntPtr, BitmapSource> _sourceMemoizer = new Memoizer<IntPtr, BitmapSource>();
 
         private static Memoizer<string, IntPtr> _pathMemoizer = new Memoizer<string, IntPtr>();
@@ -34,19 +32,6 @@ namespace Damselfly.Components
                 icon,
                 Int32Rect.Empty,
                 BitmapSizeOptions.FromEmptyOptions());
-
-            //BitmapSource source;
-
-            //if (!_iconTable.TryGetValue(icon, out source))
-            //{
-            //    source = Imaging.CreateBitmapSourceFromHIcon(
-            //        icon, Int32Rect.Empty,
-            //        BitmapSizeOptions.FromEmptyOptions());
-
-            //    _iconTable.Add(icon, source);
-            //}
-
-            //return source;
         }
 
         private static IntPtr GetHandleCore(string path)
