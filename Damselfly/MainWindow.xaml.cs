@@ -152,22 +152,10 @@ namespace Damselfly
             if (!_hasLoaded)
             {
                 var interpreter = new AphidInterpreter();
-                interpreter.InterpretFile(@"Components\WindowsPath.alx");
-                //var cmdExe = WindowsPath.Search("cmd.exe");
-
-                //if (Debugger.IsAttached)
-                //{
-                //    ShowSearchWindow();
-                //    return;
-                //}
-
-                //_hookProc = new HookProc(WindowsHookCallback);
+                interpreter.InterpretFile(@"Components\Scripts.alx");
                 _hookProc = WindowsHookCallback;
-
                 _hookId = User32.SetWindowsHookEx(HookType.WH_KEYBOARD_LL, _hookProc, IntPtr.Zero, 0);
-                
                 _hasLoaded = true;
-
                 ShowSearchWindow();
                 _searchWindow.Hide();
             }
