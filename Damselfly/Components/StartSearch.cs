@@ -65,7 +65,6 @@ namespace Damselfly.Components
 
             specialFolders = new Environment.SpecialFolder[]
             {
-
                   Environment.SpecialFolder.Desktop,
                   Environment.SpecialFolder.Favorites,
                   Environment.SpecialFolder.MyComputer,
@@ -85,33 +84,15 @@ namespace Damselfly.Components
                 .Select(Environment.GetFolderPath)
                 .Concat(new[] { downloads })
                 .Where(x => !string.IsNullOrEmpty(x))
-                .Select(x => new SearchItem()
-                {
-                    Name = Path.GetFileName(x),
-                    Path = x,
-                    Type = SearchItemType.Directory,
-                    Usage = _usageDb.GetRecord(SearchItemType.Directory, x),
-                })
+                .Select(SearchItem.FromDirectory)
                 .ToList();
 
             _systemFiles = GetSystem32Files("cpl")
-                .Select(x => new SearchItem()
-                {
-                    Name = FileVersionInfo.GetVersionInfo(x).FileDescription ?? x,
-                    Path = x,
-                    Type = SearchItemType.File,
-                    Usage = _usageDb.GetRecord(SearchItemType.File, x),
-                })
+                .Select(SearchItem.FromFile)
                 .ToList();
 
             _systemFiles = _systemFiles.Concat(GetSystem32Files("msc")
-                .Select(x => new SearchItem()
-                {
-                    Name = MscHelper.GetName(x) ?? x,
-                    Path = x,
-                    Type = SearchItemType.File,
-                    Usage = _usageDb.GetRecord(SearchItemType.File, x),
-                }))
+                .Select(SearchItem.FromFile))
                 .ToList();
 
             _startMenuItems = Directory
@@ -120,18 +101,7 @@ namespace Damselfly.Components
                     "*",
                     SearchOption.AllDirectories)
                 .Where(x => x.EndsWith(".lnk", StringComparison.InvariantCultureIgnoreCase))
-                .Select(x =>
-                {
-                    var n = Path.GetFileNameWithoutExtension(x);
-
-                    return new SearchItem()
-                    {
-                        Name = n,
-                        Path = x,
-                        Type = SearchItemType.StartMenu,
-                        Usage = _usageDb.GetRecord(SearchItemType.StartMenu, n),
-                    };
-                })
+                .Select(SearchItem.FromShortcut)
                 .ToList();
 
             if (File.Exists(_cmdFile))
@@ -140,12 +110,7 @@ namespace Damselfly.Components
                     JsonSerializer
                         .DeserializeFile<string[]>(_cmdFile)
                         .Distinct()
-                        .Select(x => new SearchItem()
-                        {
-                            Name = x,
-                            Type = SearchItemType.Command,
-                            Usage = _usageDb.GetRecord(SearchItemType.Command, x),
-                        }));
+                        .Select(SearchItem.FromCommand));
             }
 
 
@@ -197,7 +162,7 @@ namespace Damselfly.Components
                             .Select(x => new SearchItem()
                             {
                                 Name = x,
-                                Path = x,
+                                ItemPath = x,
                                 Type = f.Type,
                                 Usage = _usageDb.GetRecord(f.Type, x),
                             });
@@ -214,42 +179,38 @@ namespace Damselfly.Components
 
         private IEnumerable<SearchItem> SearchFileSystem(string query)
         {
-            var m = new List<SearchItem>();
-
-            IEnumerable<SearchItem> pathMatches = null;
-
-            var separator = System.IO.Path.DirectorySeparatorChar;
+            var separator = Path.DirectorySeparatorChar;
             var parts = query.Split(separator);
+            
+            var potentialPathQueries = parts.Length > 1 ? 
+                new[]
+                {
+                    new [] { query, null },
+                    new [] 
+                    { 
+                        string.Join(
+                            separator.ToString(),
+                            parts.Take(parts.Length - 1)) +
+                            separator.ToString(), 
+                        parts.Last() 
+                    }
+                } :
+                new[] { new[] { query, null } };
 
-            string[][] potentialPathQueries;
-
-            if (parts.Length > 1)
-            {
-                potentialPathQueries = new[]
-                    {
-                        new [] { query, null },
-                        new [] 
-                        { 
-                            string.Join(separator.ToString(), parts.Take(parts.Length - 1)) + separator.ToString(), 
-                            parts.Last() 
-                        }
-                    };
-            }
-            else
-            {
-                potentialPathQueries = new[] { new[] { query, null } };
-            }
+            var m = new List<SearchItem>();
 
             foreach (var p in potentialPathQueries)
             {
-                string dir = p[0][p[0].Length - 1] == separator ? p[0] : p[0] + separator;
+                var dir = p[0][p[0].Length - 1] == separator ?
+                    p[0] :
+                    p[0] + separator;
+
                 dir = p[0];
 
-                if (dir.Last() == System.IO.Path.DirectorySeparatorChar && Directory.Exists(dir))
+                if (dir.Last() == Path.DirectorySeparatorChar &&
+                    Directory.Exists(dir))
                 {
-                    pathMatches = SearchFileSystem(dir, p[1]);
-
-                    m.AddRange(pathMatches);
+                    m.AddRange(SearchFileSystem(dir, p[1]));
 
                     break;
                 }
@@ -260,21 +221,13 @@ namespace Damselfly.Components
 
         public IEnumerable<SearchItem> Search(string query)
         {
-            IEnumerable<SearchItem> matches;
-
-            if (string.IsNullOrEmpty(query))
-            {
-                matches = GetAllItems();
-            }
-            else if (!IsPathLocalPath(query))
-            {
-                matches = GetAllItems()
-                    .Where(x => x.Name.ToUpper().Contains(query.ToUpper()));
-            }
-            else
-            {
-                matches = SearchFileSystem(query);
-            }
+            var matches =
+                string.IsNullOrEmpty(query) ?
+                    GetAllItems() :
+                !IsPathLocalPath(query) ?
+                    GetAllItems()
+                        .Where(x => x.Name.ToUpper().Contains(query.ToUpper())) :
+                    SearchFileSystem(query);
 
             return matches
                 //.Distinct(x => x.Name)

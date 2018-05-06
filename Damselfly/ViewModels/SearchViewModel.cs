@@ -236,10 +236,10 @@ namespace Damselfly.ViewModels
                                 try
                                 {
 
-                                    Process.Start(_selectedMatch.Path);
+                                    Process.Start(_selectedMatch.ItemPath);
 
                                     Func<SearchItem, bool> predicate = x =>
-                                        x.Name == _selectedMatch.Name && x.Path == _selectedMatch.Path;
+                                        x.Name == _selectedMatch.Name && x.ItemPath == _selectedMatch.ItemPath;
 
                                     if (!_search.StartMenuItems.Any(predicate) && 
                                         !_search.SpecialFolders.Any(predicate) &&

@@ -81,7 +81,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Components\KeyboardController.cs" />
-    <Compile Include="Components\MscHelper.cs" />
     <Compile Include="Components\IconLoader.cs" />
     <Compile Include="Components\PathHelper.cs" />
     <Compile Include="Components\SearchItem.cs" />

@@ -9,7 +9,27 @@ namespace Damselfly.Components
 {
     public class UsageDatabase : Dictionary<SearchItemType, Dictionary<string, UsageRecord>>
     {
+        private static object _sync = new object();
+
         private static string _usageFile = PathHelper.GetExecutingPath("usage.json");
+
+        public static UsageDatabase Instance { get; private set; }
+
+        public UsageDatabase()
+        {
+            lock (_sync)
+            {
+                if (Instance != null)
+                {
+                    throw new InvalidOperationException(
+                        "Only one instance of UsageDatabase permitted.");
+                }
+                else
+                {
+                    Instance = this;
+                }
+            }
+        }
 
         private Dictionary<string, Dictionary<string, UsageRecord>> ToSerializable()
         {
