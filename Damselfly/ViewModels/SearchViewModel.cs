@@ -159,9 +159,9 @@ namespace Damselfly.ViewModels
         {
             if (_selectedMatch != null)
             {
-                Query = _selectedMatch.Name +
-                    (_selectedMatch.Type == SearchItemType.Directory ?
-                    System.IO.Path.DirectorySeparatorChar.ToString() : "");
+                Query = _selectedMatch.Type != SearchItemType.Directory ?
+                    _selectedMatch.Name :
+                    _selectedMatch.ItemPath + Path.DirectorySeparatorChar.ToString();
             }
         }
 
