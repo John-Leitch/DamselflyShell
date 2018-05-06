@@ -86,6 +86,10 @@ namespace Damselfly.Components
 
                 case Key.Enter:
 
+                    var asAdmin =
+                        (Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
+                        (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
+
                     if (viewModel.SelectedMatch != null &&
                         viewModel.SelectedMatch.Type != SearchItemType.Command)
                     {
@@ -96,8 +100,14 @@ namespace Damselfly.Components
                             case SearchItemType.Directory:
                                 try
                                 {
+                                    var si = new ProcessStartInfo(viewModel.SelectedMatch.ItemPath);
 
-                                    Process.Start(viewModel.SelectedMatch.ItemPath);
+                                    if (asAdmin)
+                                    {
+                                        si.Verb = "runas";
+                                    }
+
+                                    Process.Start(si);
 
                                     Func<SearchItem, bool> predicate = x =>
                                         x.Name == viewModel.SelectedMatch.Name &&
@@ -137,26 +147,28 @@ namespace Damselfly.Components
 
                             var i = cmd.IndexOf(' ');
 
-                            if (i != -1)
+                            var si = i != -1 ?
+                                new ProcessStartInfo(cmd.Remove(i), cmd.Substring(i + 1)) :
+                                new ProcessStartInfo(cmd);
+
+                            if (asAdmin)
                             {
-                                Process.Start(cmd.Remove(i), cmd.Substring(i + 1));
+                                si.Verb = "runas";
                             }
-                            else
-                            {
-                                Process.Start(cmd);
-                            }
+
+                            Process.Start(si);
 
                             if (viewModel.SelectedMatch == null)
                             {
-                                var si = new SearchItem()
+                                var item = new SearchItem()
                                 {
                                     Type = SearchItemType.Command,
                                     Name = cmd,
                                 };
 
-                                if (!viewModel.Search.Commands.Any(x => x.Name == si.Name))
+                                if (!viewModel.Search.Commands.Any(x => x.Name == item.Name))
                                 {
-                                    viewModel.Search.Commands.Add(si);
+                                    viewModel.Search.Commands.Add(item);
                                 }
 
                                 var records = viewModel.Search.UsageDb.GetOrCreate(
@@ -174,7 +186,7 @@ namespace Damselfly.Components
                                     usage.HitCount++;
                                 }
 
-                                si.Usage = usage;
+                                item.Usage = usage;
                             }
                             else
                             {
