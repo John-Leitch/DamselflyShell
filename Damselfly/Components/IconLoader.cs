@@ -38,7 +38,9 @@ namespace Damselfly.Components
         {
             IntPtr handle;
 
-            var fullPath = File.Exists(path) ? path : WindowsPath.Search(path);
+            var fullPath = File.Exists(path) || Directory.Exists(path) ?
+                path :
+                WindowsPath.Search(path);
 
             try
             {
