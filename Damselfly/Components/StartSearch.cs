@@ -61,19 +61,21 @@ namespace Damselfly.Components
 
         public void LoadItems()
         {
-            var specialFolders = (Environment.SpecialFolder[])Enum.GetValues(typeof(Environment.SpecialFolder));
-
-            specialFolders = new Environment.SpecialFolder[]
+            var specialFolders = new Environment.SpecialFolder[]
             {
-                  Environment.SpecialFolder.Desktop,
-                  Environment.SpecialFolder.Favorites,
-                  Environment.SpecialFolder.MyComputer,
-                  Environment.SpecialFolder.MyDocuments,
-                  Environment.SpecialFolder.MyMusic,
-                  Environment.SpecialFolder.MyPictures,
-                  Environment.SpecialFolder.MyVideos,
-                  Environment.SpecialFolder.NetworkShortcuts,
-                  Environment.SpecialFolder.Personal,
+                Environment.SpecialFolder.AdminTools,
+                Environment.SpecialFolder.Desktop,
+                Environment.SpecialFolder.Favorites,
+                Environment.SpecialFolder.MyComputer,
+                Environment.SpecialFolder.MyDocuments,
+                Environment.SpecialFolder.MyMusic,
+                Environment.SpecialFolder.MyPictures,
+                Environment.SpecialFolder.MyVideos,
+                Environment.SpecialFolder.NetworkShortcuts,
+                Environment.SpecialFolder.PrinterShortcuts,
+                Environment.SpecialFolder.Programs,
+                Environment.SpecialFolder.StartMenu,
+                Environment.SpecialFolder.Startup,
             };
 
             var downloads = Path.Combine(
