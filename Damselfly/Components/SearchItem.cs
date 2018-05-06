@@ -33,7 +33,8 @@ namespace Damselfly.Components
         {
             IntPtr h;
 
-            if (Type != SearchItemType.Command)
+            if (Type != SearchItemType.Command ||
+                (ItemPath != null && File.Exists(ItemPath)))
             {
                 h = IconLoader.GetHandle(ItemPath);
             }
@@ -105,6 +106,7 @@ namespace Damselfly.Components
             return new SearchItem()
             {
                 Name = command,
+                ItemPath = command != null && File.Exists(command) ? command : null,
                 Type = SearchItemType.Command,
                 Usage = UsageDatabase.Instance.GetRecord(SearchItemType.Command, command),
             };

@@ -114,15 +114,13 @@ namespace Damselfly.Components
                         .Distinct()
                         .Select(SearchItem.FromCommand));
             }
-
-
         }
 
         private string CleanPath(string path)
         {
             while (path.Contains(_doubleSeparator))
             {
-                path = path.Replace(_doubleSeparator, System.IO.Path.DirectorySeparatorChar.ToString());
+                path = path.Replace(_doubleSeparator, Path.DirectorySeparatorChar.ToString());
             }
 
             return path;
@@ -130,7 +128,7 @@ namespace Damselfly.Components
 
         private bool IsPathLocalPath(string query)
         {
-            return query.Contains(System.IO.Path.DirectorySeparatorChar) && 
+            return query.Contains(Path.DirectorySeparatorChar) && 
                 !query.StartsWith(@"\\");
         }
 
@@ -144,7 +142,7 @@ namespace Damselfly.Components
             path = CleanPath(path);
 
             Func<string, bool> pred = x =>
-                    query == null || System.IO.Path.GetFileName(x).ToUpper().Contains(query.ToUpper());
+                    query == null || Path.GetFileName(x).ToUpper().Contains(query.ToUpper());
 
             var fsoFuncs = new[]
             {
