@@ -2,6 +2,7 @@
 using Components.PInvoke;
 using Damselfly.Components;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -366,6 +367,36 @@ namespace Damselfly.ViewModels
                 return;
             }
 
+            var actions = new List<Action>();
+
+            if (_search.Commands.Contains(_selectedMatch))
+            {
+                actions.Add(() => _search.Commands.Remove(_selectedMatch));
+            }
+
+            Dictionary<string, UsageRecord> records;
+
+            if (!_search.UsageDb.TryGetValue(_selectedMatch.Type, out records))
+            {
+                return;
+            }
+
+            foreach (var n in new[] { _selectedMatch.Name, _selectedMatch.ItemPath })
+            {
+                if (n != null &&
+                    records.ContainsKey(n) &&
+                    records[n] != null &&
+                    records[n].HitCount != 0)
+                {
+                    actions.Add(() => records.Remove(n));
+                }
+            }
+
+            if (actions.None())
+            {
+                return;
+            }
+
             var result = MessageBox.Show(
                 string.Format("Are you sure you want to delete \"{0}\"?", _selectedMatch.Name),
                 "Confirm",
@@ -377,20 +408,15 @@ namespace Damselfly.ViewModels
                 return;
             }
 
-            switch (_selectedMatch.Type)
+            foreach (var a in actions)
             {
-                case SearchItemType.Command:
-                    _search.Commands.Remove(_selectedMatch);
-                    _search.UsageDb[SearchItemType.Command].Remove(_selectedMatch.Name);
-                    break;
-
-                default:
-                    throw new InvalidOperationException();
+                a();
             }
 
             Query = "";
             _search.Save();
             _window.Show();
+            _search.LoadItems();
         }
 
         public void Control_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

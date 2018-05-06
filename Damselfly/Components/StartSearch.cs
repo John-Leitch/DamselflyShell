@@ -22,28 +22,28 @@ namespace Damselfly.Components
             get { return _usageDb; }
         }
 
-        private List<SearchItem> _startMenuItems = new List<SearchItem>();
+        private List<SearchItem> _startMenuItems;
 
         public List<SearchItem> StartMenuItems
         {
             get { return _startMenuItems; }
         }
 
-        private List<SearchItem> _commands = new List<SearchItem>();
+        private List<SearchItem> _commands;
 
         public List<SearchItem> Commands
         {
             get { return _commands; }
         }
 
-        private List<SearchItem> _systemFiles = new List<SearchItem>();
+        private List<SearchItem> _systemFiles;
 
         public List<SearchItem> SystemFiles
         {
             get { return _systemFiles; }
         }
 
-        private List<SearchItem> _specialFolders = new List<SearchItem>();
+        private List<SearchItem> _specialFolders;
 
         public List<SearchItem> SpecialFolders
         {
@@ -90,11 +90,8 @@ namespace Damselfly.Components
                 .ToList();
 
             _systemFiles = GetSystem32Files("cpl")
+                .Concat(GetSystem32Files("msc"))
                 .Select(SearchItem.FromFile)
-                .ToList();
-
-            _systemFiles = _systemFiles.Concat(GetSystem32Files("msc")
-                .Select(SearchItem.FromFile))
                 .ToList();
 
             _startMenuItems = Directory
@@ -106,14 +103,13 @@ namespace Damselfly.Components
                 .Select(SearchItem.FromShortcut)
                 .ToList();
 
-            if (File.Exists(_cmdFile))
-            {
-                _commands.AddRange(
-                    JsonSerializer
-                        .DeserializeFile<string[]>(_cmdFile)
-                        .Distinct()
-                        .Select(SearchItem.FromCommand));
-            }
+            _commands = File.Exists(_cmdFile) ?
+                JsonSerializer
+                    .DeserializeFile<string[]>(_cmdFile)
+                    .Distinct()
+                    .Select(SearchItem.FromCommand)
+                    .ToList() :
+                new List<SearchItem>();
         }
 
         private string CleanPath(string path)
