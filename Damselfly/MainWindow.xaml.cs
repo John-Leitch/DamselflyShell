@@ -151,8 +151,7 @@ namespace Damselfly
             
             if (!_hasLoaded)
             {
-                var interpreter = new AphidInterpreter();
-                interpreter.InterpretFile(@"Components\Scripts.alx");
+                Scripts.Init();
                 _hookProc = WindowsHookCallback;
                 _hookId = User32.SetWindowsHookEx(HookType.WH_KEYBOARD_LL, _hookProc, IntPtr.Zero, 0);
                 _hasLoaded = true;

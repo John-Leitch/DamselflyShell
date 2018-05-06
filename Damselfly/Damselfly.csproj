@@ -83,6 +83,7 @@
     <Compile Include="Components\KeyboardController.cs" />
     <Compile Include="Components\IconLoader.cs" />
     <Compile Include="Components\PathHelper.cs" />
+    <Compile Include="Components\Scripts.cs" />
     <Compile Include="Components\SearchItem.cs" />
     <Compile Include="Components\SearchItemType.cs" />
     <Compile Include="Components\SearchStrategy.cs" />
