@@ -4,8 +4,6 @@ using Damselfly.Components;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -17,10 +15,6 @@ namespace Damselfly.ViewModels
 {
     public class SearchViewModel : ViewModel
     {
-        private SearchWindow _window;
-
-        private TextBox _queryTextBox;
-
         private ListBox _queryListBox;
 
         private string _query;
@@ -33,20 +27,6 @@ namespace Damselfly.ViewModels
                 SetProperty(ref _query, value);
                 QueryChanged();
             }
-        }
-
-        private StartSearch _search = new StartSearch();
-
-        public StartSearch Search
-        {
-            get { return _search; }
-        }
-
-        private ObservableCollection<SearchItem> _matches = new ObservableCollection<SearchItem>();
-
-        public ObservableCollection<SearchItem> Matches
-        {
-            get { return _matches; }
         }
 
         private SearchItem _selectedMatch = null;
@@ -65,17 +45,29 @@ namespace Damselfly.ViewModels
             set { SetProperty(ref _queryError, value); }
         }
 
+        public SearchWindow Window { get; private set; }
+
+        public TextBox QueryTextBox { get; private set; }
+
+        public StartSearch Search { get; private set; }
+
+        public ObservableCollection<SearchItem> Matches { get; private set; }
+
+        public bool IsHandled { get; set; }
+
         public SearchViewModel(SearchWindow window, TextBox queryTextBox, ListBox queryListBox)
         {
-            _window = window;
-            _queryTextBox = queryTextBox;
+            Search = new StartSearch();
+            Window = window;
+            Matches = new ObservableCollection<SearchItem>();
+            QueryTextBox = queryTextBox;
             _queryListBox = queryListBox;
         }
 
         public void Init()
         {
             Query = "";
-            SelectedMatch = _matches.FirstOrDefault();
+            SelectedMatch = Matches.FirstOrDefault();
         }
 
         private void QueryChanged()
@@ -85,19 +77,19 @@ namespace Damselfly.ViewModels
 
             try
             {
-                _search.SearchAsync(Query, x =>
+                Search.SearchAsync(Query, x =>
                 {
-                    _window.Dispatcher.Invoke(() =>
+                    Window.Dispatcher.Invoke(() =>
                     {
-                        _matches.Clear();
+                        Matches.Clear();
 
                         foreach (var m in x)
                         {
                             //m.ParentElement = _queryListBox;
-                            _matches.Add(m);
+                            Matches.Add(m);
                         }
 
-                        SelectedMatch = _matches.FirstOrDefault();
+                        SelectedMatch = Matches.FirstOrDefault();
                     });
                 });
             }
@@ -111,9 +103,9 @@ namespace Damselfly.ViewModels
         {
             if (_selectedMatch == null)
             {
-                if (_matches.Any())
+                if (Matches.Any())
                 {
-                    SelectedMatch = _matches.First();
+                    SelectedMatch = Matches.First();
                 }
                 else
                 {
@@ -122,7 +114,7 @@ namespace Damselfly.ViewModels
             }
             else
             {
-                var i = _matches.IndexOf(_selectedMatch);
+                var i = Matches.IndexOf(_selectedMatch);
 
                 if (check(i))
                 {
@@ -133,7 +125,7 @@ namespace Damselfly.ViewModels
             FocusSelectedItem();
         }
 
-        private void FocusSelectedItem()
+        public void FocusSelectedItem()
         {
             DependencyObject c;
 
@@ -146,17 +138,17 @@ namespace Damselfly.ViewModels
             ((ListBoxItem)c).Focus();
         }
 
-        private void PreviousMatch()
+        public void PreviousMatch()
         {
-            MoveMatch(x => x > 0, x => _matches[x - 1]);
+            MoveMatch(x => x > 0, x => Matches[x - 1]);
         }
 
-        private void NextMatch()
+        public void NextMatch()
         {
-            MoveMatch(x => x < _matches.Count - 1, x => _matches[x + 1]);
+            MoveMatch(x => x < Matches.Count - 1, x => Matches[x + 1]);
         }
 
-        private void CompleteQuery()
+        public void CompleteQuery()
         {
             if (_selectedMatch != null)
             {
@@ -166,201 +158,20 @@ namespace Damselfly.ViewModels
             }
         }
 
-        private void FocusQuery()
+        public void FocusQuery()
         {
-            _queryTextBox.Focus();
-            _queryTextBox.CaretIndex = _queryTextBox.Text.Length;
-            _queryTextBox.ScrollToEnd();
+            QueryTextBox.Focus();
+            QueryTextBox.CaretIndex = QueryTextBox.Text.Length;
+            QueryTextBox.ScrollToEnd();
         }
 
         public void Control_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            switch (e.Key)
-            {
-                case Key.Tab:
-                    e.Handled = true;
-
-                    if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-                    {
-                        var q = Query;
-
-                        if (q.Length == 0)
-                        {
-                            break;
-                        }
-
-                        if (q[q.Length - 1] == Path.DirectorySeparatorChar)
-                        {
-                            q = q.Remove(q.Length - 1);
-                        }
-
-                        if (q.Any(x => x == Path.DirectorySeparatorChar))
-                        {
-                            Query = q.Remove(q.Length - Path.GetFileName(q).Length);
-                        }
-
-                        FocusQuery();
-                    }
-                    else
-                    {
-                        CompleteQuery();
-                        FocusQuery();
-                    }
-                    break;
-
-                case Key.Up:
-                    e.Handled = true;
-                    PreviousMatch();
-
-                    break;
-
-                case Key.Down:
-                    e.Handled = true;
-                    NextMatch();
-                    break;
-
-                case Key.Escape:
-                    Query = "";
-                    _window.Hide();
-                    break;
-
-                case Key.Enter:
-
-                    if (_selectedMatch != null &&
-                        _selectedMatch.Type != SearchItemType.Command)
-                    {
-                        switch (_selectedMatch.Type)
-                        {
-                            case SearchItemType.File:
-                            case SearchItemType.StartMenu:
-                            case SearchItemType.Directory:
-                                try
-                                {
-
-                                    Process.Start(_selectedMatch.ItemPath);
-
-                                    Func<SearchItem, bool> predicate = x =>
-                                        x.Name == _selectedMatch.Name && x.ItemPath == _selectedMatch.ItemPath;
-
-                                    if (!_search.StartMenuItems.Any(predicate) && 
-                                        !_search.SpecialFolders.Any(predicate) &&
-                                        !_search.Commands.Any(predicate) &&
-                                        !_search.SystemFiles.Any(predicate))
-                                    {
-                                        _search.Commands.Add(_selectedMatch);
-                                    }
-
-                                    _selectedMatch.Usage.HitCount++;
-                                    _search.Save();
-
-                                    Query = "";
-                                    _window.Hide();
-
-                                }
-                                catch (Win32Exception ex)
-                                {
-                                    QueryError = ex.Message;
-                                }
-
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            string cmd = _selectedMatch != null ?
-                                _selectedMatch.Name :
-                                Query;
-
-                            var i = cmd.IndexOf(' ');
-
-                            if (i != -1)
-                            {
-                                Process.Start(cmd.Remove(i), cmd.Substring(i + 1));
-                            }
-                            else
-                            {
-                                Process.Start(cmd);
-                            }
-
-                            if (_selectedMatch == null)
-                            {
-                                var si = new SearchItem()
-                                {
-                                    Type = SearchItemType.Command,
-                                    Name = cmd,
-                                };
-
-                                if (!_search.Commands.Any(x => x.Name == si.Name))
-                                {
-                                    _search.Commands.Add(si);
-                                }
-
-                                var records = _search.UsageDb.GetOrCreate(SearchItemType.Command);
-
-                                UsageRecord usage;
-
-                                if (!records.TryGetValue(cmd, out usage))
-                                {
-                                    usage = new UsageRecord() { HitCount = 1 };
-                                    records.Add(cmd, usage);
-                                }
-                                else
-                                {
-                                    usage.HitCount++;
-                                }
-
-                                si.Usage = usage;
-                            }
-                            else
-                            {
-                                _selectedMatch.Usage.HitCount++;
-                            }
-
-                            _search.Save();
-
-                            Query = "";
-                            _window.Hide();
-                        }
-                        catch (Win32Exception ex)
-                        {
-                            QueryError = ex.Message;
-                        }
-                    }
-
-                    break;
-
-                case Key.D:
-                    if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-                    {
-                        DeleteSelectedMatch();
-                    }
-                    else
-                    {
-                        _queryTextBox.Focus();
-                    }
-
-                    break;
-
-                case Key.PageUp:
-                case Key.PageDown:
-                    FocusSelectedItem();
-                    break;
-
-                case Key.Home:
-                case Key.End:
-                    break;
-
-                default:
-                    _queryTextBox.Focus();
-                    break;
-
-
-            }
+            KeyboardController.HandleKey(this, e.Key);
+            e.Handled = IsHandled;
         }
 
-        private void DeleteSelectedMatch()
+        public void DeleteSelectedMatch()
         {
             if (_selectedMatch == null)
             {
@@ -369,14 +180,14 @@ namespace Damselfly.ViewModels
 
             var actions = new List<Action>();
 
-            if (_search.Commands.Contains(_selectedMatch))
+            if (Search.Commands.Contains(_selectedMatch))
             {
-                actions.Add(() => _search.Commands.Remove(_selectedMatch));
+                actions.Add(() => Search.Commands.Remove(_selectedMatch));
             }
 
             Dictionary<string, UsageRecord> records;
 
-            if (!_search.UsageDb.TryGetValue(_selectedMatch.Type, out records))
+            if (!Search.UsageDb.TryGetValue(_selectedMatch.Type, out records))
             {
                 return;
             }
@@ -404,7 +215,7 @@ namespace Damselfly.ViewModels
 
             if (result == MessageBoxResult.No)
             {
-                _window.Show();
+                Window.Show();
                 return;
             }
 
@@ -414,16 +225,16 @@ namespace Damselfly.ViewModels
             }
 
             Query = "";
-            _search.Save();
-            _window.Show();
-            _search.LoadItems();
+            Search.Save();
+            Window.Show();
+            Search.LoadItems();
         }
 
         public void Control_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (_window.IsVisible)
+            if (Window.IsVisible)
             {
-                var h = ((HwndSource)PresentationSource.FromVisual(_window)).Handle;
+                var h = ((HwndSource)PresentationSource.FromVisual(Window)).Handle;
 
                 if (h == IntPtr.Zero)
                 {
@@ -463,10 +274,10 @@ namespace Damselfly.ViewModels
                     Console.WriteLine("SetFocus() failed");
                 }
 
-                _window.Focus();
-                _queryTextBox.Focus();
-                _queryTextBox.CaretIndex = _queryTextBox.Text.Length;
-                _queryTextBox.ScrollToEnd();
+                Window.Focus();
+                QueryTextBox.Focus();
+                QueryTextBox.CaretIndex = QueryTextBox.Text.Length;
+                QueryTextBox.ScrollToEnd();
             }
         }
     }

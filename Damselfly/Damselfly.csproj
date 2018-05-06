@@ -160,8 +160,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>taskkill /im aphid.exe 2&gt; nul
-taskkill /im Damselfly.exe 2&gt; nul
+    <PreBuildEvent>taskkill /im aphid.exe /f 2&gt; nul
+taskkill /im Damselfly.exe /f 2&gt; nul
 aphid $(SolutionDir)..\aphid\aphid\bin\debug\Tools\AphidExportStubCompiler.alx Damselfly.Components $(ProjectDir)Components $(ProjectDir)Generated</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
