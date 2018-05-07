@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Damselfly.Components
@@ -90,6 +92,9 @@ namespace Damselfly.Components
                         (Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
                         (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
 
+                    string command = null;
+                    var match = viewModel.SelectedMatch;
+
                     if (viewModel.SelectedMatch != null &&
                         viewModel.SelectedMatch.Type != SearchItemType.Command)
                     {
@@ -98,33 +103,37 @@ namespace Damselfly.Components
                             case SearchItemType.File:
                             case SearchItemType.StartMenu:
                             case SearchItemType.Directory:
-                                try
+
+                                command = viewModel.SelectedMatch.ItemPath;
+                                viewModel.Query = "";
+                                viewModel.Window.Hide();
+
+                                ThreadPool.QueueUserWorkItem(x =>
                                 {
-                                    Launcher.Launch(viewModel.SelectedMatch.ItemPath, asAdmin);
-
-                                    Func<SearchItem, bool> predicate = x =>
-                                        x.Name == viewModel.SelectedMatch.Name &&
-                                            x.ItemPath == viewModel.SelectedMatch.ItemPath;
-
-                                    if (!viewModel.Search.StartMenuItems.Any(predicate) &&
-                                        !viewModel.Search.SpecialFolders.Any(predicate) &&
-                                        !viewModel.Search.Commands.Any(predicate) &&
-                                        !viewModel.Search.SystemFiles.Any(predicate))
+                                    try
                                     {
-                                        viewModel.Search.Commands.Add(viewModel.SelectedMatch);
+                                        Launcher.Launch(command, asAdmin);
+
+                                        Func<SearchItem, bool> predicate = y =>
+                                            y.Name == match.Name &&
+                                                y.ItemPath == match.ItemPath;
+
+                                        if (!viewModel.Search.StartMenuItems.Any(predicate) &&
+                                            !viewModel.Search.SpecialFolders.Any(predicate) &&
+                                            !viewModel.Search.Commands.Any(predicate) &&
+                                            !viewModel.Search.SystemFiles.Any(predicate))
+                                        {
+                                            viewModel.Search.Commands.Add(match);
+                                        }
+
+                                        match.Usage.HitCount++;
+                                        viewModel.Search.Save();
                                     }
-
-                                    viewModel.SelectedMatch.Usage.HitCount++;
-                                    viewModel.Search.Save();
-
-                                    viewModel.Query = "";
-                                    viewModel.Window.Hide();
-
-                                }
-                                catch (Win32Exception ex)
-                                {
-                                    viewModel.QueryError = ex.Message;
-                                }
+                                    catch (Win32Exception ex)
+                                    {
+                                        ShowError(command, ex);
+                                    }
+                                });
 
                                 break;
                         }
@@ -133,56 +142,59 @@ namespace Damselfly.Components
                     {
                         try
                         {
-                            var cmd =
+                            command =
                                 viewModel.SelectedMatch != null ?
                                 viewModel.SelectedMatch.Name :
                                 viewModel.Query;
 
-                            Launcher.Launch(cmd, asAdmin);
+                            viewModel.Query = "";
+                            viewModel.Window.Hide();
 
-                            if (viewModel.SelectedMatch == null)
+                            ThreadPool.QueueUserWorkItem(x =>
                             {
-                                var item = new SearchItem()
+                                Launcher.Launch(command, asAdmin);
+
+                                if (match == null)
                                 {
-                                    Type = SearchItemType.Command,
-                                    Name = cmd,
-                                };
+                                    var item = new SearchItem()
+                                    {
+                                        Type = SearchItemType.Command,
+                                        Name = command,
+                                    };
 
-                                if (!viewModel.Search.Commands.Any(x => x.Name == item.Name))
-                                {
-                                    viewModel.Search.Commands.Add(item);
-                                }
+                                    if (!viewModel.Search.Commands.Any(y => y.Name == item.Name))
+                                    {
+                                        viewModel.Search.Commands.Add(item);
+                                    }
 
-                                var records = viewModel.Search.UsageDb.GetOrCreate(
-                                    SearchItemType.Command);
+                                    var records = viewModel.Search.UsageDb.GetOrCreate(
+                                        SearchItemType.Command);
 
-                                UsageRecord usage;
+                                    UsageRecord usage;
 
-                                if (!records.TryGetValue(cmd, out usage))
-                                {
-                                    usage = new UsageRecord() { HitCount = 1 };
-                                    records.Add(cmd, usage);
+                                    if (!records.TryGetValue(command, out usage))
+                                    {
+                                        usage = new UsageRecord() { HitCount = 1 };
+                                        records.Add(command, usage);
+                                    }
+                                    else
+                                    {
+                                        usage.HitCount++;
+                                    }
+
+                                    item.Usage = usage;
                                 }
                                 else
                                 {
-                                    usage.HitCount++;
+                                    viewModel.SelectedMatch.Usage.HitCount++;
                                 }
 
-                                item.Usage = usage;
-                            }
-                            else
-                            {
-                                viewModel.SelectedMatch.Usage.HitCount++;
-                            }
-
-                            viewModel.Search.Save();
-
-                            viewModel.Query = "";
-                            viewModel.Window.Hide();
+                                viewModel.Search.Save();
+                            });
                         }
                         catch (Win32Exception ex)
                         {
-                            viewModel.QueryError = ex.Message;
+                            ShowError(command, ex);
                         }
                     }
 
@@ -212,9 +224,26 @@ namespace Damselfly.Components
                 default:
                     viewModel.QueryTextBox.Focus();
                     break;
-
-
             }
+        }
+
+        public static void ShowError(string command, Exception exception)
+        {
+            MessageBox.Show(
+                //command != null ? 
+                //    string.Format(
+                //        "Error running command {0}:\r\n{1}",
+                //        command,
+                //        exception.Message) :
+                //    string.Format(
+                //        "Error running command: {0}",
+                //        exception.Message),
+                command != null ?
+                    string.Format("Error running command:\r\n\r\n{0}", command) :
+                    "Error running command",
+                "Error running command",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
         }
     }
 }
