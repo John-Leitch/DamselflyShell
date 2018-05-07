@@ -1,9 +1,5 @@
-﻿using Components.Aphid.Debugging;
-using Damselfly.Components;
-using System;
+﻿using Damselfly.Components;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using System.Windows;
 
 namespace Damselfly

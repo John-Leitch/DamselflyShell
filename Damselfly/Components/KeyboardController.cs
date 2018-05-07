@@ -3,7 +3,6 @@ using Components.PInvoke;
 using Damselfly.ViewModels;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
