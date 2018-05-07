@@ -1,4 +1,5 @@
 ﻿using Components;
+using Components.External;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -9,6 +10,9 @@ namespace Damselfly.Components
 {
     public class SearchItem
     {
+        private static Memoizer<Tuple<string, string>, ImageSource> _imageSourceMemoizer =
+            new Memoizer<Tuple<string, string>, ImageSource>();
+
         public string Name { get; set; }
 
         public string ItemPath { get; set; }
@@ -30,6 +34,13 @@ namespace Damselfly.Components
         }
 
         private ImageSource GetIconImageSource()
+        {
+            return _imageSourceMemoizer.Call(
+                GetIconImageSourceCore,
+                Tuple.Create(ItemPath, Name));
+        }
+
+        private ImageSource GetIconImageSourceCore(Tuple<string, string> tuple)
         {
             IntPtr h;
 
