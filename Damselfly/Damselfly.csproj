@@ -90,6 +90,7 @@
     <Compile Include="Components\StartSearch.cs" />
     <Compile Include="Components\UsageDatabase.cs" />
     <Compile Include="Components\UsageRecord.cs" />
+    <Compile Include="Components\StandardUserProcess.cs" />
     <Compile Include="Generated\*.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
