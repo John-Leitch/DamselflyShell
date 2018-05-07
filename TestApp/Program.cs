@@ -1,9 +1,14 @@
-﻿using Components.PInvoke;
+﻿using Components;
+using Components.Aphid.Interpreter;
+using Components.PInvoke;
 using Damselfly.Components;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Media.Imaging;
 
 namespace TestApp
@@ -35,18 +40,42 @@ namespace TestApp
 
     class Program
     {
-        static void Main(string[] args)
+        static void IconTest(string path)
         {
-            var handle2 = IconLoader.GetHandle(@"c:\windows\system32\cmd.exe");
-            var source2 = IconLoader.GetSource(handle2);
+            var png = PathHelper.GetExecutingPath(
+                path
+                    .Replace(':', '$')
+                    .Replace('\\', '$') +
+                ".png");
+
+            var handle = IconLoader.GetHandle(path);
+            var source = IconLoader.GetSource(handle);
             var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(source2));
-            var png = @"c:\temp\test.png";
+            encoder.Frames.Add(BitmapFrame.Create(source));
+
             using (var f = File.Create(png))
             {
                 encoder.Save(f);
             }
 
+            var p = Process.Start(png);
+        }
+
+        static void Main(string[] args)
+        {
+            var p2 = Process.Start(new ProcessStartInfo("cmd.exe", @"/k cd c:\source") { Verb = "runas" });
+            //var proc = StandardUserProcess.Start(@"c:\windows\system32\cmd.exe", @"/k cd c:\source");
+            //return;
+
+
+            //Kernel32.CloseHandle(proc);
+
+            //Kernel32.OpenProcess(ProcessAccessFlags.DuplicateHandle
+
+            IconTest(@"c:\windows\system32\cmd.exe");
+            IconTest(@"c:\users\john\Documents");
+            IconTest(@"C:\Users\John\Downloads");
+            
             var mscName = MscHelper.GetName(@"c:\windows\system32\services.msc");
 
 
