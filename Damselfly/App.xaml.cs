@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Components.Aphid.Debugging;
+using Damselfly.Components;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -12,7 +15,7 @@ namespace Damselfly
     {
         public App()
         {
-            
+            DamselflyErrorReporter.Attach();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -24,12 +27,10 @@ namespace Damselfly
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            File.WriteAllText(
-                Path.Combine(
-                    path,
-                    string.Format("crash-{0}.log", Environment.TickCount)),
-                e.Exception.ToString());
+            if (!Debugger.IsAttached)
+            {
+                DamselflyErrorReporter.SaveError(e.Exception);
+            }
         }
     }
 }

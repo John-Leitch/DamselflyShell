@@ -10,16 +10,16 @@ namespace Damselfly.Components
 {
     public static class Launcher
     {
-        private static string
-            _elevate = PathHelper.GetExecutingPath("Elevate.exe"),
-            _run = PathHelper.GetExecutingPath("Run.exe");
+        private static string _run = PathHelper.GetExecutingPath("Run.exe");
 
         public static void Launch(string command, bool asAdmin)
         {
-            var launcher = asAdmin ? _elevate : _run;
-            var args = WindowsPath.PrepareFilename(command);
+            var args = string.Format(
+                "{0}{1}",
+                asAdmin ? "-admin " : "",
+                WindowsPath.PrepareFilename(command));
 
-            using (var p = StandardUserProcess.Start(launcher, args))
+            using (var p = StandardUserProcess.Start(_run, args))
             {
                 p.WaitForExit();
 

@@ -17,9 +17,9 @@ namespace Damselfly.Components
         private static void SendKey(Key key, int flags)
         {
             User32.keybd_event(
-                (byte)KeyInterop.VirtualKeyFromKey(key), 
+                (byte)KeyInterop.VirtualKeyFromKey(key),
                 0,
-                flags, 
+                flags,
                 0);
         }
 
@@ -95,6 +95,12 @@ namespace Damselfly.Components
                     string command = null;
                     var match = viewModel.SelectedMatch;
 
+                    if (viewModel.Query == "!forceCrash")
+                    {
+                        var x = 0;
+                        var y = 1 / x;
+                    }
+
                     if (viewModel.SelectedMatch != null &&
                         viewModel.SelectedMatch.Type != SearchItemType.Command)
                     {
@@ -140,17 +146,18 @@ namespace Damselfly.Components
                     }
                     else
                     {
-                        try
+
+                        command =
+                            viewModel.SelectedMatch != null ?
+                            viewModel.SelectedMatch.Name :
+                            viewModel.Query;
+
+                        viewModel.Query = "";
+                        viewModel.Window.Hide();
+
+                        ThreadPool.QueueUserWorkItem(x =>
                         {
-                            command =
-                                viewModel.SelectedMatch != null ?
-                                viewModel.SelectedMatch.Name :
-                                viewModel.Query;
-
-                            viewModel.Query = "";
-                            viewModel.Window.Hide();
-
-                            ThreadPool.QueueUserWorkItem(x =>
+                            try
                             {
                                 Launcher.Launch(command, asAdmin);
 
@@ -190,12 +197,12 @@ namespace Damselfly.Components
                                 }
 
                                 viewModel.Search.Save();
-                            });
-                        }
-                        catch (Win32Exception ex)
-                        {
-                            ShowError(command, ex);
-                        }
+                            }
+                            catch (Win32Exception ex)
+                            {
+                                ShowError(command, ex);
+                            }
+                        });
                     }
 
                     break;
