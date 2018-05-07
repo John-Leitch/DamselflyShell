@@ -58,6 +58,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -164,6 +167,10 @@
     <PreBuildEvent>taskkill /im aphid.exe /f 2&gt; nul
 taskkill /im Damselfly.exe /f 2&gt; nul
 aphid $(SolutionDir)..\aphid\aphid\bin\debug\Tools\AphidExportStubCompiler.alx Damselfly.Components $(ProjectDir)Components $(ProjectDir)Generated</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>aphid $(TargetDir)Tools\MakeExe.alx Tools\Elevate.alx $(TargetDir)Elevate.exe
+aphid $(TargetDir)Tools\MakeExe.alx Tools\Run.alx $(TargetDir)Run.exe</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
