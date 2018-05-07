@@ -1,4 +1,6 @@
-﻿#'query';
+﻿#'std';
+#'query';
+using Components;
 using Damselfly.Components;
 using System;
 
@@ -9,3 +11,21 @@ var exts = [ '', '.exe', '.cmd', '.bat' ];
 // Todo: probably introduces low-sev squatting vuln via multiple extensions, fix.
 export string WindowsPath.Search = @(string path)
 	paths-<(@(p) exts->@(e) Path.Combine(p, path + e)) @aq.first(File.Exists);
+
+export string WindowsPath.PrepareFilename = @(string cmd)
+    !cmd.Contains(' ') && !cmd.Contains('\t') ? cmd :
+    Directory.Exists(cmd) ? '"{0}"' :: [ cmd ] :
+    quoteFilename(cmd);
+
+
+var quoteFilename = @(string cmd)
+    (var f = cmd
+        |> ArgLexer.GetTokenInfo
+        -> (@(x) ({
+            token: x,
+            hasArgs: x.EndOffset < cmd.Length,
+            path: hasArgs ? cmd.Remove(x.EndOffset - 1) : cmd
+        }))
+        @aq.first(@(x) File.Exists(x.path))) != null ?
+        '"{0}"{1}' :: [ f.path, f.hasArgs ? cmd.Substring(f.token.EndOffset - 1) : '' ] :
+        cmd;

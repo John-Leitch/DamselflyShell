@@ -12,7 +12,7 @@ namespace Damselfly.Components
 {
     public static class StandardUserProcess
     {
-        public static Process Start(string filename, string arguments)
+        public static NativeProcess Start(string filename, string arguments)
         {
             var proc = Process.GetProcessesByName("explorer").Single();
 
@@ -23,7 +23,7 @@ namespace Damselfly.Components
                     false,
                     proc.Id)) == Win32.INVALID_HANDLE_VALUE)
             {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+                Win32.ThrowWin32Exception();
             }
 
             IntPtr procTokenHandle;
@@ -33,7 +33,7 @@ namespace Damselfly.Components
                 TokenAccess.TOKEN_QUERY | TokenAccess.TOKEN_DUPLICATE,
                 out procTokenHandle))
             {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+                Win32.ThrowWin32Exception();
             }
 
             IntPtr duplicateTokenHandle;
@@ -50,7 +50,7 @@ namespace Damselfly.Components
                 TOKEN_TYPE.TokenPrimary,
                 out duplicateTokenHandle))
             {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+                Win32.ThrowWin32Exception();
             }
 
             var si = new STARTUPINFO { cb = Marshal.SizeOf<STARTUPINFO>() };
@@ -69,7 +69,7 @@ namespace Damselfly.Components
                 si,
                 pi))
             {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+                Win32.ThrowWin32Exception();
             }
 
             foreach (var h in new[]
@@ -77,14 +77,14 @@ namespace Damselfly.Components
                 duplicateTokenHandle,
                 procTokenHandle,
                 procHandle,
-                pi.hProcess,
-                pi.hThread,
+                //pi.hProcess,
+                //pi.hThread,
             })
             {
                 Kernel32.CloseHandle(h);
             }
 
-            return Process.GetProcessById((int)pi.dwProcessId);
+            return new NativeProcess(pi);
         }
     }
 }

@@ -12,13 +12,6 @@ namespace Damselfly.Components
 {
     public static class KeyboardController
     {
-        private static string _elevate = PathHelper.GetExecutingPath("Elevate.exe"),
-            _run = PathHelper.GetExecutingPath("Run.exe");
-
-        //private static string _explorer = Environment.ExpandEnvironmentVariables("%windir%\\explorer.exe");
-
-        //private static string _cmd = Environment.ExpandEnvironmentVariables(@"%windir%\system32\cmd.exe");
-
         private static void SendKey(Key key, int flags)
         {
             User32.keybd_event(
@@ -97,8 +90,6 @@ namespace Damselfly.Components
                         (Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
                         (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
 
-                    string command, args = null;
-
                     if (viewModel.SelectedMatch != null &&
                         viewModel.SelectedMatch.Type != SearchItemType.Command)
                     {
@@ -109,13 +100,7 @@ namespace Damselfly.Components
                             case SearchItemType.Directory:
                                 try
                                 {
-                                    args = string.Format(
-                                        "\"{0}\"",
-                                        viewModel.SelectedMatch.ItemPath);
-
-                                    command = asAdmin ? _elevate : _run;
-
-                                    StandardUserProcess.Start(command, args);
+                                    Launcher.Launch(viewModel.SelectedMatch.ItemPath, asAdmin);
 
                                     Func<SearchItem, bool> predicate = x =>
                                         x.Name == viewModel.SelectedMatch.Name &&
@@ -153,7 +138,7 @@ namespace Damselfly.Components
                                 viewModel.SelectedMatch.Name :
                                 viewModel.Query;
 
-                            StandardUserProcess.Start(asAdmin ? _elevate : _run, cmd);
+                            Launcher.Launch(cmd, asAdmin);
 
                             if (viewModel.SelectedMatch == null)
                             {

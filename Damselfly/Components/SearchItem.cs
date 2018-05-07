@@ -42,7 +42,7 @@ namespace Damselfly.Components
             {
                 try
                 {
-                    var tokens = ArgLexer.Tokenize(Name);
+                    var tokens = ArgLexer.Tokenize(WindowsPath.PrepareFilename(Name));
 
                     h = tokens.Length > 0 ?
                         IconLoader.GetHandle(tokens[0]) :

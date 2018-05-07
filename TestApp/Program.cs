@@ -63,6 +63,17 @@ namespace TestApp
 
         static void Main(string[] args)
         {
+            Scripts.Init();
+            var commands = new[]
+            {
+                @"c:\Program Files\Notepad++\notepad++.exe c:\Program Files\Notepad++\contextMenu.xml",
+                "test.txt",
+                "",
+                @"c:\source",
+                @"c:\source\test.cmd",
+                @"c:\Program Files (x86)\Atmel",
+                @"c:\Program Files (x86)\Deluge\_ctypes.pyd"
+            }.Select(x => WindowsPath.PrepareFilename(x)).ToArray();
             var p2 = Process.Start(new ProcessStartInfo("cmd.exe", @"/k cd c:\source") { Verb = "runas" });
             //var proc = StandardUserProcess.Start(@"c:\windows\system32\cmd.exe", @"/k cd c:\source");
             //return;

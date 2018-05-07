@@ -85,6 +85,8 @@
     </ApplicationDefinition>
     <Compile Include="Components\KeyboardController.cs" />
     <Compile Include="Components\IconLoader.cs" />
+    <Compile Include="Components\Launcher.cs" />
+    <Compile Include="Components\NativeProcess.cs" />
     <Compile Include="Components\PathHelper.cs" />
     <Compile Include="Components\Scripts.cs" />
     <Compile Include="Components\SearchItem.cs" />
