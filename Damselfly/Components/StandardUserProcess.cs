@@ -8,18 +8,45 @@ namespace Damselfly.Components
 {
     public static class StandardUserProcess
     {
+        private static Lazy<IntPtr> _duplicatedToken = new Lazy<IntPtr>(DuplicateToken);
+
         public static NativeProcess Start(string filename, string arguments)
         {
-            var proc = Process.GetProcessesByName("explorer").Single();
+            var si = new STARTUPINFO { cb = Marshal.SizeOf<STARTUPINFO>() };
+            var pi = new PROCESS_INFORMATION();
+            var sa = new SECURITY_ATTRIBUTES();
+            sa.nLength = Marshal.SizeOf<SECURITY_ATTRIBUTES>();
 
-            IntPtr procHandle;
-
-            if ((procHandle = Kernel32.OpenProcess(
-                    ProcessAccessFlags.QueryInformation,
-                    false,
-                    proc.Id)) == Win32.INVALID_HANDLE_VALUE)
+            if (!AdvApi32.CreateProcessWithTokenW(
+                _duplicatedToken.Value,
+                LogonFlags.WithProfile,
+                filename,
+                arguments,
+                ProcessCreationFlags.None,
+                IntPtr.Zero,
+                null,
+                si,
+                pi))
             {
                 Win32.ThrowWin32Exception();
+            }
+
+            return new NativeProcess(pi);
+        }
+
+        private static IntPtr DuplicateToken()
+        {
+            IntPtr procHandle;
+
+            using (var proc = Process.GetProcessesByName("explorer").Single())
+            {
+                if ((procHandle = Kernel32.OpenProcess(
+                        ProcessAccessFlags.QueryInformation,
+                        false,
+                        proc.Id)) == Win32.INVALID_HANDLE_VALUE)
+                {
+                    Win32.ThrowWin32Exception();
+                }
             }
 
             IntPtr procTokenHandle;
@@ -49,38 +76,10 @@ namespace Damselfly.Components
                 Win32.ThrowWin32Exception();
             }
 
-            var si = new STARTUPINFO { cb = Marshal.SizeOf<STARTUPINFO>() };
-            var pi = new PROCESS_INFORMATION();
-            var sa = new SECURITY_ATTRIBUTES();
-            sa.nLength = Marshal.SizeOf<SECURITY_ATTRIBUTES>();
+            Kernel32.CloseHandle(procTokenHandle);
+            Kernel32.CloseHandle(procHandle);
 
-            if (!AdvApi32.CreateProcessWithTokenW(
-                duplicateTokenHandle,
-                LogonFlags.WithProfile,
-                filename,
-                arguments,
-                ProcessCreationFlags.None,
-                IntPtr.Zero,
-                null,
-                si,
-                pi))
-            {
-                Win32.ThrowWin32Exception();
-            }
-
-            foreach (var h in new[]
-            {
-                duplicateTokenHandle,
-                procTokenHandle,
-                procHandle,
-                //pi.hProcess,
-                //pi.hThread,
-            })
-            {
-                Kernel32.CloseHandle(h);
-            }
-
-            return new NativeProcess(pi);
+            return duplicateTokenHandle;
         }
     }
 }
