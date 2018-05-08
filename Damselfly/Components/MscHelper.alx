@@ -6,11 +6,11 @@ export string MscHelper.GetName = @(string file) {
     var resolve = @(s) (r.Strings()[0].String()-?(@(x) x.ID() == s.ID()))[0].Value;
     var d = r.String()-?@(x) x.Name() == 'ApplicationTitle';
 
-    if (d.Count > 0) {
+    if ((d #!) > 0) {
         ret d[0] |> resolve;
     }
 
     var n = (r.Node()-<@()$_.String())->resolve-?@(x) x != 'Console Root';
 
-    ret n.Count > 0 ? n[0] : file;
+    ret (n #!) > 0 ? n[0] : file;
 };
