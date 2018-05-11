@@ -17,7 +17,6 @@ export string WindowsPath.PrepareFilename = @(string cmd)
     Directory.Exists(cmd) ? '"{0}"' :: [ cmd ] :
     quoteFilename(cmd);
 
-
 var quoteFilename = @(string cmd)
     (var f = cmd
         |> ArgLexer.GetTokenInfo
