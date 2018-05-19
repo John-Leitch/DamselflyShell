@@ -1,2 +1,2 @@
 ﻿#'Keyboard';
-export KeyboardAutomation.Type = @(string text) keyboard.type;
+export KeyboardAutomation.Type = @(string text) text |> keyboard.type;

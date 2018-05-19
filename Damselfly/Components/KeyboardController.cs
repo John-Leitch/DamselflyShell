@@ -36,8 +36,48 @@ namespace Damselfly.Components
         {
             viewModel.IsHandled = false;
 
+            var controlShift =
+                (Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
+                (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
+
             switch (key)
             {
+                case Key.T:
+                    if (controlShift)
+                    {
+                        var buffer = viewModel.Query;
+
+                        if (buffer.Length == 0)
+                        {
+                            return;
+                        }
+
+                        viewModel.IsHandled = true;
+                        viewModel.Query = "";
+                        POINT point;
+
+                        ThreadPool.QueueUserWorkItem(x =>
+                        {
+                            Thread.Sleep(100);
+
+                            if (!User32.GetCursorPos(out point))
+                            {
+                                throw Win32.CreateWin32Exception();
+                            }
+
+                            //User32.mouse_event(MouseEventFlags.LEFTDOWN, point.x, point.y,
+                            foreach (var f in new[] { MouseEventFlags.LEFTDOWN, MouseEventFlags.LEFTUP })
+                            {
+                                User32.mouse_event(f, point.x, point.y, 0, UIntPtr.Zero);
+                                Thread.Sleep(10);
+                            }
+
+                            KeyboardAutomation.Type(buffer);
+                            
+                        });
+                    }
+                    break;
+
                 case Key.Tab:
                     viewModel.IsHandled = true;
 
@@ -86,11 +126,6 @@ namespace Damselfly.Components
                     break;
 
                 case Key.Enter:
-
-                    var asAdmin =
-                        (Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
-                        (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
-
                     string command = null;
                     var match = viewModel.SelectedMatch;
 
@@ -117,7 +152,7 @@ namespace Damselfly.Components
                                 {
                                     try
                                     {
-                                        Launcher.Launch(command, asAdmin);
+                                        Launcher.Launch(command, controlShift);
 
                                         Func<SearchItem, bool> predicate = y =>
                                             y.Name == match.Name &&
@@ -158,7 +193,7 @@ namespace Damselfly.Components
                         {
                             try
                             {
-                                Launcher.Launch(command, asAdmin);
+                                Launcher.Launch(command, controlShift);
 
                                 if (match == null)
                                 {

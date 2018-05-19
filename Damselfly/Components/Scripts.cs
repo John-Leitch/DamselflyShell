@@ -16,19 +16,22 @@ namespace Damselfly.Components
             var code = File.ReadAllText(file);
             var aphid = PathHelper.GetExecutingPath("Aphid.exe");
 
-            var si = new ProcessStartInfo(
-                aphid,
-                string.Format(
-                    "tools\\ngen.alx {0}",
-                    PathHelper.GetExecutingPath("Run.exe")))
-                    {
-                        UseShellExecute = false,
-                        WindowStyle = ProcessWindowStyle.Hidden,
-                        CreateNoWindow = true,
-                    };
+            if (!Debugger.IsAttached)
+            {
+                var si = new ProcessStartInfo(
+                    aphid,
+                    string.Format(
+                        "tools\\ngen.alx {0}",
+                        PathHelper.GetExecutingPath("Run.exe")))
+                        {
+                            UseShellExecute = false,
+                            WindowStyle = ProcessWindowStyle.Hidden,
+                            CreateNoWindow = true,
+                        };
 
-            var p = Process.Start(si);
-            p.WaitForExit();
+                var p = Process.Start(si);
+                p.WaitForExit();
+            }
 
             if (!Debugger.IsAttached)
             {

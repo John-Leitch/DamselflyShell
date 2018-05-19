@@ -144,6 +144,9 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Components\KeyboardAutomation.alx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Components\Scripts.alx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
