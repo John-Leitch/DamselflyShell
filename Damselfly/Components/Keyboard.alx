@@ -1,0 +1,81 @@
+﻿var keyboard;
+
+@{
+    #'std';
+    //#"C:\\source\\Aphid\\Components.Aphid\\Library\\IntentInference.alx";
+
+    load WindowsBase;
+    using System;
+    using System.Reflection;
+    using System.Threading;
+    using System.Windows.Input;
+
+    var asm = 'c:\\source\\Damselfly\\Damselfly\\bin\\Debug\\Damselfly.exe';
+    Directory.SetCurrentDirectory(asm |> Path.GetDirectoryName);
+    var dasmelfly = Assembly.LoadFrom('Damselfly.exe');
+    
+    keyboard = {
+        type: @(buffer) buffer.ToCharArray() |> parseKeyBuffer -> pressChar,
+        
+        pressChar: @(ci) {
+            if (ci.shift) {
+                shiftDown();
+                pressKey(ci.key);
+                shiftUp();
+            } else {
+                pressKey(ci.key);
+            }
+        },
+
+        shiftDown: @() keyDown(Key.LeftShift),
+        shiftUp: @() keyUp(Key.LeftShift),
+
+        keyDown: @(key){
+            __impl.kbd.SendKeyDown(key);
+            __impl.sleep();
+        },
+
+        keyUp: @(key){
+            __impl.kbd.SendKeyUp(key);
+            __impl.sleep();
+        },
+        
+        pressKey: @(key) [ keyDown, keyUp ]->@() $_ <| key,
+        keystrokeMinMs: 5,
+        keystrokeMaxMs: 20,
+
+        __impl: {
+            kbd = KeyboardController,
+            rnd: new Random(),
+            nextMs: @{
+                lock rnd
+                    ret rnd.Next(keystrokeMinMs, keystrokeMaxMs + 1);
+            },
+            sleep: nextMs @> Thread.Sleep,
+        },
+    };
+
+
+    var conv = new KeyConverter();
+    var parseKeyBuffer = @(buffer) buffer->parseKey;
+
+    _k = macro(@(n) { Key.n });
+    var parseKey = @(c)({
+        shift: c |> Char.IsUpper,
+        key: $(c)
+            '\n': _k(Enter),
+            ' ': _k(Space),
+            '\t': _k(Tab),
+            $_ |> conv.ConvertFromString
+    });
+
+    // Key
+    //     .GetFields()
+    //     -?(@()$_.FieldType == Key)
+    //     |> Enumerable.ToArray
+
+    Console.WriteLine('Hello world');
+
+    // keyboard.pressKey(Key.D)
+
+}();

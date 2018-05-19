@@ -1,0 +1,2 @@
+﻿#'Keyboard';
+export KeyboardAutomation.Type = @(string text) keyboard.type;
