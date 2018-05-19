@@ -114,12 +114,16 @@ namespace Damselfly.Components
 
         public static SearchItem FromCommand(string command)
         {
+            var t = File.Exists(command) ? SearchItemType.File :
+                Directory.Exists(command) ? SearchItemType.Directory :
+                SearchItemType.Command;
+
             return new SearchItem()
             {
                 Name = command,
-                ItemPath = command != null && File.Exists(command) ? command : null,
-                Type = SearchItemType.Command,
-                Usage = UsageDatabase.Instance.GetRecord(SearchItemType.Command, command),
+                ItemPath = t != SearchItemType.Command ? command : null,
+                Type = t,
+                Usage = UsageDatabase.Instance.GetRecord(t, command),
             };
         }
     }
