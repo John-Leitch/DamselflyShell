@@ -192,7 +192,7 @@ namespace Damselfly.Components
                                 }
                                 else
                                 {
-                                    viewModel.SelectedMatch.Usage.HitCount++;
+                                    match.Usage.HitCount++;
                                 }
 
                                 viewModel.Search.Save();
