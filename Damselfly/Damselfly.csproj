@@ -87,9 +87,19 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Components\DamselflyErrorReporter.cs" />
+    <Compile Include="Components\KeyboardAutomation.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>KeyboardAutomation.alx</DependentUpon>
+    </Compile>
     <Compile Include="Components\KeyboardController.cs" />
     <Compile Include="Components\IconLoader.cs" />
     <Compile Include="Components\Launcher.cs" />
+    <Compile Include="Components\MscHelper.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MscHelper.alx</DependentUpon>
+    </Compile>
     <Compile Include="Components\NativeProcess.cs" />
     <Compile Include="Components\PathHelper.cs" />
     <Compile Include="Components\Scripts.cs" />
@@ -100,7 +110,11 @@
     <Compile Include="Components\UsageDatabase.cs" />
     <Compile Include="Components\UsageRecord.cs" />
     <Compile Include="Components\StandardUserProcess.cs" />
-    <Compile Include="Generated\*.cs" />
+    <Compile Include="Components\WindowsPath.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WindowsPath.alx</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -146,12 +160,18 @@
     </None>
     <None Include="Components\KeyboardAutomation.alx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Generator>AphidCodeDomGenerator</Generator>
+      <LastGenOutput>KeyboardAutomation.cs</LastGenOutput>
+      <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
     </None>
     <None Include="Components\Scripts.alx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Components\MscHelper.alx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
+      <Generator>AphidCodeDomGenerator</Generator>
+      <LastGenOutput>MscHelper.cs</LastGenOutput>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -160,6 +180,9 @@
     <AppDesigner Include="Properties\" />
     <None Include="Components\WindowsPath.alx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
+      <Generator>AphidCodeDomGenerator</Generator>
+      <LastGenOutput>WindowsPath.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -180,12 +203,11 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>taskkill /im aphid.exe /f 2&gt; nul
-taskkill /im Damselfly.exe /f 2&gt; nul
-aphid $(SolutionDir)..\aphid\aphid\bin\debug\Tools\AphidExportStubCompiler.alx Damselfly.Components $(ProjectDir)Components $(ProjectDir)Generated</PreBuildEvent>
+    <PreBuildEvent>::taskkill /im aphid.exe /f 2&gt; nul
+::taskkill /im Damselfly.exe /f 2&gt; nul</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>aphid $(TargetDir)Tools\MakeExe.alx Tools\Run.alx $(TargetDir)Run.exe</PostBuildEvent>
+    <PostBuildEvent>::aphid $(TargetDir)Tools\MakeExe.alx Tools\Run.alx $(TargetDir)Run.exe</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
