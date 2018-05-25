@@ -1,10 +1,12 @@
 ﻿using Components;
+using Components.Json;
 using Components.PInvoke;
 using Damselfly.Components;
 using Damselfly.Components.Search;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -16,7 +18,11 @@ namespace Damselfly.ViewModels
 {
     public class SearchViewModel : ViewModel
     {
+        private double _widthDelta, _minWidth, _maxWidth, _lastWidth = -1;
+
         private ListBox _queryListBox;
+
+        private ScrollViewer _queryScrollViewer;
 
         private string _query;
 
@@ -56,13 +62,27 @@ namespace Damselfly.ViewModels
 
         public bool IsHandled { get; set; }
 
-        public SearchViewModel(SearchWindow window, TextBox queryTextBox, ListBox queryListBox)
+        public SearchViewModel(
+            SearchWindow window,
+            TextBox queryTextBox,
+            ListBox queryListBox,
+            ScrollViewer queryScrollViewer)
         {
             Search = new StartSearch();
             Window = window;
             Matches = new ObservableCollection<SearchItem>();
             QueryTextBox = queryTextBox;
             _queryListBox = queryListBox;
+            _queryScrollViewer = queryScrollViewer;
+            _queryScrollViewer.ScrollChanged += QueryScrollViewer_ScrollChanged;
+            _maxWidth = SystemParameters.PrimaryScreenWidth;
+            _minWidth = window.ActualWidth;
+            _widthDelta = window.ActualWidth - _queryScrollViewer.ActualWidth;
+        }
+
+        void QueryScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            UpdateWindowSize();
         }
 
         public void Init()
@@ -73,7 +93,6 @@ namespace Damselfly.ViewModels
 
         private void QueryChanged()
         {
-            
             QueryError = "";
 
             try
@@ -278,6 +297,37 @@ namespace Damselfly.ViewModels
                 QueryTextBox.Focus();
                 QueryTextBox.CaretIndex = QueryTextBox.Text.Length;
                 QueryTextBox.ScrollToEnd();
+            }
+        }
+
+        public void UpdateWindowSize()
+        {
+            if (_queryScrollViewer == null)
+            {
+                return;
+            }
+
+            var padding = _queryScrollViewer.ComputedVerticalScrollBarVisibility == Visibility.Visible ?
+                20 :
+                5;
+
+            var itemWidth = _queryScrollViewer.ExtentWidth + _widthDelta + padding;
+            var width = Math.Min(Math.Max(_minWidth, itemWidth), _maxWidth);
+
+            //Console.WriteLine(JsonSerializer.Serialize(new
+            //{
+            //    Frame = new StackTrace().GetFrame(1).ToString(),
+            //    _queryScrollViewer.ActualWidth,
+            //    _queryScrollViewer.ScrollableWidth,
+            //    _queryScrollViewer.ExtentWidth,
+            //    _queryScrollViewer.Width,
+            //    _queryScrollViewer.ViewportWidth
+            //}));
+
+            if (width != _lastWidth)
+            {
+                Window.Width = width;
+                _lastWidth = width;
             }
         }
     }

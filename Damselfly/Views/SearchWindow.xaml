@@ -24,7 +24,7 @@
                  Background="Transparent"
                  ItemsSource="{Binding Matches}" 
                  SelectedItem="{Binding SelectedMatch,Mode=TwoWay}"
-                 Margin="4,4,4,0" >
+                 Margin="4,4,4,0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>

@@ -16,6 +16,7 @@ namespace Damselfly.Components
             var code = File.ReadAllText(file);
             var aphid = PathHelper.GetExecutingPath("Aphid.exe");
 
+#if !DEBUG
             if (!Debugger.IsAttached)
             {
                 var si = new ProcessStartInfo(
@@ -32,6 +33,7 @@ namespace Damselfly.Components
                 var p = Process.Start(si);
                 p.WaitForExit();
             }
+#endif
 
             if (!Debugger.IsAttached)
             {

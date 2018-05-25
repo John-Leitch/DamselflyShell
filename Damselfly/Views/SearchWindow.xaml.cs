@@ -1,5 +1,9 @@
-﻿using Damselfly.ViewModels;
+﻿using Components.Json;
+using Damselfly.ViewModels;
+using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Damselfly
 {
@@ -12,23 +16,26 @@ namespace Damselfly
 
         public SearchWindow()
         {
-            
             InitializeComponent();
             Top = SystemParameters.PrimaryScreenHeight - Height - 40;
             Left = 0;
-            
-            _searchViewModel = new SearchViewModel(this, QueryTextBox, SearchItemListBox);
-            _searchViewModel.Init();
+            SearchItemListBox.Loaded += SearchItemListBox_Loaded;
+        }
 
-            Loaded += SearchWindow_Loaded;
+        void SearchItemListBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            _searchViewModel = new SearchViewModel(
+                this,
+                QueryTextBox,
+                SearchItemListBox,
+                (ScrollViewer)VisualTreeHelper.GetChild(
+                    VisualTreeHelper.GetChild(SearchItemListBox, 0),
+                    0));
+
+            _searchViewModel.Init();
             PreviewKeyDown += _searchViewModel.Control_PreviewKeyDown;
             IsVisibleChanged += _searchViewModel.Control_IsVisibleChanged;
             DataContext = _searchViewModel;
-        }
-
-        private void SearchWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            _searchViewModel.Control_IsVisibleChanged(sender, new DependencyPropertyChangedEventArgs());
         }
     }
 }
