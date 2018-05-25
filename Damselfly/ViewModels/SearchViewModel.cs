@@ -1,6 +1,7 @@
 ﻿using Components;
 using Components.PInvoke;
 using Damselfly.Components;
+using Damselfly.Components.Search;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -227,7 +228,6 @@ namespace Damselfly.ViewModels
             Query = "";
             Search.Save();
             Window.Show();
-            Search.LoadItems();
         }
 
         public void Control_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

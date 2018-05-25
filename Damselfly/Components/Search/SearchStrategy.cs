@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Damselfly.Components
+namespace Damselfly.Components.Search
 {
     public class SearchStrategy
     {

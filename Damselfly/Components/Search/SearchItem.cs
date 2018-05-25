@@ -6,7 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Media;
 
-namespace Damselfly.Components
+namespace Damselfly.Components.Search
 {
     public class SearchItem
     {

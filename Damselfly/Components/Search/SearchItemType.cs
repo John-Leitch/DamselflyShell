@@ -1,4 +1,4 @@
-﻿namespace Damselfly.Components
+﻿namespace Damselfly.Components.Search
 {
     public enum SearchItemType
     {

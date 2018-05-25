@@ -1,5 +1,6 @@
 ﻿using Components;
 using Components.PInvoke;
+using Damselfly.Components.Search;
 using Damselfly.ViewModels;
 using System;
 using System.ComponentModel;
