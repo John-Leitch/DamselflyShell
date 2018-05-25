@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Components.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -57,8 +58,8 @@ namespace Damselfly.Components.Search.Handlers
 
                 dir = p[0];
 
-                if (dir.Last() == Path.DirectorySeparatorChar &&
-                    Directory.Exists(dir))
+                if ((dir.Last() == Path.DirectorySeparatorChar && Directory.Exists(dir)) ||
+                    IsHost(dir))
                 {
                     m.AddRange(SearchFileSystem(dir, p[1]));
 
@@ -80,7 +81,7 @@ namespace Damselfly.Components.Search.Handlers
             {
                 new SearchStrategy(SearchItemType.Directory, Directory.GetDirectories),
                 new SearchStrategy(SearchItemType.File, Directory.GetFiles),
-                
+                new SearchStrategy(SearchItemType.Directory, GetSharePaths),
             };
 
             var items = fsoFuncs
@@ -119,6 +120,26 @@ namespace Damselfly.Components.Search.Handlers
             }
 
             return path;
+        }
+
+        private string[] GetSharePaths(string path)
+        {
+            if (!IsHost(path))
+            {
+                return new string[0];
+            }
+
+            var p = path.Substring(2).TrimEnd('\\');
+            var shares = NetworkShares.GetShares(p);
+
+            return shares.Select(x => Path.Combine(path, x)).ToArray();
+        }
+
+        private bool IsHost(string path)
+        {
+            var p = path.TrimEnd('\\');
+
+            return p.StartsWith(_doubleSeparator) && p.Count(x => x == '\\') == 2;
         }
     }
 }

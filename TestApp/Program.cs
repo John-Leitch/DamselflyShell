@@ -1,9 +1,12 @@
-﻿using Components.PInvoke;
+﻿using Components.IO;
+using Components.PInvoke;
 using Damselfly.Components;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Media.Imaging;
 
 namespace TestApp
@@ -58,6 +61,9 @@ namespace TestApp
 
         static void Main(string[] args)
         {
+            var shares = NetworkShares.GetShares("Node2");
+
+
             Scripts.Init();
             var commands = new[]
             {
