@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Media;
 
 namespace Damselfly.Components.Search
@@ -42,6 +43,17 @@ namespace Damselfly.Components.Search
 
         private ImageSource GetIconImageSourceCore(Tuple<string, string> tuple)
         {
+            if (ItemPath != null)
+            {
+                var p = ItemPath.TrimEnd('\\');
+                int count;
+
+                if (p.StartsWith("\\\\") && ((count = p.Count(x => x == '\\')) == 2 || count == 3))
+                {
+                    return IconLoader.GetSource(IconLoader.GetHandle(".\\"));
+                }
+            }
+
             IntPtr h;
 
             if (Type != SearchItemType.Command ||
