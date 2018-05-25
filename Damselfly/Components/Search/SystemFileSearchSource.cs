@@ -9,20 +9,39 @@ namespace Damselfly.Components.Search
 {
     public class SystemFileSearchSource : SearchSource
     {
+        private string[] _directories = new[]
+        {
+            @"%SystemRoot%",
+            @"%SystemRoot%\system32",
+        };
+
+        private string[] _extensions = new[]
+        {
+            "cpl",
+            "msc",
+            "exe",
+            "cmd",
+            "bat",
+        };
+
         protected override List<SearchItem> LoadItems()
         {
-            return GetSystem32Files("cpl")
-                .Concat(GetSystem32Files("msc"))
-                .Select(SearchItem.FromFile)
+            return _directories
+                .SelectMany(x => _extensions.SelectMany(y => GetDirectoryFiles(x, y)))
+                .SelectMany(x => new[]
+                {
+                    SearchItem.FromFile(x),
+                    SearchItem.FromCommand(x)
+                })
                 .ToList();
         }
 
-        private IEnumerable<string> GetSystem32Files(string extension)
+        private IEnumerable<string> GetDirectoryFiles(string directory, string extension)
         {
-            var sysDir = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\system32");
+            var expanded = Environment.ExpandEnvironmentVariables(directory);
 
             return Directory
-                .GetFiles(sysDir)
+                .GetFiles(expanded)
                 .Where(x => x.EndsWith(
                     "." + extension,
                     StringComparison.InvariantCultureIgnoreCase));
