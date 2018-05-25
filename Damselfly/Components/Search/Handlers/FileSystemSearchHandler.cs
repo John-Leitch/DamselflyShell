@@ -13,14 +13,24 @@ namespace Damselfly.Components.Search.Handlers
 
         public override bool IsHandled(string query)
         {
-            return query.Contains(Path.DirectorySeparatorChar) &&
-                !query.StartsWith(@"\\");
+            return query.Contains(Path.DirectorySeparatorChar); //&&
+                //!query.StartsWith(@"\\");
         }
 
         public override IEnumerable<SearchItem> Search(string query)
         {
             var separator = Path.DirectorySeparatorChar;
-            var parts = query.Split(separator);
+            string[] parts;
+
+            if (!query.StartsWith(_doubleSeparator))
+            {
+                parts = query.Split(separator);
+            }
+            else
+            {
+                parts = query.Substring(2).Split(separator);
+                parts[0] = _doubleSeparator + parts[0];
+            }
 
             var potentialPathQueries = parts.Length > 1 ?
                 new[]
@@ -101,9 +111,11 @@ namespace Damselfly.Components.Search.Handlers
 
         private string CleanPath(string path)
         {
-            while (path.Contains(_doubleSeparator))
+            int index;
+
+            while ((index = path.IndexOf(_doubleSeparator, 1)) != -1)
             {
-                path = path.Replace(_doubleSeparator, Path.DirectorySeparatorChar.ToString());
+                path = path.Remove(index, 1);
             }
 
             return path;
