@@ -9,14 +9,26 @@ namespace Damselfly.Components.Search
 {
     public class StartMenuSearchSource : SearchSource
     {
+        private string[] _directories = new[]
+        {
+            Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
+        };
+
+        private string[] _extensions = new[]
+        {
+            "lnk",
+            "url",
+            "appref-ms",
+        };
+
         protected override List<SearchItem> LoadItems()
         {
-            return Directory
-                .GetFiles(
-                    Environment.ExpandEnvironmentVariables(@"%ProgramData%\microsoft\windows\Start Menu\Programs"),
-                    "*",
-                    SearchOption.AllDirectories)
-                .Where(x => x.EndsWith(".lnk", StringComparison.InvariantCultureIgnoreCase))
+
+            return _directories
+                .SelectMany(x => Directory.GetFiles(x, "*", SearchOption.AllDirectories))
+                .Where(x => _extensions
+                    .Any(y => x.EndsWith("." + y, StringComparison.InvariantCultureIgnoreCase)))
                 .Select(SearchItem.FromShortcut)
                 .ToList();
         }
