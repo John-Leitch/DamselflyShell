@@ -169,11 +169,8 @@
     </None>
     <None Include="Components\KeyboardAutomation.alx">
       <Generator>AphidCodeDomGenerator</Generator>
-      <LastGenOutput>KeyboardAutomation.cs</LastGenOutput>
       <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
-    </None>
-    <None Include="Components\Scripts.alx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <LastGenOutput>KeyboardAutomation.cs</LastGenOutput>
     </None>
     <None Include="Components\MscHelper.alx">
       <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>

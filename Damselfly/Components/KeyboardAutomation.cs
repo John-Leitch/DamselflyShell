@@ -11,7 +11,7 @@ namespace Damselfly.Components {
         public static TypeDelegate Type {
             get {
                 if ((KeyboardAutomation._Type == null)) {
-                    new AphidInterpreter().Interpret(AphidByteCode.Decode(Resources.ByteCode_1f36e33562633a5275c84d9e1c61d309));
+                    new AphidInterpreter().Interpret(AphidByteCode.Decode(Resources.ByteCode_0c775ae75426d8208e7f1d811860b408));
                 }
                 return KeyboardAutomation._Type;
             }
@@ -29,7 +29,7 @@ namespace Damselfly.Components {
     
     public partial class Resources {
         
-        private static byte[] _ByteCode_1f36e33562633a5275c84d9e1c61d309 = new byte[] {
+        private static byte[] _ByteCode_0c775ae75426d8208e7f1d811860b408 = new byte[] {
                 0,
                 1,
                 0,
@@ -773,7 +773,7 @@ namespace Damselfly.Components {
                 0,
                 0,
                 0,
-                86,
+                84,
                 35,
                 39,
                 75,
@@ -858,8 +858,6 @@ namespace Damselfly.Components {
                 112,
                 101,
                 59,
-                13,
-                10,
                 10,
                 0,
                 5,
@@ -4334,9 +4332,9 @@ namespace Damselfly.Components {
                 0,
                 11};
         
-        public static byte[] ByteCode_1f36e33562633a5275c84d9e1c61d309 {
+        public static byte[] ByteCode_0c775ae75426d8208e7f1d811860b408 {
             get {
-                return Resources._ByteCode_1f36e33562633a5275c84d9e1c61d309;
+                return Resources._ByteCode_0c775ae75426d8208e7f1d811860b408;
             }
         }
     }
