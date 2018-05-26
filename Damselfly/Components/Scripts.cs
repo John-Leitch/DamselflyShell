@@ -10,13 +10,9 @@ namespace Damselfly.Components
     {
         public static void Init()
         {
-            var interpreter = new AphidInterpreter();
-            interpreter.Loader.SearchPaths.Add(PathHelper.GetExecutingPath("Components"));
-            var file = PathHelper.GetExecutingPath(@"Components\Scripts.alx");
-            var code = File.ReadAllText(file);
+#if !DEBUG
             var aphid = PathHelper.GetExecutingPath("Aphid.exe");
 
-#if !DEBUG
             if (!Debugger.IsAttached)
             {
                 var si = new ProcessStartInfo(
@@ -34,18 +30,6 @@ namespace Damselfly.Components
                 p.WaitForExit();
             }
 #endif
-
-            if (!Debugger.IsAttached)
-            {
-                AphidCli.TryAction(
-                    interpreter,
-                    code,
-                    () => interpreter.InterpretFile(file));
-            }
-            else
-            {
-                interpreter.InterpretFile(file);
-            }
         }
     }
 }

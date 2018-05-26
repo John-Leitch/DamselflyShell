@@ -168,7 +168,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Components\KeyboardAutomation.alx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Generator>AphidCodeDomGenerator</Generator>
       <LastGenOutput>KeyboardAutomation.cs</LastGenOutput>
       <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
@@ -177,7 +176,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Components\MscHelper.alx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
       <Generator>AphidCodeDomGenerator</Generator>
       <LastGenOutput>MscHelper.cs</LastGenOutput>
@@ -188,7 +186,6 @@
     </None>
     <AppDesigner Include="Properties\" />
     <None Include="Components\WindowsPath.alx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
       <Generator>AphidCodeDomGenerator</Generator>
       <LastGenOutput>WindowsPath.cs</LastGenOutput>
@@ -216,7 +213,7 @@
 ::taskkill /im Damselfly.exe /f 2&gt; nul</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>::aphid $(TargetDir)Tools\MakeExe.alx Tools\Run.alx $(TargetDir)Run.exe</PostBuildEvent>
+    <PostBuildEvent>IF NOT EXIST "$(TargetDir)Run.exe" aphid $(TargetDir)Tools\MakeExe.alx Tools\Run.alx $(TargetDir)Run.exe</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
