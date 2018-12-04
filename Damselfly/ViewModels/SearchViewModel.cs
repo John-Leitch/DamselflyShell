@@ -18,7 +18,9 @@ namespace Damselfly.ViewModels
 {
     public class SearchViewModel : ViewModel
     {
-        private double _widthDelta, _minWidth, _maxWidth, _lastWidth = -1;
+        private readonly double _widthDelta, _minWidth, _maxWidth;
+
+        private double _lastWidth = -1;
 
         private ListBox _queryListBox;
 
@@ -205,9 +207,7 @@ namespace Damselfly.ViewModels
                 actions.Add(() => Search.Commands.Remove(_selectedMatch));
             }
 
-            Dictionary<string, UsageRecord> records;
-
-            if (!Search.UsageDb.TryGetValue(_selectedMatch.Type, out records))
+            if (!Search.UsageDb.TryGetValue(_selectedMatch.Type, out var records))
             {
                 return;
             }

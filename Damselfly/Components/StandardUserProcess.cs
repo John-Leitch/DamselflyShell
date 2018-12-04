@@ -49,17 +49,13 @@ namespace Damselfly.Components
                 }
             }
 
-            IntPtr procTokenHandle;
-
             if (!AdvApi32.OpenProcessToken(
                 procHandle,
                 TokenAccess.TOKEN_QUERY | TokenAccess.TOKEN_DUPLICATE,
-                out procTokenHandle))
+                out var procTokenHandle))
             {
                 Win32.ThrowWin32Exception();
             }
-
-            IntPtr duplicateTokenHandle;
 
             if (!AdvApi32.DuplicateTokenEx(
                 procTokenHandle,
@@ -71,7 +67,7 @@ namespace Damselfly.Components
                 IntPtr.Zero,
                 SECURITY_IMPERSONATION_LEVEL.SecurityIdentification,
                 TOKEN_TYPE.TokenPrimary,
-                out duplicateTokenHandle))
+                out var duplicateTokenHandle))
             {
                 Win32.ThrowWin32Exception();
             }

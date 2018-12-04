@@ -22,15 +22,12 @@ namespace Damselfly.Components.Search
             "appref-ms",
         };
 
-        protected override List<SearchItem> LoadItems()
-        {
-
-            return _directories
+        protected override List<SearchItem> LoadItems() =>
+            _directories
                 .SelectMany(x => Directory.GetFiles(x, "*", SearchOption.AllDirectories))
                 .Where(x => _extensions
                     .Any(y => x.EndsWith("." + y, StringComparison.InvariantCultureIgnoreCase)))
                 .Select(SearchItem.FromShortcut)
                 .ToList();
-        }
     }
 }

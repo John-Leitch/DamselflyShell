@@ -24,10 +24,7 @@ namespace Damselfly.Components.Search
 
         private Lazy<ImageSource> _source;
 
-        public ImageSource Source
-        {
-            get { return _source.Value; }
-        }
+        public ImageSource Source => _source.Value;
 
         public SearchItem()
         {
@@ -80,49 +77,35 @@ namespace Damselfly.Components.Search
             return IconLoader.GetSource(h);
         }
 
-        public override string ToString()
+        public override string ToString() => $"{Type}, {Name}, {ItemPath}";
+
+        public static SearchItem FromFile(string filename) => new SearchItem
         {
-            return string.Format("{0}, {1}, {2}", Type, Name, ItemPath);
-        }
+            Name =
+                Path.GetExtension(filename).ToLower() == ".msc" ? MscHelper.GetName(filename) :
+                FileVersionInfo.GetVersionInfo(filename).FileDescription ??
+                filename,
 
-        public static SearchItem FromFile(string filename)
+            ItemPath = filename,
+            Type = SearchItemType.File,
+            Usage = UsageDatabase.Instance.GetRecord(SearchItemType.File, filename),
+        };
+
+        public static SearchItem FromDirectory(string path) => new SearchItem()
         {
-            return new SearchItem
-            {
-                Name =
-                    Path.GetExtension(filename).ToLower() == ".msc" ? MscHelper.GetName(filename) :
-                    FileVersionInfo.GetVersionInfo(filename).FileDescription ??
-                    filename,
+            Name = Path.GetFileName(path),
+            ItemPath = path,
+            Type = SearchItemType.Directory,
+            Usage = UsageDatabase.Instance.GetRecord(SearchItemType.Directory, path),
+        };
 
-                ItemPath = filename,
-                Type = SearchItemType.File,
-                Usage = UsageDatabase.Instance.GetRecord(SearchItemType.File, filename),
-            };
-        }
-
-        public static SearchItem FromDirectory(string path)
+        public static SearchItem FromShortcut(string shortcutPath) => new SearchItem()
         {
-            return new SearchItem()
-            {
-                Name = Path.GetFileName(path),
-                ItemPath = path,
-                Type = SearchItemType.Directory,
-                Usage = UsageDatabase.Instance.GetRecord(SearchItemType.Directory, path),
-            };
-        }
-
-        public static SearchItem FromShortcut(string shortcutPath)
-        {
-            var n = Path.GetFileNameWithoutExtension(shortcutPath);
-
-            return new SearchItem()
-            {
-                Name = n,
-                ItemPath = shortcutPath,
-                Type = SearchItemType.StartMenu,
-                Usage = UsageDatabase.Instance.GetRecord(SearchItemType.StartMenu, shortcutPath),
-            };
-        }
+            Name = Path.GetFileNameWithoutExtension(shortcutPath),
+            ItemPath = shortcutPath,
+            Type = SearchItemType.StartMenu,
+            Usage = UsageDatabase.Instance.GetRecord(SearchItemType.StartMenu, shortcutPath),
+        };
 
         public static SearchItem FromCommand(string command)
         {

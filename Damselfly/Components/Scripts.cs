@@ -11,7 +11,7 @@ namespace Damselfly.Components
         public static void Init()
         {
 #if !DEBUG
-            var aphid = PathHelper.GetExecutingPath("Aphid.exe");
+            var aphid = PathHelper.GetExecutingPath("Aphid64.exe");
 
             if (!Debugger.IsAttached)
             {

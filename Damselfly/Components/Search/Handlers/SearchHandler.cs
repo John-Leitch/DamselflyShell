@@ -10,10 +10,7 @@ namespace Damselfly.Components.Search.Handlers
     {
         protected StartSearch _context;
 
-        public void Init(StartSearch context)
-        {
-            _context = context;
-        }
+        public void Init(StartSearch context) => _context = context;
 
         public abstract bool IsHandled(string query);
 

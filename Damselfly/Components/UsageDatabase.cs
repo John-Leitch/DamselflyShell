@@ -12,7 +12,7 @@ namespace Damselfly.Components
     {
         private static object _sync = new object();
 
-        private static string _usageFile = PathHelper.GetExecutingPath("usage.json");
+        private static readonly string _usageFile = PathHelper.GetExecutingPath("usage.json");
 
         public static UsageDatabase Instance { get; private set; }
 
@@ -32,14 +32,12 @@ namespace Damselfly.Components
             }
         }
 
-        private Dictionary<string, Dictionary<string, UsageRecord>> ToSerializable()
-        {
-            return this.ToDictionary(
-                x => x.Key.ToString(), 
+        private Dictionary<string, Dictionary<string, UsageRecord>> ToSerializable() =>
+            this.ToDictionary(
+                x => x.Key.ToString(),
                 x => x.Value
                     .Where(y => y.Value.HitCount > 0)
                     .ToDictionary(y => y.Key, y => y.Value));
-        }
 
         private static UsageDatabase FromSerializable(Dictionary<string, Dictionary<string, UsageRecord>> table)
         {
@@ -53,10 +51,7 @@ namespace Damselfly.Components
             return db;
         }
 
-        public void Save()
-        {
-            JsonSerializer.SerializeToFile(_usageFile, ToSerializable());
-        }
+        public void Save() => JsonSerializer.SerializeToFile(_usageFile, ToSerializable());
 
         public static UsageDatabase Load()
         {
@@ -73,9 +68,7 @@ namespace Damselfly.Components
             }            
         }
 
-        public UsageRecord GetRecord(SearchItemType type, string name)
-        {
-            return this.GetOrCreate(type).GetOrCreate(name);
-        }
+        public UsageRecord GetRecord(SearchItemType type, string name) =>
+            this.GetOrCreate(type).GetOrCreate(name);
     }
 }

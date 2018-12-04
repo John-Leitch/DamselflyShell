@@ -10,10 +10,7 @@ namespace Damselfly.Components.Search
     {
         private List<SearchItem> _items;
 
-        public virtual bool IsCommandRepository
-        {
-            get { return false; }
-        }
+        public virtual bool IsCommandRepository => false;
 
         public bool IsLoaded { get; private set; }
 

@@ -16,31 +16,28 @@ namespace Damselfly.Components
 
         private static Memoizer<string, IntPtr> _pathMemoizer = new Memoizer<string, IntPtr>();
 
-        public static BitmapSource GetSource(IntPtr icon)
-        {
-            return _sourceMemoizer.Call(GetSourceCore, icon);
-        }
+        public static BitmapSource GetSource(IntPtr icon) => _sourceMemoizer.Call(GetSourceCore, icon);
 
-        public static IntPtr GetHandle(string path)
-        {
-            return _pathMemoizer.Call(GetHandleCore, path);
-        }
+        public static IntPtr GetHandle(string path) => _pathMemoizer.Call(GetHandleCore, path);
 
-        private static BitmapSource GetSourceCore(IntPtr icon)
-        {
-            return Imaging.CreateBitmapSourceFromHIcon(
+        private static BitmapSource GetSourceCore(IntPtr icon) =>
+            Imaging.CreateBitmapSourceFromHIcon(
                 icon,
                 Int32Rect.Empty,
                 BitmapSizeOptions.FromEmptyOptions());
-        }
 
         private static IntPtr GetHandleCore(string path)
         {
             IntPtr handle;
 
-            var fullPath = File.Exists(path) || Directory.Exists(path) ?
+            var fullPath = File.Exists(path) || Directory.Exists(path) || path.StartsWith(@"\\") ?
                 path :
                 WindowsPath.Search(path);
+
+            if (!Directory.Exists(fullPath) && !File.Exists(fullPath))
+            {
+                return SystemIcons.Error.Handle;
+            }
 
             try
             {

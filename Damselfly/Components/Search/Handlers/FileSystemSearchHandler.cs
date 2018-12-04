@@ -10,13 +10,10 @@ namespace Damselfly.Components.Search.Handlers
 {
     public class FileSystemSearchHandler : SearchHandler
     {
-        private string _doubleSeparator = new string(Path.DirectorySeparatorChar, 2);
+        private readonly string _doubleSeparator = new string(Path.DirectorySeparatorChar, 2);
 
-        public override bool IsHandled(string query)
-        {
-            return query.Contains(Path.DirectorySeparatorChar); //&&
-                //!query.StartsWith(@"\\");
-        }
+        public override bool IsHandled(string query) =>
+            query.Contains(Path.DirectorySeparatorChar); //&&//!query.StartsWith(@"\\");
 
         public override IEnumerable<SearchItem> Search(string query)
         {
@@ -74,8 +71,8 @@ namespace Damselfly.Components.Search.Handlers
         {
             path = CleanPath(path);
 
-            Func<string, bool> pred = x =>
-                    query == null || Path.GetFileName(x).ToUpper().Contains(query.ToUpper());
+            bool pred(string x) =>
+                query == null || Path.GetFileName(x).ToUpper().Contains(query.ToUpper());
 
             var fsoFuncs = new[]
             {

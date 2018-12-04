@@ -20,10 +20,8 @@ namespace Damselfly.Components
             }
         }
 
-        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e) =>
             SaveError((Exception)(e.ExceptionObject ?? new Exception("Unknown exception")));
-        }
 
         public static void SaveError(Exception exception)
         {

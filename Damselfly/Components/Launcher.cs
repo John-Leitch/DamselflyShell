@@ -5,7 +5,7 @@ namespace Damselfly.Components
 {
     public static class Launcher
     {
-        private static string _run = PathHelper.GetExecutingPath("Run.exe");
+        private static readonly string _run = PathHelper.GetExecutingPath("Run.exe");
 
         public static void Launch(string command, bool asAdmin)
         {

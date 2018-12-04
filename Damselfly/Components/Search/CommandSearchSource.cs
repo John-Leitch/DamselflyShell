@@ -7,29 +7,22 @@ namespace Damselfly.Components.Search
 {
     public class CommandSearchSource : SearchSource
     {
-        private string _cmdFile = PathHelper.GetExecutingPath("commands.json");
+        private readonly string _cmdFile = PathHelper.GetExecutingPath("commands.json");
 
-        public override bool IsCommandRepository
-        {
-            get { return true;  }
-        }
+        public override bool IsCommandRepository => true;
 
-        protected override List<SearchItem> LoadItems()
-        {
-            return File.Exists(_cmdFile) ?
+        protected override List<SearchItem> LoadItems() =>
+            File.Exists(_cmdFile) ?
                 JsonSerializer
                     .DeserializeFile<string[]>(_cmdFile)
                     .Distinct()
                     .Select(SearchItem.FromCommand)
                     .ToList() :
                 new List<SearchItem>();
-        }
 
-        public override void Save()
-        {
+        public override void Save() =>
             JsonSerializer.SerializeToFile(
                 _cmdFile,
                 GetItems().Distinct().Select(x => x.Name));
-        }
     }
 }

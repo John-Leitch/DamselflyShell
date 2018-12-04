@@ -6,36 +6,14 @@ namespace Damselfly.Components
     public sealed class NativeProcess : IDisposable
     {
         private PROCESS_INFORMATION _processInfo;
+        public IntPtr ProcessHandle => _processInfo.hProcess;
+        public IntPtr ThreadHandle => _processInfo.hThread;
+        public uint ProcessId => _processInfo.dwProcessId;
+        public uint ThreadId => _processInfo.dwThreadId;
 
-        public IntPtr ProcessHandle
-        {
-            get { return _processInfo.hProcess; }
-        }
+        public NativeProcess(PROCESS_INFORMATION processInfo) => _processInfo = processInfo;
 
-        public IntPtr ThreadHandle
-        {
-            get { return _processInfo.hThread; }
-        }
-
-        public uint ProcessId
-        {
-            get { return _processInfo.dwProcessId; }
-        }
-
-        public uint ThreadId
-        {
-            get { return _processInfo.dwThreadId; }
-        }
-
-        public NativeProcess(PROCESS_INFORMATION processInfo)
-        {
-            _processInfo = processInfo;
-        }
-
-        public bool WaitForExit()
-        {
-            return WaitForExit(0);
-        }
+        public bool WaitForExit() => WaitForExit(0);
 
         public bool WaitForExit(int milliseconds)
         {
@@ -58,9 +36,7 @@ namespace Damselfly.Components
 
         public int GetExitCode()
         {
-            uint exitCode;
-
-            if (!Kernel32.GetExitCodeProcess(ProcessHandle, out exitCode))
+            if (!Kernel32.GetExitCodeProcess(ProcessHandle, out var exitCode))
             {
                 Win32.ThrowWin32Exception();
             }

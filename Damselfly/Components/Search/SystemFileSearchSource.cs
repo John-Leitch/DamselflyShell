@@ -24,9 +24,8 @@ namespace Damselfly.Components.Search
             "bat",
         };
 
-        protected override List<SearchItem> LoadItems()
-        {
-            return _directories
+        protected override List<SearchItem> LoadItems() =>
+            _directories
                 .SelectMany(x => _extensions.SelectMany(y => GetDirectoryFiles(x, y)))
                 .SelectMany(x => new[]
                 {
@@ -34,17 +33,12 @@ namespace Damselfly.Components.Search
                     SearchItem.FromCommand(x)
                 })
                 .ToList();
-        }
 
-        private IEnumerable<string> GetDirectoryFiles(string directory, string extension)
-        {
-            var expanded = Environment.ExpandEnvironmentVariables(directory);
-
-            return Directory
-                .GetFiles(expanded)
+        private IEnumerable<string> GetDirectoryFiles(string directory, string extension) =>
+            Directory
+                .GetFiles(Environment.ExpandEnvironmentVariables(directory))
                 .Where(x => x.EndsWith(
                     "." + extension,
                     StringComparison.InvariantCultureIgnoreCase));
-        }
     }
 }

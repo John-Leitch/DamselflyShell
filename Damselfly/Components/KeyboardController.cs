@@ -14,24 +14,14 @@ namespace Damselfly.Components
 {
     public static class KeyboardController
     {
-        private static void SendKey(Key key, int flags)
-        {
-            User32.keybd_event(
-                (byte)KeyInterop.VirtualKeyFromKey(key),
-                0,
-                flags,
-                0);
-        }
+        private static void SendKey(Key key, int flags) =>
+            User32.keybd_event((byte)KeyInterop.VirtualKeyFromKey(key), 0, flags, 0);
 
-        public static void SendKeyDown(Key key)
-        {
+        public static void SendKeyDown(Key key) =>
             SendKey(key, User32.KEYEVENTF_EXTENDEDKEY);
-        }
 
-        public static void SendKeyUp(Key key)
-        {
+        public static void SendKeyUp(Key key) =>
             SendKey(key, User32.KEYEVENTF_EXTENDEDKEY | User32.KEYEVENTF_KEYUP);
-        }
 
         public static void HandleKey(SearchViewModel viewModel, Key key)
         {
@@ -55,13 +45,12 @@ namespace Damselfly.Components
 
                         viewModel.IsHandled = true;
                         viewModel.Query = "";
-                        POINT point;
 
                         ThreadPool.QueueUserWorkItem(x =>
                         {
                             Thread.Sleep(100);
 
-                            if (!User32.GetCursorPos(out point))
+                            if (!User32.GetCursorPos(out var point))
                             {
                                 throw Win32.CreateWin32Exception();
                             }
@@ -74,7 +63,7 @@ namespace Damselfly.Components
                             }
 
                             KeyboardAutomation.Type(buffer);
-                            
+
                         });
                     }
                     break;
@@ -155,9 +144,8 @@ namespace Damselfly.Components
                                     {
                                         Launcher.Launch(command, controlShift);
 
-                                        Func<SearchItem, bool> predicate = y =>
-                                            y.Name == match.Name &&
-                                                y.ItemPath == match.ItemPath;
+                                        bool predicate(SearchItem y) =>
+                                            y.Name == match.Name && y.ItemPath == match.ItemPath;
 
                                         if (!viewModel.Search.StartMenuItems.Any(predicate) &&
                                             !viewModel.Search.SpecialFolders.Any(predicate) &&
@@ -212,9 +200,7 @@ namespace Damselfly.Components
                                     var records = viewModel.Search.UsageDb.GetOrCreate(
                                         SearchItemType.Command);
 
-                                    UsageRecord usage;
-
-                                    if (!records.TryGetValue(command, out usage))
+                                    if (!records.TryGetValue(command, out var usage))
                                     {
                                         usage = new UsageRecord() { HitCount = 1 };
                                         records.Add(command, usage);

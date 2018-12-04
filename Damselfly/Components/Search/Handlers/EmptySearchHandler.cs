@@ -8,14 +8,7 @@ namespace Damselfly.Components.Search.Handlers
 {
     public class EmptySearchHandler : SearchHandler
     {
-        public override bool IsHandled(string query)
-        {
-            return string.IsNullOrEmpty(query);
-        }
-
-        public override IEnumerable<SearchItem> Search(string query)
-        {
-            return _context.AllItems;
-        }
+        public override bool IsHandled(string query) => string.IsNullOrEmpty(query);
+        public override IEnumerable<SearchItem> Search(string query) => _context.AllItems;
     }
 }
