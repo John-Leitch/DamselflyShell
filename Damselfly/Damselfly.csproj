@@ -87,6 +87,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Components\DamselflyErrorReporter.cs" />
+    <Compile Include="Components\External\IRepository.cs" />
+    <Compile Include="Components\External\PathSanitizer.cs" />
+    <Compile Include="Components\Input\GlobalHotkeyBinding.cs" />
+    <Compile Include="Components\External\JsonRepository.cs" />
     <Compile Include="Components\KeyboardAutomation.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

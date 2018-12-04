@@ -31,6 +31,10 @@ namespace Damselfly.Components
                 (Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
                 (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
 
+            var controlAlt =
+                (Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
+                (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
+
             switch (key)
             {
                 case Key.T:
@@ -247,6 +251,23 @@ namespace Damselfly.Components
 
                 case Key.Home:
                 case Key.End:
+                    break;
+
+                case Key.D0:
+                case Key.D1:
+                case Key.D2:
+                case Key.D3:
+                case Key.D4:
+                case Key.D5:
+                case Key.D6:
+                case Key.D7:
+                case Key.D8:
+                case Key.D9:
+                    if (controlAlt)
+                    {
+                        viewModel.SetGlobalHotkey(key);
+                    }
+
                     break;
 
                 default:

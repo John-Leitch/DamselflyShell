@@ -2,6 +2,7 @@
 using Components.Json;
 using Components.PInvoke;
 using Damselfly.Components;
+using Damselfly.Components.Input;
 using Damselfly.Components.Search;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace Damselfly.ViewModels
 {
     public class SearchViewModel : ViewModel
     {
+        private Dictionary<string, GlobalHotkeyBinding> _globalBindings = new Dictionary<string, GlobalHotkeyBinding>();
+
         private readonly double _widthDelta, _minWidth, _maxWidth;
 
         private double _lastWidth = -1;
@@ -91,6 +94,7 @@ namespace Damselfly.ViewModels
         {
             Query = "";
             SelectedMatch = Matches.FirstOrDefault();
+            JsonRepository.LoadOrCreate(out _globalBindings);
         }
 
         private void QueryChanged()
@@ -329,6 +333,40 @@ namespace Damselfly.ViewModels
                 Window.Width = width;
                 _lastWidth = width;
             }
+        }
+
+        public void SetGlobalHotkey(Key key)
+        {
+            var keyStr = key.ToString();
+
+            if (_globalBindings.TryGetValue(keyStr, out var binding))
+            {
+                if (MessageBox.Show(
+                    $"Are you sure you want to overwrite '{key}' binding?\r\n{binding.Command}",
+                    "Confirm",
+                    MessageBoxButton.YesNo) == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                _globalBindings.Add(keyStr, binding = new GlobalHotkeyBinding(key));
+            }
+
+            binding.Command = SelectedMatch.GetCommand();
+            JsonRepository.Save(_globalBindings);
+            //Debugger.Break();
+        }
+
+        public void HandleGlobalHotkey(Key key)
+        {
+            if (!_globalBindings.TryGetValue(key.ToString(), out var binding))
+            {
+                return;
+            }
+
+            Launcher.Launch(binding.Command, asAdmin: false);
         }
     }
 }

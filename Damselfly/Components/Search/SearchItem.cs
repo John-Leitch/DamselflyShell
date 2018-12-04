@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace Damselfly.Components.Search
 {
-    public class SearchItem
+    public class SearchItem 
     {
         private static Memoizer<Tuple<string, string>, ImageSource> _imageSourceMemoizer =
             new Memoizer<Tuple<string, string>, ImageSource>();
@@ -120,6 +120,20 @@ namespace Damselfly.Components.Search
                 Type = t,
                 Usage = UsageDatabase.Instance.GetRecord(t, command),
             };
+        }
+
+        public string GetCommand()
+        {
+            switch (Type)
+            {
+                case SearchItemType.File:
+                case SearchItemType.StartMenu:
+                case SearchItemType.Directory:
+                    return ItemPath;
+
+                default:
+                    return Name;
+            }
         }
     }
 }

@@ -13,9 +13,7 @@ namespace Damselfly
     {
         public WindowsHookCallback _hookProc = null;
 
-        private bool _isWinDown = false;
-
-        private bool _isWinUnmodified = false;
+        private bool _isCtrlDown = false, _isWinDown = false, _isWinUnmodified = false;
 
         private IntPtr _hookId;
 
@@ -90,16 +88,29 @@ namespace Damselfly
                 return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
             }
 
-            Key keyPressed = KeyInterop.KeyFromVirtualKey(lParam.vkCode);
+            bool isDir(int dir) => (wParam.ToInt32() & dir) == dir;
+            bool isDown() => isDir(User32.WM_KEYDOWN);
+            bool isUp() => isDir(User32.WM_KEYUP);
 
-            if (keyPressed == Key.LWin || keyPressed == Key.RWin)
+            var keyPressed = KeyInterop.KeyFromVirtualKey(lParam.vkCode);
+
+            if (keyPressed == Key.LeftCtrl || keyPressed == Key.RightCtrl)
+            {
+                _isCtrlDown = isDown();
+
+                return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
+            }
+            else if (keyPressed == Key.LWin || keyPressed == Key.RWin)
             {
                 var i = wParam.ToInt32();
 
                 if (!_isWinDown)
                 {
-                    _isWinUnmodified = true;
-                    _isWinDown = true;
+                    if ((i & User32.WM_KEYDOWN) == User32.WM_KEYDOWN)
+                    {
+                        _isWinUnmodified = true;
+                        _isWinDown = true;
+                    }
 
                     return new IntPtr(1);
                 }
@@ -113,7 +124,7 @@ namespace Damselfly
                         {
                             ToggleSearchWindow();
                             //Dispatcher.Invoke(() => ToggleSearchWindow());
-                            
+
                             return new IntPtr(1);
                         }
                         else
@@ -126,6 +137,15 @@ namespace Damselfly
                         return new IntPtr(1);
                     }
                 }
+            }
+            else if (_isCtrlDown &&
+                _isWinDown &&
+                isUp() &&
+                Key.D0 <= keyPressed && keyPressed <= Key.D9)
+            {
+                _searchWindow.SearchViewModel.HandleGlobalHotkey(keyPressed);
+                _isWinDown = false;
+                return new IntPtr(1);
             }
             else
             {

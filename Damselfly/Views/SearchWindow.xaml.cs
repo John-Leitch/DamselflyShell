@@ -12,7 +12,7 @@ namespace Damselfly
     /// </summary>
     public partial class SearchWindow : Window
     {
-        private SearchViewModel _searchViewModel;
+        public SearchViewModel SearchViewModel { get; private set; }
 
         public SearchWindow()
         {
@@ -24,7 +24,7 @@ namespace Damselfly
 
         void SearchItemListBox_Loaded(object sender, RoutedEventArgs e)
         {
-            _searchViewModel = new SearchViewModel(
+            SearchViewModel = new SearchViewModel(
                 this,
                 QueryTextBox,
                 SearchItemListBox,
@@ -32,10 +32,10 @@ namespace Damselfly
                     VisualTreeHelper.GetChild(SearchItemListBox, 0),
                     0));
 
-            _searchViewModel.Init();
-            PreviewKeyDown += _searchViewModel.Control_PreviewKeyDown;
-            IsVisibleChanged += _searchViewModel.Control_IsVisibleChanged;
-            DataContext = _searchViewModel;
+            SearchViewModel.Init();
+            PreviewKeyDown += SearchViewModel.Control_PreviewKeyDown;
+            IsVisibleChanged += SearchViewModel.Control_IsVisibleChanged;
+            DataContext = SearchViewModel;
         }
     }
 }
