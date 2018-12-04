@@ -1,5 +1,5 @@
-﻿#'std';
-#'query';
+﻿#'Std';
+
 using Components;
 using Damselfly.Components;
 using System;

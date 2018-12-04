@@ -1,2 +1,4 @@
-﻿#'Keyboard';
+﻿#'Automation/Keyboard';
+using Damselfly.Components
+using System.Test;
 export KeyboardAutomation.Type = @(string text) text |> keyboard.type;
