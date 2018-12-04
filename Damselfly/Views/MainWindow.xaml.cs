@@ -144,7 +144,7 @@ namespace Damselfly
                 Key.D0 <= keyPressed && keyPressed <= Key.D9)
             {
                 _searchWindow.SearchViewModel.HandleGlobalHotkey(keyPressed);
-                _isWinDown = false;
+
                 return new IntPtr(1);
             }
             else

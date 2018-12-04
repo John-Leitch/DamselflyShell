@@ -342,7 +342,7 @@ namespace Damselfly.ViewModels
             if (_globalBindings.TryGetValue(keyStr, out var binding))
             {
                 if (MessageBox.Show(
-                    $"Are you sure you want to overwrite '{key}' binding?\r\n{binding.Command}",
+                    $"Are you sure you want to overwrite '{key}' binding?\r\n\r\n{binding.Command}",
                     "Confirm",
                     MessageBoxButton.YesNo) == MessageBoxResult.No)
                 {
