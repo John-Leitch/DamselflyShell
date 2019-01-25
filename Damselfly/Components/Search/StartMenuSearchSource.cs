@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,20 +8,24 @@ using System.Threading.Tasks;
 
 namespace Damselfly.Components.Search
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class StartMenuSearchSource : SearchSource
     {
-        private string[] _directories = new[]
+        private readonly string[] _directories = new[]
         {
             Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
             Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
         };
 
-        private string[] _extensions = new[]
+        private readonly string[] _extensions = new[]
         {
             "lnk",
             "url",
             "appref-ms",
         };
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         protected override List<SearchItem> LoadItems() =>
             _directories

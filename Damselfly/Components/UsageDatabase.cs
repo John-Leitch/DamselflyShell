@@ -10,7 +10,7 @@ namespace Damselfly.Components
 {
     public class UsageDatabase : Dictionary<SearchItemType, Dictionary<string, UsageRecord>>
     {
-        private static object _sync = new object();
+        private static readonly object _sync = new object();
 
         private static readonly string _usageFile = PathHelper.GetExecutingPath("usage.json");
 
@@ -25,10 +25,8 @@ namespace Damselfly.Components
                     throw new InvalidOperationException(
                         "Only one instance of UsageDatabase permitted.");
                 }
-                else
-                {
-                    Instance = this;
-                }
+
+                Instance = this;
             }
         }
 
@@ -62,13 +60,11 @@ namespace Damselfly.Components
 
                 return t != null ? FromSerializable(t) : new UsageDatabase();
             }
-            else
-            {
-                return new UsageDatabase();
-            }            
+
+            return new UsageDatabase();
         }
 
         public UsageRecord GetRecord(SearchItemType type, string name) =>
-            this.GetOrCreate(type).GetOrCreate(name);
+            this.GetOrAdd(type).GetOrAdd(name);
     }
 }

@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 namespace Damselfly.Components.Search
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class SpecialFolderSearchSource : SearchSource
     {
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
+
         protected override List<SearchItem> LoadItems()
         {
             var specialFolders = new Environment.SpecialFolder[]

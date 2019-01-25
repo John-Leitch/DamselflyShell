@@ -7,12 +7,13 @@ namespace Damselfly
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public partial class App : Application
     {
-        public App()
-        {
-            DamselflyErrorReporter.Attach();
-        }
+        public App() => DamselflyErrorReporter.Attach();
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         protected override void OnStartup(StartupEventArgs e)
         {

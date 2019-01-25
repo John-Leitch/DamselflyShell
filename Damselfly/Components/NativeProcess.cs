@@ -1,15 +1,20 @@
 ﻿using Components.PInvoke;
 using System;
+using System.Diagnostics;
 
 namespace Damselfly.Components
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public sealed class NativeProcess : IDisposable
     {
-        private PROCESS_INFORMATION _processInfo;
+        private readonly PROCESS_INFORMATION _processInfo;
         public IntPtr ProcessHandle => _processInfo.hProcess;
         public IntPtr ThreadHandle => _processInfo.hThread;
         public uint ProcessId => _processInfo.dwProcessId;
         public uint ThreadId => _processInfo.dwThreadId;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         public NativeProcess(PROCESS_INFORMATION processInfo) => _processInfo = processInfo;
 

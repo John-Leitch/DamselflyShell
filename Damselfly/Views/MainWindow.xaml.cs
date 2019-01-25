@@ -1,6 +1,7 @@
 ﻿using Components.PInvoke;
 using Damselfly.Components;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -9,15 +10,16 @@ namespace Damselfly
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public partial class MainWindow : Window
     {
-        public WindowsHookCallback _hookProc = null;
+        public WindowsHookCallback _hookProc;
 
-        private bool _isCtrlDown = false, _isWinDown = false, _isWinUnmodified = false;
+        private bool _isCtrlDown, _isWinDown, _isWinUnmodified;
 
         private IntPtr _hookId;
 
-        private static bool _hasLoaded = false;
+        private static bool _hasLoaded;
 
         private SearchWindow _searchWindow;
 
@@ -28,10 +30,10 @@ namespace Damselfly
             Loaded += MainWindow_Loaded;
         }
 
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-        }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
+
+        protected override void OnSourceInitialized(EventArgs e) => base.OnSourceInitialized(e);
 
         private void ShowSearchWindow()
         {
@@ -47,7 +49,10 @@ namespace Damselfly
                         {
                             _searchWindow.Hide();
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError(ex.ToString());
+                        }
                     };
                 //}
 
@@ -68,16 +73,13 @@ namespace Damselfly
             {
                 ShowSearchWindow();
             }
+            else if (_searchWindow.IsVisible)
+            {
+                _searchWindow.Hide();
+            }
             else
             {
-                if (_searchWindow.IsVisible)
-                {
-                    _searchWindow.Hide();
-                }
-                else
-                {
-                    _searchWindow.Show();
-                }
+                _searchWindow.Show();
             }
         }
 
@@ -114,28 +116,26 @@ namespace Damselfly
 
                     return new IntPtr(1);
                 }
-                else
+
+                if ((i & User32.WM_KEYUP) == User32.WM_KEYUP)
                 {
-                    if ((i & User32.WM_KEYUP) == User32.WM_KEYUP)
+                    _isWinDown = false;
+
+                    if (_isWinUnmodified)
                     {
-                        _isWinDown = false;
+                        ToggleSearchWindow();
+                        //Dispatcher.Invoke(() => ToggleSearchWindow());
 
-                        if (_isWinUnmodified)
-                        {
-                            ToggleSearchWindow();
-                            //Dispatcher.Invoke(() => ToggleSearchWindow());
-
-                            return new IntPtr(1);
-                        }
-                        else
-                        {
-                            return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
-                        }
+                        return new IntPtr(1);
                     }
                     else
                     {
-                        return new IntPtr(1);
+                        return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
                     }
+                }
+                else
+                {
+                    return new IntPtr(1);
                 }
             }
             else if (_isCtrlDown &&
@@ -147,17 +147,14 @@ namespace Damselfly
 
                 return new IntPtr(1);
             }
-            else
+            else if (_isWinDown)
             {
-                if (_isWinDown)
-                {
-                    KeyboardController.SendKeyDown(Key.LWin);
-                    _isWinUnmodified = false;
+                KeyboardController.SendKeyDown(Key.LWin);
+                _isWinUnmodified = false;
 
-                    if (keyPressed == Key.L)
-                    {
-                        _isWinDown = false;
-                    }
+                if (keyPressed == Key.L)
+                {
+                    _isWinDown = false;
                 }
             }
 

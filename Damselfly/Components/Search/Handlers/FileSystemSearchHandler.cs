@@ -1,23 +1,29 @@
 ﻿using Components.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.IO.Path;
 
 namespace Damselfly.Components.Search.Handlers
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class FileSystemSearchHandler : SearchHandler
     {
-        private readonly string _doubleSeparator = new string(Path.DirectorySeparatorChar, 2);
+        private readonly string _doubleSeparator = new string(DirectorySeparatorChar, 2);
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         public override bool IsHandled(string query) =>
-            query.Contains(Path.DirectorySeparatorChar); //&&//!query.StartsWith(@"\\");
+            query.Contains(DirectorySeparatorChar); //&&//!query.StartsWith(@"\\");
 
         public override IEnumerable<SearchItem> Search(string query)
         {
-            var separator = Path.DirectorySeparatorChar;
+            var separator = DirectorySeparatorChar;
             string[] parts;
 
             if (!query.StartsWith(_doubleSeparator))
@@ -51,11 +57,11 @@ namespace Damselfly.Components.Search.Handlers
             {
                 var dir = p[0][p[0].Length - 1] == separator ?
                     p[0] :
-                    p[0] + separator;
+                    p[0] + separator.ToString();
 
                 dir = p[0];
 
-                if ((dir.Last() == Path.DirectorySeparatorChar && Directory.Exists(dir)) ||
+                if ((dir.Last() == DirectorySeparatorChar && Directory.Exists(dir)) ||
                     IsHost(dir))
                 {
                     m.AddRange(SearchFileSystem(dir, p[1]));
@@ -72,7 +78,7 @@ namespace Damselfly.Components.Search.Handlers
             path = CleanPath(path);
 
             bool pred(string x) =>
-                query == null || Path.GetFileName(x).ToUpper().Contains(query.ToUpper());
+                query == null || GetFileName(x).IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
 
             var fsoFuncs = new[]
             {
@@ -81,7 +87,7 @@ namespace Damselfly.Components.Search.Handlers
                 new SearchStrategy(SearchItemType.Directory, GetSharePaths),
             };
 
-            var items = fsoFuncs
+            return fsoFuncs
                 .SelectMany(f =>
                 {
                     try
@@ -89,7 +95,7 @@ namespace Damselfly.Components.Search.Handlers
                         return f
                             .GetItems(path)
                             .Where(pred)
-                            .Select(x => new SearchItem()
+                            .Select(x => new SearchItem
                             {
                                 Name = x,
                                 ItemPath = x,
@@ -97,14 +103,14 @@ namespace Damselfly.Components.Search.Handlers
                                 Usage = _context.UsageDb.GetRecord(f.Type, x),
                             });
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        return new SearchItem[0];
+                        Trace.TraceError(e.ToString());
+
+                        return Array.Empty<SearchItem>();
                     }
                 })
                 .ToArray();
-
-            return items;
         }
 
         private string CleanPath(string path)
@@ -129,7 +135,7 @@ namespace Damselfly.Components.Search.Handlers
             var p = path.Substring(2).TrimEnd('\\');
             var shares = NetworkShares.GetShares(p);
 
-            return shares.Select(x => Path.Combine(path, x)).ToArray();
+            return shares.Select(x => Combine(path, x)).ToArray();
         }
 
         private bool IsHost(string path)

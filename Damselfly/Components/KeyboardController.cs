@@ -15,7 +15,7 @@ namespace Damselfly.Components
     public static class KeyboardController
     {
         private static void SendKey(Key key, int flags) =>
-            User32.keybd_event((byte)KeyInterop.VirtualKeyFromKey(key), 0, flags, 0);
+            User32.keybd_event((byte)KeyInterop.VirtualKeyFromKey(key), 0, flags, IntPtr.Zero);
 
         public static void SendKeyDown(Key key) =>
             SendKey(key, User32.KEYEVENTF_EXTENDEDKEY);
@@ -38,6 +38,7 @@ namespace Damselfly.Components
             switch (key)
             {
                 case Key.T:
+                {
                     if (controlShift)
                     {
                         var buffer = viewModel.Query;
@@ -71,8 +72,10 @@ namespace Damselfly.Components
                         });
                     }
                     break;
+                }
 
                 case Key.Tab:
+                {
                     viewModel.IsHandled = true;
 
                     if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
@@ -102,24 +105,32 @@ namespace Damselfly.Components
                         viewModel.FocusQuery();
                     }
                     break;
+                }
 
                 case Key.Up:
+                {
                     viewModel.IsHandled = true;
                     viewModel.PreviousMatch();
 
                     break;
+                }
 
                 case Key.Down:
+                {
                     viewModel.IsHandled = true;
                     viewModel.NextMatch();
                     break;
+                }
 
                 case Key.Escape:
+                {
                     viewModel.Query = "";
                     viewModel.Window.Hide();
                     break;
+                }
 
                 case Key.Enter:
+                {
                     string command = null;
                     var match = viewModel.SelectedMatch;
 
@@ -137,7 +148,7 @@ namespace Damselfly.Components
                             case SearchItemType.File:
                             case SearchItemType.StartMenu:
                             case SearchItemType.Directory:
-
+                            {
                                 command = viewModel.SelectedMatch.ItemPath;
                                 viewModel.Query = "";
                                 viewModel.Window.Hide();
@@ -169,6 +180,7 @@ namespace Damselfly.Components
                                 });
 
                                 break;
+                            }
                         }
                     }
                     else
@@ -190,7 +202,7 @@ namespace Damselfly.Components
 
                                 if (match == null)
                                 {
-                                    var item = new SearchItem()
+                                    var item = new SearchItem
                                     {
                                         Type = SearchItemType.Command,
                                         Name = command,
@@ -201,12 +213,12 @@ namespace Damselfly.Components
                                         viewModel.Search.Commands.Add(item);
                                     }
 
-                                    var records = viewModel.Search.UsageDb.GetOrCreate(
+                                    var records = viewModel.Search.UsageDb.GetOrAdd(
                                         SearchItemType.Command);
 
                                     if (!records.TryGetValue(command, out var usage))
                                     {
-                                        usage = new UsageRecord() { HitCount = 1 };
+                                        usage = new UsageRecord { HitCount = 1 };
                                         records.Add(command, usage);
                                     }
                                     else
@@ -231,8 +243,10 @@ namespace Damselfly.Components
                     }
 
                     break;
+                }
 
                 case Key.D:
+                {
                     if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
                     {
                         viewModel.DeleteSelectedMatch();
@@ -243,11 +257,14 @@ namespace Damselfly.Components
                     }
 
                     break;
+                }
 
                 case Key.PageUp:
                 case Key.PageDown:
+                {
                     viewModel.FocusSelectedItem();
                     break;
+                }
 
                 case Key.Home:
                 case Key.End:
@@ -263,16 +280,20 @@ namespace Damselfly.Components
                 case Key.D7:
                 case Key.D8:
                 case Key.D9:
+                {
                     if (controlAlt)
                     {
                         viewModel.SetGlobalHotkey(key);
                     }
 
                     break;
+                }
 
                 default:
+                {
                     viewModel.QueryTextBox.Focus();
                     break;
+                }
             }
         }
 

@@ -17,6 +17,7 @@ using System.Windows.Interop;
 
 namespace Damselfly.ViewModels
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class SearchViewModel : ViewModel
     {
         private Dictionary<string, GlobalHotkeyBinding> _globalBindings = new Dictionary<string, GlobalHotkeyBinding>();
@@ -25,15 +26,15 @@ namespace Damselfly.ViewModels
 
         private double _lastWidth = -1;
 
-        private ListBox _queryListBox;
+        private readonly ListBox _queryListBox;
 
-        private ScrollViewer _queryScrollViewer;
+        private readonly ScrollViewer _queryScrollViewer;
 
         private string _query;
 
         public string Query
         {
-            get { return _query; }
+            get => _query;
             set
             {
                 SetProperty(ref _query, value);
@@ -41,20 +42,20 @@ namespace Damselfly.ViewModels
             }
         }
 
-        private SearchItem _selectedMatch = null;
+        private SearchItem _selectedMatch;
 
         public SearchItem SelectedMatch
         {
-            get { return _selectedMatch; }
-            set { SetProperty(ref _selectedMatch, value); }
+            get => _selectedMatch;
+            set => SetProperty(ref _selectedMatch, value);
         }
 
         private string _queryError;
 
         public string QueryError
         {
-            get { return _queryError; }
-            set { SetProperty(ref _queryError, value); }
+            get => _queryError;
+            set => SetProperty(ref _queryError, value);
         }
 
         public SearchWindow Window { get; private set; }
@@ -66,6 +67,9 @@ namespace Damselfly.ViewModels
         public ObservableCollection<SearchItem> Matches { get; private set; }
 
         public bool IsHandled { get; set; }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         public SearchViewModel(
             SearchWindow window,
@@ -85,10 +89,7 @@ namespace Damselfly.ViewModels
             _widthDelta = window.ActualWidth - _queryScrollViewer.ActualWidth;
         }
 
-        void QueryScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            UpdateWindowSize();
-        }
+        void QueryScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) => UpdateWindowSize();
 
         public void Init()
         {
@@ -164,15 +165,9 @@ namespace Damselfly.ViewModels
             ((ListBoxItem)c).Focus();
         }
 
-        public void PreviousMatch()
-        {
-            MoveMatch(x => x > 0, x => Matches[x - 1]);
-        }
+        public void PreviousMatch() => MoveMatch(x => x > 0, x => Matches[x - 1]);
 
-        public void NextMatch()
-        {
-            MoveMatch(x => x < Matches.Count - 1, x => Matches[x + 1]);
-        }
+        public void NextMatch() => MoveMatch(x => x < Matches.Count - 1, x => Matches[x + 1]);
 
         public void CompleteQuery()
         {
@@ -264,8 +259,8 @@ namespace Damselfly.ViewModels
                     throw new InvalidOperationException();
                 }
 
-                uint foreThread = User32.GetWindowThreadProcessId(User32.GetForegroundWindow(), IntPtr.Zero);
-                uint appThread = Kernel32.GetCurrentThreadId();
+                var foreThread = User32.GetWindowThreadProcessId(User32.GetForegroundWindow(), IntPtr.Zero);
+                var appThread = Kernel32.GetCurrentThreadId();
                 const uint SW_SHOW = 5;
 
                 if (foreThread != appThread)
@@ -342,7 +337,7 @@ namespace Damselfly.ViewModels
             if (_globalBindings.TryGetValue(keyStr, out var binding))
             {
                 if (MessageBox.Show(
-                    $"Are you sure you want to overwrite '{key}' binding?\r\n\r\n{binding.Command}",
+                    $"Are you sure you want to overwrite '{key.ToString()}' binding?\r\n\r\n{binding.Command}",
                     "Confirm",
                     MessageBoxButton.YesNo) == MessageBoxResult.No)
                 {

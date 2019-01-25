@@ -9,9 +9,10 @@ using System.Windows.Media;
 
 namespace Damselfly.Components.Search
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class SearchItem 
     {
-        private static Memoizer<Tuple<string, string>, ImageSource> _imageSourceMemoizer =
+        private static readonly Memoizer<Tuple<string, string>, ImageSource> _imageSourceMemoizer =
             new Memoizer<Tuple<string, string>, ImageSource>();
 
         public string Name { get; set; }
@@ -22,14 +23,14 @@ namespace Damselfly.Components.Search
 
         public UsageRecord Usage { get; set; }
 
-        private Lazy<ImageSource> _source;
+        private readonly Lazy<ImageSource> _source;
 
         public ImageSource Source => _source.Value;
 
-        public SearchItem()
-        {
-            _source = new Lazy<ImageSource>(GetIconImageSource);
-        }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
+
+        public SearchItem() => _source = new Lazy<ImageSource>(GetIconImageSource);
 
         private ImageSource GetIconImageSource()
         {
@@ -68,8 +69,9 @@ namespace Damselfly.Components.Search
                         IconLoader.GetHandle(tokens[0]) :
                         SystemIcons.Application.Handle;
                 }
-                catch
+                catch (Exception e)
                 {
+                    Trace.TraceError(e.ToString());
                     h = SystemIcons.Application.Handle;
                 }
             }
@@ -77,12 +79,12 @@ namespace Damselfly.Components.Search
             return IconLoader.GetSource(h);
         }
 
-        public override string ToString() => $"{Type}, {Name}, {ItemPath}";
+        public override string ToString() => $"{Type.ToString()}, {Name}, {ItemPath}";
 
         public static SearchItem FromFile(string filename) => new SearchItem
         {
             Name =
-                Path.GetExtension(filename).ToLower() == ".msc" ? MscHelper.GetName(filename) :
+                string.Equals(Path.GetExtension(filename), ".msc", StringComparison.OrdinalIgnoreCase) ? MscHelper.GetName(filename) :
                 FileVersionInfo.GetVersionInfo(filename).FileDescription ??
                 filename,
 
@@ -91,7 +93,7 @@ namespace Damselfly.Components.Search
             Usage = UsageDatabase.Instance.GetRecord(SearchItemType.File, filename),
         };
 
-        public static SearchItem FromDirectory(string path) => new SearchItem()
+        public static SearchItem FromDirectory(string path) => new SearchItem
         {
             Name = Path.GetFileName(path),
             ItemPath = path,
@@ -99,7 +101,7 @@ namespace Damselfly.Components.Search
             Usage = UsageDatabase.Instance.GetRecord(SearchItemType.Directory, path),
         };
 
-        public static SearchItem FromShortcut(string shortcutPath) => new SearchItem()
+        public static SearchItem FromShortcut(string shortcutPath) => new SearchItem
         {
             Name = Path.GetFileNameWithoutExtension(shortcutPath),
             ItemPath = shortcutPath,
@@ -113,7 +115,7 @@ namespace Damselfly.Components.Search
                 Directory.Exists(command) ? SearchItemType.Directory :
                 SearchItemType.Command;
 
-            return new SearchItem()
+            return new SearchItem
             {
                 Name = command,
                 ItemPath = t != SearchItemType.Command ? command : null,

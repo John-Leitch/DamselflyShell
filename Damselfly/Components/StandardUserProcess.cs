@@ -8,7 +8,7 @@ namespace Damselfly.Components
 {
     public static class StandardUserProcess
     {
-        private static Lazy<IntPtr> _duplicatedToken = new Lazy<IntPtr>(DuplicateToken);
+        private static readonly Lazy<IntPtr> _duplicatedToken = new Lazy<IntPtr>(DuplicateToken);
 
         public static NativeProcess Start(string filename, string arguments)
         {

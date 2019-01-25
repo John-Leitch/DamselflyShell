@@ -1,15 +1,20 @@
 ﻿using Components.Json;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 namespace Damselfly.Components.Search
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class CommandSearchSource : SearchSource
     {
         private readonly string _cmdFile = PathHelper.GetExecutingPath("commands.json");
 
         public override bool IsCommandRepository => true;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         protected override List<SearchItem> LoadItems() =>
             File.Exists(_cmdFile) ?
@@ -17,7 +22,7 @@ namespace Damselfly.Components.Search
                     .DeserializeFile<string[]>(_cmdFile)
                     .Distinct()
                     .Select(SearchItem.FromCommand)
-                    .ToList() :
+                    .ToList():
                 new List<SearchItem>();
 
         public override void Save() =>

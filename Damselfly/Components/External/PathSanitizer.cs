@@ -1,31 +1,24 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace Components
 {
-    public class PathSanitizer
+    public static class PathSanitizer
     {
-        public static string SanitizePath(string name, char c)
-        {
-            Path.GetInvalidPathChars().Iter(x => name = name.Replace(x, c));
+        public static string SanitizePath(string name, char c) => Path
+            .GetInvalidPathChars()
+            .Aggregate(name, (a, x) => a.Replace(x, c))
+            .Replace(':', c)
+            .Replace('\\', c)
+            .Replace('/', c);
 
-            return name.Replace(':', c).Replace('\\', c).Replace('/', c);
-        }
+        public static string SanitizeName(string name, char c) => Path
+            .GetInvalidFileNameChars()
+            .Aggregate(name, (a, x) => a.Replace(x, c));
 
-        public static string SanitizeName(string name, char c)
-        {
-            Path.GetInvalidFileNameChars().Iter(x => name = name.Replace(x, c));
+        public static string SanitizeName(string name) => SanitizeName(name, '_');
 
-            return name;
-        }
-
-        public static string SanitizeName(string name)
-        {
-            return SanitizeName(name, '_');
-        }
-
-        public static string SanitizePath(string name)
-        {
-            return SanitizePath(name, '_');
-        }
+        public static string SanitizePath(string name) => SanitizePath(name, '_');
     }
 }

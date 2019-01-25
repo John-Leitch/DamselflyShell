@@ -1,6 +1,7 @@
 ﻿using Components.Json;
 using Damselfly.ViewModels;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,9 +11,13 @@ namespace Damselfly
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public partial class SearchWindow : Window
     {
         public SearchViewModel SearchViewModel { get; private set; }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         public SearchWindow()
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,15 +8,16 @@ using System.Threading.Tasks;
 
 namespace Damselfly.Components.Search
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class SystemFileSearchSource : SearchSource
     {
-        private string[] _directories = new[]
+        private readonly string[] _directories = new[]
         {
             @"%SystemRoot%",
             @"%SystemRoot%\system32",
         };
 
-        private string[] _extensions = new[]
+        private readonly string[] _extensions = new[]
         {
             "cpl",
             "msc",
@@ -23,6 +25,9 @@ namespace Damselfly.Components.Search
             "cmd",
             "bat",
         };
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         protected override List<SearchItem> LoadItems() =>
             _directories
@@ -34,7 +39,7 @@ namespace Damselfly.Components.Search
                 })
                 .ToList();
 
-        private IEnumerable<string> GetDirectoryFiles(string directory, string extension) =>
+        private static IEnumerable<string> GetDirectoryFiles(string directory, string extension) =>
             Directory
                 .GetFiles(Environment.ExpandEnvironmentVariables(directory))
                 .Where(x => x.EndsWith(

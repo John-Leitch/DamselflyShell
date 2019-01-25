@@ -6,21 +6,23 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Components;
+using System.Diagnostics;
 
 namespace Damselfly.Components.Search
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class StartSearch
     {
         public UsageDatabase UsageDb { get; } = UsageDatabase.Load();
 
-        private SearchHandler[] _handlers = new SearchHandler[]
+        private readonly SearchHandler[] _handlers = new SearchHandler[]
         {
             new EmptySearchHandler(),
             new FileSystemSearchHandler(),
             new StandardSearchHandler(),
         };
 
-        private SearchSource
+        private readonly SearchSource
             _startMenuSource = new StartMenuSearchSource(),
             _systemFileSource = new SystemFileSearchSource(),
             _specialFolderSource = new SpecialFolderSearchSource(),
@@ -36,6 +38,9 @@ namespace Damselfly.Components.Search
                 .Concat(Commands)
                 .Concat(SystemFiles)
                 .Concat(SpecialFolders);
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
 
         public StartSearch() => _handlers.Iter(x => x.Init(this));
 
