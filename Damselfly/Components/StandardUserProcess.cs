@@ -3,6 +3,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using static Components.PInvoke.TokenAccess;
+using static Components.PInvoke.Win32;
 
 namespace Damselfly.Components
 {
@@ -17,19 +19,17 @@ namespace Damselfly.Components
             var sa = new SECURITY_ATTRIBUTES();
             sa.nLength = Marshal.SizeOf<SECURITY_ATTRIBUTES>();
 
-            if (!AdvApi32.CreateProcessWithTokenW(
-                _duplicatedToken.Value,
-                LogonFlags.WithProfile,
-                filename,
-                arguments,
-                ProcessCreationFlags.None,
-                IntPtr.Zero,
-                null,
-                si,
-                pi))
-            {
-                Win32.ThrowWin32Exception();
-            }
+            ThrowLastErrorIf(
+                !AdvApi32.CreateProcessWithTokenW(
+                    _duplicatedToken.Value,
+                    LogonFlags.WithProfile,
+                    filename,
+                    arguments,
+                    ProcessCreationFlags.None,
+                    IntPtr.Zero,
+                    null,
+                    si,
+                    pi));
 
             return new NativeProcess(pi);
         }
@@ -38,39 +38,33 @@ namespace Damselfly.Components
         {
             IntPtr procHandle;
 
-            using (var proc = Process.GetProcessesByName("explorer").Single())
+            using (var proc = Process.GetProcessesByName("explorer").First())
             {
-                if ((procHandle = Kernel32.OpenProcess(
+                ThrowLastErrorIf(
+                    (procHandle = Kernel32.OpenProcess(
                         ProcessAccessFlags.QueryInformation,
                         false,
-                        proc.Id)) == Win32.INVALID_HANDLE_VALUE)
-                {
-                    Win32.ThrowWin32Exception();
-                }
+                        proc.Id)) == INVALID_HANDLE_VALUE);
             }
 
-            if (!AdvApi32.OpenProcessToken(
-                procHandle,
-                TokenAccess.TOKEN_QUERY | TokenAccess.TOKEN_DUPLICATE,
-                out var procTokenHandle))
-            {
-                Win32.ThrowWin32Exception();
-            }
+            ThrowLastErrorIf(
+                !AdvApi32.OpenProcessToken(
+                    procHandle,
+                    TOKEN_QUERY | TOKEN_DUPLICATE,
+                    out var procTokenHandle));
 
-            if (!AdvApi32.DuplicateTokenEx(
-                procTokenHandle,
-                TokenAccess.TOKEN_ASSIGN_PRIMARY |
-                    TokenAccess.TOKEN_DUPLICATE |
-                    TokenAccess.TOKEN_QUERY |
-                    TokenAccess.TOKEN_ADJUST_DEFAULT |
-                    TokenAccess.TOKEN_ADJUST_SESSIONID,
-                IntPtr.Zero,
-                SECURITY_IMPERSONATION_LEVEL.SecurityIdentification,
-                TOKEN_TYPE.TokenPrimary,
-                out var duplicateTokenHandle))
-            {
-                Win32.ThrowWin32Exception();
-            }
+            ThrowLastErrorIf(
+                !AdvApi32.DuplicateTokenEx(
+                    procTokenHandle,
+                    TOKEN_ASSIGN_PRIMARY |
+                        TOKEN_DUPLICATE |
+                        TOKEN_QUERY |
+                        TOKEN_ADJUST_DEFAULT |
+                        TOKEN_ADJUST_SESSIONID,
+                    IntPtr.Zero,
+                    SECURITY_IMPERSONATION_LEVEL.SecurityIdentification,
+                    TOKEN_TYPE.TokenPrimary,
+                    out var duplicateTokenHandle));
 
             Kernel32.CloseHandle(procTokenHandle);
             Kernel32.CloseHandle(procHandle);

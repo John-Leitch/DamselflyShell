@@ -1,4 +1,5 @@
-﻿using Components.External;
+﻿using Components;
+using Components.External;
 using Components.PInvoke;
 using System;
 using System.Diagnostics;
@@ -13,9 +14,9 @@ namespace Damselfly.Components
 {
     public static class IconLoader
     {
-        private static readonly Memoizer<IntPtr, BitmapSource> _sourceMemoizer = new Memoizer<IntPtr, BitmapSource>();
+        private static readonly ArgLockingMemoizer<IntPtr, BitmapSource> _sourceMemoizer = new ArgLockingMemoizer<IntPtr, BitmapSource>();
 
-        private static readonly Memoizer<string, IntPtr> _pathMemoizer = new Memoizer<string, IntPtr>();
+        private static readonly ArgLockingMemoizer<string, IntPtr> _pathMemoizer = new ArgLockingMemoizer<string, IntPtr>();
 
         public static BitmapSource GetSource(IntPtr icon) => _sourceMemoizer.Call(GetSourceCore, icon);
 
@@ -47,7 +48,7 @@ namespace Damselfly.Components
             }
             catch (Exception e)
             {
-                Trace.TraceError(e.ToString());
+                Trace.TraceError($"Error extracting associated icon:\r\n{e}\r\n");
                 var shinfo = new SHFILEINFO();
 
                 var result = Shell32.SHGetFileInfo(

@@ -41,35 +41,8 @@ namespace Damselfly.Components
                 {
                     if (controlShift)
                     {
-                        var buffer = viewModel.Query;
+                        ExecQueryType(viewModel, viewModel.Query);
 
-                        if (buffer.Length == 0)
-                        {
-                            return;
-                        }
-
-                        viewModel.IsHandled = true;
-                        viewModel.Query = "";
-
-                        ThreadPool.QueueUserWorkItem(x =>
-                        {
-                            Thread.Sleep(100);
-
-                            if (!User32.GetCursorPos(out var point))
-                            {
-                                throw Win32.CreateWin32Exception();
-                            }
-
-                            //User32.mouse_event(MouseEventFlags.LEFTDOWN, point.x, point.y,
-                            foreach (var f in new[] { MouseEventFlags.LEFTDOWN, MouseEventFlags.LEFTUP })
-                            {
-                                User32.mouse_event(f, point.x, point.y, 0, UIntPtr.Zero);
-                                Thread.Sleep(10);
-                            }
-
-                            KeyboardAutomation.Type(buffer);
-
-                        });
                     }
                     break;
                 }
@@ -155,28 +128,7 @@ namespace Damselfly.Components
 
                                 ThreadPool.QueueUserWorkItem(x =>
                                 {
-                                    try
-                                    {
-                                        Launcher.Launch(command, controlShift);
-
-                                        bool predicate(SearchItem y) =>
-                                            y.Name == match.Name && y.ItemPath == match.ItemPath;
-
-                                        if (!viewModel.Search.StartMenuItems.Any(predicate) &&
-                                            !viewModel.Search.SpecialFolders.Any(predicate) &&
-                                            !viewModel.Search.Commands.Any(predicate) &&
-                                            !viewModel.Search.SystemFiles.Any(predicate))
-                                        {
-                                            viewModel.Search.Commands.Add(match);
-                                        }
-
-                                        match.Usage.HitCount++;
-                                        viewModel.Search.Save();
-                                    }
-                                    catch (Win32Exception ex)
-                                    {
-                                        ShowError(command, ex);
-                                    }
+                                    LaunchChildSystemItem(viewModel, controlShift, command, match);
                                 });
 
                                 break;
@@ -200,37 +152,13 @@ namespace Damselfly.Components
                             {
                                 Launcher.Launch(command, controlShift);
 
-                                if (match == null)
+                                if (match != null)
                                 {
-                                    var item = new SearchItem
-                                    {
-                                        Type = SearchItemType.Command,
-                                        Name = command,
-                                    };
-
-                                    if (!viewModel.Search.Commands.Any(y => y.Name == item.Name))
-                                    {
-                                        viewModel.Search.Commands.Add(item);
-                                    }
-
-                                    var records = viewModel.Search.UsageDb.GetOrAdd(
-                                        SearchItemType.Command);
-
-                                    if (!records.TryGetValue(command, out var usage))
-                                    {
-                                        usage = new UsageRecord { HitCount = 1 };
-                                        records.Add(command, usage);
-                                    }
-                                    else
-                                    {
-                                        usage.HitCount++;
-                                    }
-
-                                    item.Usage = usage;
+                                    match.Usage.IncrementHitCount();
                                 }
                                 else
                                 {
-                                    match.Usage.HitCount++;
+                                    LaunchCommand(viewModel, command);
                                 }
 
                                 viewModel.Search.Save();
@@ -294,6 +222,87 @@ namespace Damselfly.Components
                     viewModel.QueryTextBox.Focus();
                     break;
                 }
+            }
+        }
+
+        private static void ExecQueryType(SearchViewModel viewModel, string buffer)
+        {
+            if (buffer.Length == 0)
+            {
+                return;
+            }
+
+            viewModel.IsHandled = true;
+            viewModel.Query = "";
+
+            ThreadPool.QueueUserWorkItem(x =>
+            {
+                Thread.Sleep(100);
+                Win32.ThrowLastErrorIf(!User32.GetCursorPos(out var point));
+
+                foreach (var f in new[] { MouseEventFlags.LEFTDOWN, MouseEventFlags.LEFTUP })
+                {
+                    User32.mouse_event(f, point.x, point.y, 0, UIntPtr.Zero);
+                    Thread.Sleep(10);
+                }
+
+                KeyboardAutomation.Type(buffer);
+
+            });
+        }
+
+        private static void LaunchCommand(SearchViewModel viewModel, string command)
+        {
+            var item = new SearchItem
+            {
+                Type = SearchItemType.Command,
+                Name = command,
+            };
+
+            if (!viewModel.Search.Commands.Any(y => y.Name == item.Name))
+            {
+                viewModel.Search.Commands.Add(item);
+            }
+
+            var records = viewModel.Search.UsageDb.GetOrAdd(
+                SearchItemType.Command);
+
+            if (!records.TryGetValue(command, out var usage))
+            {
+                usage = new UsageRecord(1);
+                records.Add(command, usage);
+            }
+            else
+            {
+                usage.IncrementHitCount();
+            }
+
+            item.Usage = usage;
+        }
+
+        private static void LaunchChildSystemItem(SearchViewModel viewModel, bool controlShift, string command, SearchItem match)
+        {
+            try
+            {
+                Launcher.Launch(command, controlShift);
+
+                bool predicate(SearchItem y) =>
+                    y.Name == match.Name && y.ItemPath == match.ItemPath;
+
+                if (!viewModel.Search.StartMenuItems.Any(predicate) &&
+                    !viewModel.Search.SpecialFolders.Any(predicate) &&
+                    !viewModel.Search.Commands.Any(predicate) &&
+                    !viewModel.Search.SystemFiles.Any(predicate))
+                {
+                    viewModel.Search.Commands.Add(match);
+                }
+
+                match.Usage.IncrementHitCount();
+                viewModel.Search.Save();
+            }
+            catch (Win32Exception ex)
+            {
+                ShowError(command, ex);
             }
         }
 

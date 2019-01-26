@@ -6,67 +6,95 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
+using ST = Damselfly.Components.Search.SearchItemType;
+using SI = Damselfly.Components.Search.SearchItem;
+using Img = System.Windows.Media.ImageSource;
+using static Damselfly.Components.IconLoader;
+using static Damselfly.Components.UsageDatabase;
 
 namespace Damselfly.Components.Search
 {
+    using SearchMemoizer = ArgLockingMemoizer<string, SI>;
+
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public class SearchItem 
+    public class SearchItem
     {
-        private static readonly Memoizer<Tuple<string, string>, ImageSource> _imageSourceMemoizer =
-            new Memoizer<Tuple<string, string>, ImageSource>();
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => ToString();
+
+        private static readonly Memoizer<(string, string, ST), Img> _imageSourceMemoizer =
+            new Memoizer<(string, string, ST), Img>(
+                new SelectorComparer<(string, string, ST), (string, string)>(x => (x.Item1, x.Item2)));
+
+        private static readonly SearchMemoizer
+            _fromFileMemoizer = new SearchMemoizer(),
+            _fromDirectoryMemoizer = new SearchMemoizer(),
+            _fromShortcutMemoizer = new SearchMemoizer(),
+            _fromCommandMemoizer = new SearchMemoizer();
+
+        private readonly Lazy<Img> _source;
+
+        public Img Source => _source.Value;
 
         public string Name { get; set; }
 
         public string ItemPath { get; set; }
 
-        public SearchItemType Type { get; set; }
+        public ST Type { get; set; }
 
         public UsageRecord Usage { get; set; }
 
-        private readonly Lazy<ImageSource> _source;
+        public SearchItem() => _source = new Lazy<Img>(() => GetIconImageSource((ItemPath, Name, Type)));
 
-        public ImageSource Source => _source.Value;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => ToString();
-
-        public SearchItem() => _source = new Lazy<ImageSource>(GetIconImageSource);
-
-        private ImageSource GetIconImageSource()
+        public string GetCommand()
         {
-            return _imageSourceMemoizer.Call(
-                GetIconImageSourceCore,
-                Tuple.Create(ItemPath, Name));
+            switch (Type)
+            {
+                case ST.File:
+                case ST.StartMenu:
+                case ST.Directory:
+                    return ItemPath;
+
+                default:
+                    return Name;
+            }
         }
 
-        private ImageSource GetIconImageSourceCore(Tuple<string, string> tuple)
+        public override string ToString() => $"{Type.ToString()}, {Name}, {ItemPath}";
+
+        private static Img GetIconImageSource((string, string, ST) tuple) =>
+            _imageSourceMemoizer.Call(GetIconImageSourceCore, (tuple.Item1, tuple.Item2, tuple.Item3));
+
+        private static Img GetIconImageSourceCore((string, string, ST) tuple)
         {
-            if (ItemPath != null)
+            var (itemPath, name, type) = tuple;
+
+            if (itemPath != null)
             {
-                var p = ItemPath.TrimEnd('\\');
+                var p = itemPath.TrimEnd('\\');
                 int count;
 
                 if (p.StartsWith("\\\\") && ((count = p.Count(x => x == '\\')) == 2 || count == 3))
                 {
-                    return IconLoader.GetSource(IconLoader.GetHandle(".\\"));
+                    return GetSource(GetHandle(".\\"));
                 }
             }
 
             IntPtr h;
 
-            if (Type != SearchItemType.Command ||
-                (ItemPath != null && File.Exists(ItemPath)))
+            if (type != ST.Command ||
+                (itemPath != null && File.Exists(itemPath)))
             {
-                h = IconLoader.GetHandle(ItemPath);
+                h = GetHandle(itemPath);
             }
             else
             {
                 try
                 {
-                    var tokens = ArgLexer.Tokenize(WindowsPath.PrepareFilename(Name));
+                    var tokens = ArgLexer.Tokenize(WindowsPath.PrepareFilename(name));
 
                     h = tokens.Length > 0 ?
-                        IconLoader.GetHandle(tokens[0]) :
+                        GetHandle(tokens[0]) :
                         SystemIcons.Application.Handle;
                 }
                 catch (Exception e)
@@ -76,66 +104,69 @@ namespace Damselfly.Components.Search
                 }
             }
 
-            return IconLoader.GetSource(h);
+            return GetSource(h);
         }
 
-        public override string ToString() => $"{Type.ToString()}, {Name}, {ItemPath}";
+        public static SI FromFile(string filename) => _fromFileMemoizer.Call(FromFileCore, filename);
 
-        public static SearchItem FromFile(string filename) => new SearchItem
+        private static string TryGetDescription(string filename)
         {
-            Name =
-                string.Equals(Path.GetExtension(filename), ".msc", StringComparison.OrdinalIgnoreCase) ? MscHelper.GetName(filename) :
-                FileVersionInfo.GetVersionInfo(filename).FileDescription ??
-                filename,
+            var ver = FileVersionInfo.GetVersionInfo(filename);
+
+            if (ver == null || string.IsNullOrWhiteSpace(ver.FileDescription))
+            {
+                return null;
+            }
+
+            return ver.FileDescription;
+        }
+
+        private static SI FromFileCore(string filename) => new SI
+        {
+            Name = string.Equals(Path.GetExtension(filename), ".msc", StringComparison.OrdinalIgnoreCase) ?
+                MscHelper.GetName(filename) :
+                TryGetDescription(filename) ?? filename,
 
             ItemPath = filename,
-            Type = SearchItemType.File,
-            Usage = UsageDatabase.Instance.GetRecord(SearchItemType.File, filename),
+            Type = ST.File,
+            Usage = Instance.GetRecord(ST.File, filename),
         };
 
-        public static SearchItem FromDirectory(string path) => new SearchItem
+        public static SI FromDirectory(string filename) => _fromDirectoryMemoizer.Call(FromDirectoryCore, filename);
+
+        public static SI FromDirectoryCore(string path) => new SI
         {
             Name = Path.GetFileName(path),
             ItemPath = path,
-            Type = SearchItemType.Directory,
-            Usage = UsageDatabase.Instance.GetRecord(SearchItemType.Directory, path),
+            Type = ST.Directory,
+            Usage = Instance.GetRecord(ST.Directory, path),
         };
 
-        public static SearchItem FromShortcut(string shortcutPath) => new SearchItem
+        public static SI FromShortcut(string filename) => _fromShortcutMemoizer.Call(FromShortcutCore, filename);
+
+        public static SI FromShortcutCore(string shortcutPath) => new SI
         {
             Name = Path.GetFileNameWithoutExtension(shortcutPath),
             ItemPath = shortcutPath,
-            Type = SearchItemType.StartMenu,
-            Usage = UsageDatabase.Instance.GetRecord(SearchItemType.StartMenu, shortcutPath),
+            Type = ST.StartMenu,
+            Usage = Instance.GetRecord(ST.StartMenu, shortcutPath),
         };
 
-        public static SearchItem FromCommand(string command)
-        {
-            var t = File.Exists(command) ? SearchItemType.File :
-                Directory.Exists(command) ? SearchItemType.Directory :
-                SearchItemType.Command;
+        public static SI FromCommand(string filename) => _fromCommandMemoizer.Call(FromCommandCore, filename);
 
-            return new SearchItem
+        public static SI FromCommandCore(string command)
+        {
+            var t = File.Exists(command) ? ST.File :
+                Directory.Exists(command) ? ST.Directory :
+                ST.Command;
+
+            return new SI
             {
                 Name = command,
-                ItemPath = t != SearchItemType.Command ? command : null,
+                ItemPath = t != ST.Command ? command : null,
                 Type = t,
-                Usage = UsageDatabase.Instance.GetRecord(t, command),
+                Usage = Instance.GetRecord(t, command),
             };
-        }
-
-        public string GetCommand()
-        {
-            switch (Type)
-            {
-                case SearchItemType.File:
-                case SearchItemType.StartMenu:
-                case SearchItemType.Directory:
-                    return ItemPath;
-
-                default:
-                    return Name;
-            }
         }
     }
 }

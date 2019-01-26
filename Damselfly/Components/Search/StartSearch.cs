@@ -37,7 +37,9 @@ namespace Damselfly.Components.Search
             StartMenuItems
                 .Concat(Commands)
                 .Concat(SystemFiles)
-                .Concat(SpecialFolders);
+                .Concat(SpecialFolders)
+                .OrderByDescending(x => x.Usage.HitCount)
+                .ThenBy(x => x.Name);
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
@@ -51,8 +53,7 @@ namespace Damselfly.Components.Search
                 //.Distinct(x => x.Name)
                 .OrderByDescending(x => x.Usage.HitCount)
                 .ThenBy(x => x.Name)
-                .Take(200)
-                .ToArray();
+                .Take(200);
 
         public void SearchAsync(string query, Action<IEnumerable<SearchItem>> callback) =>
             ThreadPool.QueueUserWorkItem(x => callback(Search(query)));

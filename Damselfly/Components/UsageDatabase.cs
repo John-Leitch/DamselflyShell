@@ -35,19 +35,9 @@ namespace Damselfly.Components
                 x => x.Key.ToString(),
                 x => x.Value
                     .Where(y => y.Value.HitCount > 0)
+                    .OrderByDescending(y => y.Value.HitCount)
+                    .ThenBy(y => y.Key)
                     .ToDictionary(y => y.Key, y => y.Value));
-
-        private static UsageDatabase FromSerializable(Dictionary<string, Dictionary<string, UsageRecord>> table)
-        {
-            var db = new UsageDatabase();
-
-            foreach (var k in table)
-            {
-                db.Add((SearchItemType)Enum.Parse(typeof(SearchItemType), k.Key), k.Value);
-            }
-
-            return db;
-        }
 
         public void Save() => JsonSerializer.SerializeToFile(_usageFile, ToSerializable());
 
@@ -64,7 +54,24 @@ namespace Damselfly.Components
             return new UsageDatabase();
         }
 
-        public UsageRecord GetRecord(SearchItemType type, string name) =>
-            this.GetOrAdd(type).GetOrAdd(name);
+        public UsageRecord GetRecord(SearchItemType type, string name)
+        {
+            lock (_sync)
+            {
+                return this.GetOrAdd(type).GetOrAdd(name);
+            }
+        }
+
+        private static UsageDatabase FromSerializable(Dictionary<string, Dictionary<string, UsageRecord>> table)
+        {
+            var db = new UsageDatabase();
+
+            foreach (var k in table)
+            {
+                db.Add((SearchItemType)Enum.Parse(typeof(SearchItemType), k.Key), k.Value);
+            }
+
+            return db;
+        }
     }
 }

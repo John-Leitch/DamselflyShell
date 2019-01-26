@@ -1,13 +1,24 @@
 ﻿using System.Diagnostics;
+using System.Threading;
 
 namespace Damselfly.Components
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class UsageRecord
     {
-        public int HitCount { get; set; }
+        private int _hitCount = 0;
+
+        public int HitCount { get => _hitCount; set => _hitCount = value; }
+
+        public UsageRecord()
+        {
+        }
+
+        public UsageRecord(int hitCount) => _hitCount = hitCount;        
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
+
+        public void IncrementHitCount() => Interlocked.Increment(ref _hitCount);
     }
 }

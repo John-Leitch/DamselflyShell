@@ -90,9 +90,9 @@
     <Compile Include="Components\DamselflyErrorReporter.cs" />
     <Compile Include="Components\External\IRepository.cs" />
     <Compile Include="Components\External\JsonRepository`1.cs" />
-      <Compile Include="Components\KeyboardAutomation.cs">
+    <Compile Include="Components\KeyboardAutomation.cs">
       <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime> 
+      <DesignTime>True</DesignTime>
       <DependentUpon>KeyboardAutomation.alx</DependentUpon>
     </Compile>
     <Compile Include="Components\External\PathSanitizer.cs" />
@@ -113,6 +113,7 @@
     <Compile Include="Components\Search\Handlers\EmptySearchHandler.cs" />
     <Compile Include="Components\Search\Handlers\FileSystemSearchHandler.cs" />
     <Compile Include="Components\Search\Handlers\StandardSearchHandler.cs" />
+    <Compile Include="Components\Search\SearchItem - Copy.cs" />
     <Compile Include="Components\Search\SearchSource.cs" />
     <Compile Include="Components\Search\Handlers\SearchHandler.cs" />
     <Compile Include="Components\Search\SearchItem.cs" />
@@ -177,7 +178,7 @@
     <None Include="Components\KeyboardAutomation.alx">
       <Generator>AphidCodeDomGenerator</Generator>
       <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
-      <LastGenOutput>KeyboardAutomation.cs</LastGenOutput> 
+      <LastGenOutput>KeyboardAutomation.cs</LastGenOutput>
     </None>
     <None Include="Components\MscHelper.alx">
       <CustomToolNamespace>Damselfly.Components</CustomToolNamespace>
