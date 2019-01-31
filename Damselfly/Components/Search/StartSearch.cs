@@ -34,12 +34,26 @@ namespace Damselfly.Components.Search
         public List<SearchItem> SpecialFolders => _specialFolderSource.GetItems();
 
         public IEnumerable<SearchItem> AllItems =>
-            StartMenuItems
-                .Concat(Commands)
-                .Concat(SystemFiles)
-                .Concat(SpecialFolders)
+            new Func<List<SearchItem>>[]
+            {
+                () => StartMenuItems,
+                () => Commands,
+                () => SystemFiles,
+                () => SpecialFolders,
+            }
+                .ForceUnbufferedPerProcessorParallelism()
+                .SelectMany(x => x())
                 .OrderByDescending(x => x.Usage.HitCount)
                 .ThenBy(x => x.Name);
+                //.AsSequential();
+
+            //StartMenuItems
+            //    .ForceUnbufferedPerProcessorParallelism()
+            //    .Concat(Commands.AsParallel())
+            //    .Concat(SystemFiles.AsParallel())
+            //    .Concat(SpecialFolders.AsParallel())
+            //    .OrderByDescending(x => x.Usage.HitCount)
+            //    .ThenBy(x => x.Name);
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();

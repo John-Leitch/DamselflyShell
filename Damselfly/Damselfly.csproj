@@ -113,7 +113,6 @@
     <Compile Include="Components\Search\Handlers\EmptySearchHandler.cs" />
     <Compile Include="Components\Search\Handlers\FileSystemSearchHandler.cs" />
     <Compile Include="Components\Search\Handlers\StandardSearchHandler.cs" />
-    <Compile Include="Components\Search\SearchItem - Copy.cs" />
     <Compile Include="Components\Search\SearchSource.cs" />
     <Compile Include="Components\Search\Handlers\SearchHandler.cs" />
     <Compile Include="Components\Search\SearchItem.cs" />
@@ -220,11 +219,6 @@
     <Analyzer Include="..\packages\ErrorProne.NET.Structs.0.1.2\analyzers\dotnet\cs\RuntimeContracts.dll" />
     <Analyzer Include="..\packages\Roslynator.Analyzers.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\Roslynator.Analyzers.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Roslynator.CodeFixes.2.0.0\analyzers\dotnet\cs\Roslynator.Common.dll" />
-    <Analyzer Include="..\packages\Roslynator.CodeFixes.2.0.0\analyzers\dotnet\cs\Roslynator.Common.Workspaces.dll" />
-    <Analyzer Include="..\packages\Roslynator.CodeFixes.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.CodeFixes.dll" />
-    <Analyzer Include="..\packages\Roslynator.CodeFixes.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.dll" />
-    <Analyzer Include="..\packages\Roslynator.CodeFixes.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.Workspaces.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

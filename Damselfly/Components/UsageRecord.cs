@@ -6,7 +6,7 @@ namespace Damselfly.Components
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class UsageRecord
     {
-        private int _hitCount = 0;
+        private int _hitCount;
 
         public int HitCount { get => _hitCount; set => _hitCount = value; }
 

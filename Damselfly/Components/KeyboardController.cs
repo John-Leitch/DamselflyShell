@@ -127,9 +127,7 @@ namespace Damselfly.Components
                                 viewModel.Window.Hide();
 
                                 ThreadPool.QueueUserWorkItem(x =>
-                                {
-                                    LaunchChildSystemItem(viewModel, controlShift, command, match);
-                                });
+                                    LaunchChildSystemItem(viewModel, controlShift, command, match));
 
                                 break;
                             }

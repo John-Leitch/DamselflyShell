@@ -1,4 +1,5 @@
-﻿using Components.IO;
+﻿using Components;
+using Components.IO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -50,6 +51,13 @@ namespace Damselfly.Components.Search.Handlers
                     }
                 } :
                 new[] { new[] { query, null } };
+
+            return potentialPathQueries
+                .ForceUnbufferedPerProcessorParallelism(1)
+                .FirstOrDefault(x =>
+                    (x[0][x[0].Length - 1] == DirectorySeparatorChar && Directory.Exists(x[0])) ||
+                    IsHost(x[0]))
+                .Then(x => x != null ? SearchFileSystem(x[0], x[1]) : Array.Empty<SearchItem>());
 
             var m = new List<SearchItem>();
 

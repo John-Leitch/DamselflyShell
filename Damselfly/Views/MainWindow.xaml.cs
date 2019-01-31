@@ -128,10 +128,8 @@ namespace Damselfly
 
                         return new IntPtr(1);
                     }
-                    else
-                    {
-                        return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
-                    }
+
+                    return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
                 }
                 else
                 {

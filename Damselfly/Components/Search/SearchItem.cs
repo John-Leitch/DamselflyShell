@@ -15,6 +15,7 @@ using static Damselfly.Components.UsageDatabase;
 namespace Damselfly.Components.Search
 {
     using SearchMemoizer = ArgLockingMemoizer<string, SI>;
+    using StringMemoizer = ArgLockingMemoizer<string, string>;
 
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class SearchItem
@@ -27,10 +28,17 @@ namespace Damselfly.Components.Search
                 new SelectorComparer<(string, string, ST), (string, string)>(x => (x.Item1, x.Item2)));
 
         private static readonly SearchMemoizer
-            _fromFileMemoizer = new SearchMemoizer(),
-            _fromDirectoryMemoizer = new SearchMemoizer(),
-            _fromShortcutMemoizer = new SearchMemoizer(),
-            _fromCommandMemoizer = new SearchMemoizer();
+            _fromFileMemoizer = new SearchMemoizer(StringComparer.OrdinalIgnoreCase),
+            _fromDirectoryMemoizer = new SearchMemoizer(StringComparer.OrdinalIgnoreCase),
+            _fromShortcutMemoizer = new SearchMemoizer(StringComparer.OrdinalIgnoreCase),
+            _fromCommandMemoizer = new SearchMemoizer(StringComparer.OrdinalIgnoreCase);
+
+        private static readonly StringMemoizer _tryGetDescriptionMemoizer =
+            new StringMemoizer(StringComparer.OrdinalIgnoreCase);
+        
+        private static readonly ArgLockingMemoizer<string, bool>
+            _fileExistsMemoizer = new ArgLockingMemoizer<string, bool>(StringComparer.OrdinalIgnoreCase),
+            _directoryExistsMemoizer = new ArgLockingMemoizer<string, bool>(StringComparer.OrdinalIgnoreCase);
 
         private readonly Lazy<Img> _source;
 
@@ -46,6 +54,132 @@ namespace Damselfly.Components.Search
 
         public SearchItem() => _source = new Lazy<Img>(() => GetIconImageSource((ItemPath, Name, Type)));
 
+        public static Img GetIconImageSource((string, string, ST) tuple2)
+        {
+            Img GetIconImageSourceCore((string, string, ST) tupleInner)
+            {
+                var (itemPath, name, type) = tupleInner;
+
+                if (itemPath != null)
+                {
+                    var p = itemPath.TrimEnd('\\');
+                    int count;
+
+                    if (p.StartsWith("\\\\") && ((count = p.Count(x => x == '\\')) == 2 || count == 3))
+                    {
+                        return GetSource(GetHandle(".\\"));
+                    }
+                }
+
+                IntPtr h;
+
+                if (type != ST.Command ||
+                    (itemPath != null && FileExists(itemPath)))
+                {
+                    h = GetHandle(itemPath);
+                }
+                else
+                {
+                    try
+                    {
+                        var tokens = ArgLexer.Tokenize(WindowsPath.PrepareFilename(name));
+
+                        h = tokens.Length > 0 ?
+                            GetHandle(tokens[0]) :
+                            SystemIcons.Application.Handle;
+                    }
+                    catch (Exception e)
+                    {
+                        Trace.TraceError(e.ToString());
+                        h = SystemIcons.Application.Handle;
+                    }
+                }
+
+                return GetSource(h);
+            }
+
+            return _imageSourceMemoizer.Call(GetIconImageSourceCore, (tuple2.Item1, tuple2.Item2, tuple2.Item3));
+        }
+
+        public static string TryGetDescription(string filename)
+        {
+            string TryGetDescriptionCore(string filenameInner)
+            {
+                var ver = FileVersionInfo.GetVersionInfo(filenameInner);
+
+                if (ver == null || string.IsNullOrWhiteSpace(ver.FileDescription))
+                {
+                    return null;
+                }
+
+                return ver.FileDescription;
+            }
+
+            return _tryGetDescriptionMemoizer.Call(TryGetDescriptionCore, filename);
+        }
+
+        public static SI FromFile(string filenameInner)
+        {
+            SI FromFileCore(string filename) => new SI
+            {
+                Name = string.Equals(Path.GetExtension(filename), ".msc", StringComparison.OrdinalIgnoreCase) ?
+                MscHelper.GetName(filename) :
+                TryGetDescription(filename) ?? filename,
+
+                ItemPath = filename,
+                Type = ST.File,
+                Usage = Instance.GetRecord(ST.File, filename),
+            };
+
+            return _fromFileMemoizer.Call(FromFileCore, filenameInner);
+        }
+
+        public static SI FromDirectory(string filenameInner)
+        {
+            SI FromDirectoryCore(string path) => new SI
+            {
+                Name = Path.GetFileName(path),
+                ItemPath = path,
+                Type = ST.Directory,
+                Usage = Instance.GetRecord(ST.Directory, path),
+            };
+
+            return _fromDirectoryMemoizer.Call(FromDirectoryCore, filenameInner);
+        }
+
+        public static SI FromShortcut(string filenameInner)
+        {
+            SI FromShortcutCore(string shortcutPath) => new SI
+            {
+                Name = Path.GetFileNameWithoutExtension(shortcutPath),
+                ItemPath = shortcutPath,
+                Type = ST.StartMenu,
+                Usage = Instance.GetRecord(ST.StartMenu, shortcutPath),
+            };
+
+            return _fromShortcutMemoizer.Call(FromShortcutCore, filenameInner);
+        }
+
+        public static SI FromCommand(string filenameInner)
+        {
+            SI FromCommandCore(string commandInner)
+            {
+                var t = FileExists(commandInner) ? ST.File :
+                    DirectoryExists(commandInner) ? ST.Directory :
+                    ST.Command;
+
+                return new SI
+                {
+                    Name = commandInner,
+                    ItemPath = t != ST.Command ? commandInner : null,
+                    Type = t,
+                    Usage = Instance.GetRecord(t, commandInner),
+                };
+            }
+
+            return _fromCommandMemoizer.Call(FromCommandCore, filenameInner);
+        }
+
         public string GetCommand()
         {
             switch (Type)
@@ -60,113 +194,10 @@ namespace Damselfly.Components.Search
             }
         }
 
+        private static bool FileExists(string filename) => _fileExistsMemoizer.Call(File.Exists, filename);
+
+        private static bool DirectoryExists(string filename) => _directoryExistsMemoizer.Call(Directory.Exists, filename);
+
         public override string ToString() => $"{Type.ToString()}, {Name}, {ItemPath}";
-
-        private static Img GetIconImageSource((string, string, ST) tuple) =>
-            _imageSourceMemoizer.Call(GetIconImageSourceCore, (tuple.Item1, tuple.Item2, tuple.Item3));
-
-        private static Img GetIconImageSourceCore((string, string, ST) tuple)
-        {
-            var (itemPath, name, type) = tuple;
-
-            if (itemPath != null)
-            {
-                var p = itemPath.TrimEnd('\\');
-                int count;
-
-                if (p.StartsWith("\\\\") && ((count = p.Count(x => x == '\\')) == 2 || count == 3))
-                {
-                    return GetSource(GetHandle(".\\"));
-                }
-            }
-
-            IntPtr h;
-
-            if (type != ST.Command ||
-                (itemPath != null && File.Exists(itemPath)))
-            {
-                h = GetHandle(itemPath);
-            }
-            else
-            {
-                try
-                {
-                    var tokens = ArgLexer.Tokenize(WindowsPath.PrepareFilename(name));
-
-                    h = tokens.Length > 0 ?
-                        GetHandle(tokens[0]) :
-                        SystemIcons.Application.Handle;
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(e.ToString());
-                    h = SystemIcons.Application.Handle;
-                }
-            }
-
-            return GetSource(h);
-        }
-
-        public static SI FromFile(string filename) => _fromFileMemoizer.Call(FromFileCore, filename);
-
-        private static string TryGetDescription(string filename)
-        {
-            var ver = FileVersionInfo.GetVersionInfo(filename);
-
-            if (ver == null || string.IsNullOrWhiteSpace(ver.FileDescription))
-            {
-                return null;
-            }
-
-            return ver.FileDescription;
-        }
-
-        private static SI FromFileCore(string filename) => new SI
-        {
-            Name = string.Equals(Path.GetExtension(filename), ".msc", StringComparison.OrdinalIgnoreCase) ?
-                MscHelper.GetName(filename) :
-                TryGetDescription(filename) ?? filename,
-
-            ItemPath = filename,
-            Type = ST.File,
-            Usage = Instance.GetRecord(ST.File, filename),
-        };
-
-        public static SI FromDirectory(string filename) => _fromDirectoryMemoizer.Call(FromDirectoryCore, filename);
-
-        public static SI FromDirectoryCore(string path) => new SI
-        {
-            Name = Path.GetFileName(path),
-            ItemPath = path,
-            Type = ST.Directory,
-            Usage = Instance.GetRecord(ST.Directory, path),
-        };
-
-        public static SI FromShortcut(string filename) => _fromShortcutMemoizer.Call(FromShortcutCore, filename);
-
-        public static SI FromShortcutCore(string shortcutPath) => new SI
-        {
-            Name = Path.GetFileNameWithoutExtension(shortcutPath),
-            ItemPath = shortcutPath,
-            Type = ST.StartMenu,
-            Usage = Instance.GetRecord(ST.StartMenu, shortcutPath),
-        };
-
-        public static SI FromCommand(string filename) => _fromCommandMemoizer.Call(FromCommandCore, filename);
-
-        public static SI FromCommandCore(string command)
-        {
-            var t = File.Exists(command) ? ST.File :
-                Directory.Exists(command) ? ST.Directory :
-                ST.Command;
-
-            return new SI
-            {
-                Name = command,
-                ItemPath = t != ST.Command ? command : null,
-                Type = t,
-                Usage = Instance.GetRecord(t, command),
-            };
-        }
     }
 }

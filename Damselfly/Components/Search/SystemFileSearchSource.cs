@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Components;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -31,7 +32,9 @@ namespace Damselfly.Components.Search
 
         protected override List<SearchItem> LoadItems() =>
             _directories
-                .SelectMany(x => _extensions.SelectMany(y => GetDirectoryFiles(x, y)))
+                .ForceUnbufferedPerProcessorParallelism()
+                .Zip(_extensions.AsParallel(), (x, y) =>  new { Directory = x, Extension = y })
+                .SelectMany(x => GetDirectoryFiles(x.Directory, x.Extension))                
                 .SelectMany(x => new[]
                 {
                     SearchItem.FromFile(x),

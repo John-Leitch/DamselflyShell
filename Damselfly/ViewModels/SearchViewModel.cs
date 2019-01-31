@@ -14,6 +14,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using static System.Console;
+using static Components.PInvoke.User32;
+using static Components.PInvoke.Win32;
 
 namespace Damselfly.ViewModels
 {
@@ -259,37 +262,36 @@ namespace Damselfly.ViewModels
                     throw new InvalidOperationException();
                 }
 
-                var foreThread = User32.GetWindowThreadProcessId(User32.GetForegroundWindow(), IntPtr.Zero);
+                var foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
                 var appThread = Kernel32.GetCurrentThreadId();
-                const uint SW_SHOW = 5;
-
+                
                 if (foreThread != appThread)
                 {
-                    Console.WriteLine("Using AttachThreadInput()");
-                    User32.AttachThreadInput(foreThread, appThread, true);
-                    User32.BringWindowToTop(h);
-                    User32.ShowWindow(h, SW_SHOW);
-                    User32.AttachThreadInput(foreThread, appThread, false);
+                    WriteLine("Using AttachThreadInput()");
+                    ThrowLastErrorIf(!AttachThreadInput(foreThread, appThread, true));
+                    ThrowLastErrorIf(!BringWindowToTop(h));
+                    ShowWindow(h, ShowWindowCommands.SW_SHOW);
+                    ThrowLastErrorIf(!AttachThreadInput(foreThread, appThread, false));
                 }
                 else
                 {
-                    User32.BringWindowToTop(h);
-                    User32.ShowWindow(h, SW_SHOW);
+                    ThrowLastErrorIf(!BringWindowToTop(h));
+                    ShowWindow(h, ShowWindowCommands.SW_SHOW);
                 }
 
-                if (!User32.SetForegroundWindow(h))
+                if (!SetForegroundWindow(h))
                 {
-                    Console.WriteLine("SetForegroundWindow() failed");
+                    WriteLine("SetForegroundWindow() failed");
                 }
 
-                if (User32.SetActiveWindow(h) == IntPtr.Zero)
+                if (SetActiveWindow(h) == IntPtr.Zero)
                 {
-                    Console.WriteLine("SetActiveWindow() failed");
+                    WriteLine("SetActiveWindow() failed");
                 }
 
-                if (User32.SetFocus(h) == IntPtr.Zero)
+                if (SetFocus(h) == IntPtr.Zero)
                 {
-                    Console.WriteLine("SetFocus() failed");
+                    WriteLine("SetFocus() failed");
                 }
 
                 Window.Focus();
@@ -313,7 +315,7 @@ namespace Damselfly.ViewModels
             var itemWidth = _queryScrollViewer.ExtentWidth + _widthDelta + padding;
             var width = Math.Min(Math.Max(_minWidth, itemWidth), _maxWidth);
 
-            //Console.WriteLine(JsonSerializer.Serialize(new
+            //WriteLine(JsonSerializer.Serialize(new
             //{
             //    Frame = new StackTrace().GetFrame(1).ToString(),
             //    _queryScrollViewer.ActualWidth,
