@@ -268,10 +268,14 @@ namespace Damselfly.ViewModels
                 if (foreThread != appThread)
                 {
                     WriteLine("Using AttachThreadInput()");
-                    ThrowLastErrorIf(!AttachThreadInput(foreThread, appThread, true));
-                    ThrowLastErrorIf(!BringWindowToTop(h));
+                    var attached = AttachThreadInput(foreThread, appThread, true);
+                    BringWindowToTop(h);
                     ShowWindow(h, ShowWindowCommands.SW_SHOW);
-                    ThrowLastErrorIf(!AttachThreadInput(foreThread, appThread, false));
+
+                    if (attached)
+                    {
+                        AttachThreadInput(foreThread, appThread, false);
+                    }
                 }
                 else
                 {

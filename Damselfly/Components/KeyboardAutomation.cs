@@ -38,6 +38,11 @@ namespace Damselfly.Components
             {
                 new LoadScriptExpression(
                     new StringExpression(
+                        "'Core/Operators'"
+                    )
+                ),
+                new LoadScriptExpression(
+                    new StringExpression(
                         "'Automation/Keyboard'"
                     )
                 ),

@@ -42,7 +42,10 @@ namespace Damselfly.Components
                     if (controlShift)
                     {
                         ExecQueryType(viewModel, viewModel.Query);
-
+                    }
+                    else
+                    {
+                        viewModel.QueryTextBox.Focus();
                     }
                     break;
                 }
