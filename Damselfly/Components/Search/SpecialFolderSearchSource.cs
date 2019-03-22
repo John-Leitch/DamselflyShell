@@ -28,7 +28,7 @@ namespace Damselfly.Components.Search
                 Environment.SpecialFolder.PrinterShortcuts,
                 Environment.SpecialFolder.Programs,
                 Environment.SpecialFolder.StartMenu,
-                Environment.SpecialFolder.Startup,
+                Environment.SpecialFolder.Startup
             };
 
             var downloads = Path.Combine(

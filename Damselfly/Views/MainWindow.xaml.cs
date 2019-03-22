@@ -15,7 +15,7 @@ namespace Damselfly
     {
         public WindowsHookCallback _hookProc;
 
-        private bool _isCtrlDown, _isWinDown, _isWinUnmodified;
+        private bool _isCtrlDown, _isWinDown, _isRightWin, _isWinUnmodified;
 
         private IntPtr _hookId;
 
@@ -32,8 +32,6 @@ namespace Damselfly
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
-
-        protected override void OnSourceInitialized(EventArgs e) => base.OnSourceInitialized(e);
 
         private void ShowSearchWindow()
         {
@@ -102,44 +100,15 @@ namespace Damselfly
 
                 return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
             }
-            else if (keyPressed == Key.LWin || keyPressed == Key.RWin)
+            else if (keyPressed == Key.LWin)
             {
-                var i = wParam.ToInt32();
-
-                if (!_isWinDown)
-                {
-                    if ((i & User32.WM_KEYDOWN) == User32.WM_KEYDOWN)
-                    {
-                        _isWinUnmodified = true;
-                        _isWinDown = true;
-                    }
-
-                    return new IntPtr(1);
-                }
-
-                if ((i & User32.WM_KEYUP) == User32.WM_KEYUP)
-                {
-                    _isWinDown = false;
-
-                    if (_isWinUnmodified)
-                    {
-                        ToggleSearchWindow();
-                        //Dispatcher.Invoke(() => ToggleSearchWindow());
-
-                        return new IntPtr(1);
-                    }
-
-                    return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
-                }
-                else
-                {
-                    return new IntPtr(1);
-                }
+                return HandleWinKey(code, wParam, ref lParam, isRightWin: false);
             }
-            else if (_isCtrlDown &&
-                _isWinDown &&
-                isUp() &&
-                Key.D0 <= keyPressed && keyPressed <= Key.D9)
+            else if (keyPressed == Key.RWin)
+            {
+                return HandleWinKey(code, wParam, ref lParam, isRightWin: true);
+            }
+            else if (_isCtrlDown && _isWinDown && isUp() && Key.D0 <= keyPressed && keyPressed <= Key.D9)
             {
                 _searchWindow.SearchViewModel.HandleGlobalHotkey(keyPressed);
 
@@ -147,22 +116,70 @@ namespace Damselfly
             }
             else if (_isWinDown)
             {
-                KeyboardController.SendKeyDown(Key.LWin);
-                _isWinUnmodified = false;
-
-                if (keyPressed == Key.L)
-                {
-                    _isWinDown = false;
-                }
+                SendWinKey(keyPressed);
             }
 
             return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
         }
-
-        void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            Visibility = System.Windows.Visibility.Hidden;
             
+        private void SendWinKey(Key keyPressed)
+        {
+            if (!_isRightWin)
+            {
+                KeyboardController.SendKeyDown(Key.LWin);
+            }
+            else
+            {
+                KeyboardController.SendKeyDown(Key.RWin);
+            }
+            
+            _isWinUnmodified = false;
+
+            if (keyPressed == Key.L)
+            {
+                _isWinDown = false;
+            }
+        }
+
+        private IntPtr HandleWinKey(int code, IntPtr wParam, ref KeyboardHook lParam, bool isRightWin)
+        {
+            var i = wParam.ToInt32();
+
+            if (!_isWinDown)
+            {
+                if ((i & User32.WM_KEYDOWN) == User32.WM_KEYDOWN)
+                {
+                    _isWinUnmodified = true;
+                    _isWinDown = true;
+                    _isRightWin = isRightWin;
+                }
+
+                return new IntPtr(1);
+            }
+            else if ((i & User32.WM_KEYUP) == User32.WM_KEYUP)
+            {
+                _isWinDown = false;
+
+                if (_isWinUnmodified)
+                {
+                    ToggleSearchWindow();
+                    //Dispatcher.Invoke(() => ToggleSearchWindow());
+
+                    return new IntPtr(1);
+                }
+
+                return User32.CallNextHookEx(_hookId, code, wParam, ref lParam);
+            }
+            else
+            {
+                return new IntPtr(1);
+            }
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Visibility = Visibility.Hidden;
+
             if (!_hasLoaded)
             {
                 Scripts.Init();

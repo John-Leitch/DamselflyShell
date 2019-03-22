@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Damselfly.Components.Search
 {
@@ -15,7 +13,7 @@ namespace Damselfly.Components.Search
         private readonly string[] _directories = new[]
         {
             @"%SystemRoot%",
-            @"%SystemRoot%\system32",
+            @"%SystemRoot%\system32"
         };
 
         private readonly string[] _extensions = new[]
@@ -24,7 +22,7 @@ namespace Damselfly.Components.Search
             "msc",
             "exe",
             "cmd",
-            "bat",
+            "bat"
         };
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -33,7 +31,7 @@ namespace Damselfly.Components.Search
         protected override List<SearchItem> LoadItems() =>
             _directories
                 .ForceUnbufferedPerProcessorParallelism()
-                .Zip(_extensions.AsParallel(), (x, y) =>  new { Directory = x, Extension = y })
+                .SelectMany(x => _extensions.Select(y => new { Directory = x, Extension = y }))
                 .SelectMany(x => GetDirectoryFiles(x.Directory, x.Extension))                
                 .SelectMany(x => new[]
                 {

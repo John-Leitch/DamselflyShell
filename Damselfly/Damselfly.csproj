@@ -25,6 +25,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +37,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -46,7 +50,8 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -56,7 +61,7 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>..\..\Aphid\Components.Aphid\Analyzers.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Damselfly.ruleset</CodeAnalysisRuleSet>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
@@ -90,6 +95,7 @@
     <Compile Include="Components\DamselflyErrorReporter.cs" />
     <Compile Include="Components\External\IRepository.cs" />
     <Compile Include="Components\External\JsonRepository`1.cs" />
+    <Compile Include="Components\External\WindowsExtensions.cs" />
     <Compile Include="Components\KeyboardAutomation.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -171,6 +177,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="..\..\Aphid\Components.Aphid\Components.Aphid.ruleset" />
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
@@ -213,12 +220,16 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\ErrorProne.NET.0.1.5898.41180\analyzers\dotnet\cs\ErrorProne.NET.dll" />
+    <Analyzer Include="..\packages\ErrorProne.NET.CoreAnalyzers.0.1.2\analyzers\dotnet\cs\ErrorProne.NET.Core.dll" />
     <Analyzer Include="..\packages\ErrorProne.NET.CoreAnalyzers.0.1.2\analyzers\dotnet\cs\ErrorProne.Net.CoreAnalyzers.dll" />
-    <Analyzer Include="..\packages\ErrorProne.NET.Structs.0.1.2\analyzers\dotnet\cs\ErrorProne.NET.Core.dll" />
+    <Analyzer Include="..\packages\ErrorProne.NET.CoreAnalyzers.0.1.2\analyzers\dotnet\cs\RuntimeContracts.dll" />
     <Analyzer Include="..\packages\ErrorProne.NET.Structs.0.1.2\analyzers\dotnet\cs\ErrorProne.Net.StructAnalyzers.dll" />
-    <Analyzer Include="..\packages\ErrorProne.NET.Structs.0.1.2\analyzers\dotnet\cs\RuntimeContracts.dll" />
+    <Analyzer Include="..\packages\Roslynator.Analyzers.2.0.0\analyzers\dotnet\cs\Roslynator.Common.dll" />
+    <Analyzer Include="..\packages\Roslynator.Analyzers.2.0.0\analyzers\dotnet\cs\Roslynator.Common.Workspaces.dll" />
     <Analyzer Include="..\packages\Roslynator.Analyzers.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\Roslynator.Analyzers.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Roslynator.Analyzers.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.dll" />
+    <Analyzer Include="..\packages\Roslynator.Analyzers.2.0.0\analyzers\dotnet\cs\Roslynator.CSharp.Workspaces.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

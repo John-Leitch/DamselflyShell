@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Damselfly.Components.Search
 {
@@ -14,14 +12,14 @@ namespace Damselfly.Components.Search
         private readonly string[] _directories = new[]
         {
             Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu)
         };
 
         private readonly string[] _extensions = new[]
         {
             "lnk",
             "url",
-            "appref-ms",
+            "appref-ms"
         };
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]

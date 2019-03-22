@@ -2,9 +2,9 @@
 {
     public enum SearchItemType
     {
-        StartMenu,
-        Directory,
-        File,
-        Command,
+        StartMenu = 0,
+        Directory = 1,
+        File = 2,
+        Command = 3
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Components;
-using Components.Json;
 using Components.PInvoke;
 using Damselfly.Components;
 using Damselfly.Components.Input;
@@ -17,6 +16,7 @@ using System.Windows.Interop;
 using static System.Console;
 using static Components.PInvoke.User32;
 using static Components.PInvoke.Win32;
+using System.Windows.Threading;
 
 namespace Damselfly.ViewModels
 {
@@ -61,13 +61,13 @@ namespace Damselfly.ViewModels
             set => SetProperty(ref _queryError, value);
         }
 
-        public SearchWindow Window { get; private set; }
+        public SearchWindow Window { get; }
 
-        public TextBox QueryTextBox { get; private set; }
+        public TextBox QueryTextBox { get; }
 
-        public StartSearch Search { get; private set; }
+        public StartSearch Search { get; }
 
-        public ObservableCollection<SearchItem> Matches { get; private set; }
+        public ObservableCollection<SearchItem> Matches { get; }
 
         public bool IsHandled { get; set; }
 
@@ -92,7 +92,7 @@ namespace Damselfly.ViewModels
             _widthDelta = window.ActualWidth - _queryScrollViewer.ActualWidth;
         }
 
-        void QueryScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) => UpdateWindowSize();
+        private void QueryScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) => UpdateWindowSize();
 
         public void Init()
         {
@@ -100,6 +100,8 @@ namespace Damselfly.ViewModels
             SelectedMatch = Matches.FirstOrDefault();
             JsonRepository.LoadOrCreate(out _globalBindings);
         }
+
+          
 
         private void QueryChanged()
         {
@@ -109,7 +111,7 @@ namespace Damselfly.ViewModels
             {
                 Search.SearchAsync(Query, x =>
                 {
-                    Window.Dispatcher.Invoke(() =>
+                    Window.Freeze(() =>
                     {
                         Matches.Clear();
 
@@ -138,8 +140,7 @@ namespace Damselfly.ViewModels
                     SelectedMatch = Matches.First();
                 }
                 else
-                {
-                    return;
+                {                    return;
                 }
             }
             else
@@ -264,7 +265,7 @@ namespace Damselfly.ViewModels
 
                 var foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
                 var appThread = Kernel32.GetCurrentThreadId();
-                
+
                 if (foreThread != appThread)
                 {
                     WriteLine("Using AttachThreadInput()");

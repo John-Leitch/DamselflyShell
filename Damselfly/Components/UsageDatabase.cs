@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace Damselfly.Components
 {
+    [Serializable]
     public class UsageDatabase : Dictionary<SearchItemType, Dictionary<string, UsageRecord>>
     {
         private static readonly object _sync = new object();

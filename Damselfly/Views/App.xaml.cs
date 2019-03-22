@@ -15,12 +15,7 @@ namespace Damselfly
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
 
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-            //MessageBox.Show(string.Format("{0:x8}", RenderCapability.Tier));
-            //RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-        }
+        protected override void OnStartup(StartupEventArgs e) => base.OnStartup(e);//MessageBox.Show(string.Format("{0:x8}", RenderCapability.Tier));//RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {

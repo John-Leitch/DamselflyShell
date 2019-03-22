@@ -1,8 +1,6 @@
-﻿using Components.Json;
-using Damselfly.Components.Search.Handlers;
+﻿using Damselfly.Components.Search.Handlers;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using Components;
@@ -19,7 +17,7 @@ namespace Damselfly.Components.Search
         {
             new EmptySearchHandler(),
             new FileSystemSearchHandler(),
-            new StandardSearchHandler(),
+            new StandardSearchHandler()
         };
 
         private readonly SearchSource
@@ -39,7 +37,7 @@ namespace Damselfly.Components.Search
                 () => StartMenuItems,
                 () => Commands,
                 () => SystemFiles,
-                () => SpecialFolders,
+                () => SpecialFolders
             }
                 .ForceUnbufferedPerProcessorParallelism()
                 .SelectMany(x => x())

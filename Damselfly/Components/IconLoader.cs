@@ -1,5 +1,4 @@
 ﻿using Components;
-using Components.External;
 using Components.PInvoke;
 using System;
 using System.Diagnostics;
@@ -43,32 +42,25 @@ namespace Damselfly.Components
 
             try
             {
-                
-                handle = Icon.ExtractAssociatedIcon(fullPath).Handle;
+
+                return Icon.ExtractAssociatedIcon(fullPath).Handle;
             }
             catch (Exception e)
             {
                 Trace.TraceError($"Error extracting associated icon:\r\n{e}\r\n");
                 var shinfo = new SHFILEINFO();
 
-                var result = Shell32.SHGetFileInfo(
-                    fullPath, 
-                    0, 
-                    ref shinfo, 
+#pragma warning disable ERP022 // Catching everything considered harmful.
+                return Shell32.SHGetFileInfo(
+                    fullPath,
+                    0,
+                    ref shinfo,
                     (uint)Marshal.SizeOf(shinfo),
-                    Shell32.SHGFI_ICON | Shell32.SHGFI_SMALLICON);
-
-                if (result != IntPtr.Zero)
-                {
-                    handle = shinfo.hIcon;
-                }
-                else
-                {
-                    handle = SystemIcons.Application.Handle;
-                }
+                    Shell32.SHGFI_ICON | Shell32.SHGFI_SMALLICON) != IntPtr.Zero ?
+                        shinfo.hIcon :
+                        SystemIcons.Application.Handle;
+#pragma warning restore ERP022 // Catching everything considered harmful.
             }
-
-            return handle;
         }
     }
 }

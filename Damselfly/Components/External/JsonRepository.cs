@@ -1,13 +1,4 @@
-﻿using Components.External;
-using Components.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Components
+﻿namespace Components
 {
     public static class JsonRepository
     {

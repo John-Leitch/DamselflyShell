@@ -1,12 +1,5 @@
-﻿using Components.External;
-using Components.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Components.Json.JsonSerializer;
 
 namespace Components
@@ -24,12 +17,7 @@ namespace Components
 
         public TEntities Load()
         {
-            if (!ScriptFileExists())
-            {
-                return default(TEntities);
-            }
-
-            return DeserializeFile<TEntities>(ScriptFile);
+            return !ScriptFileExists() ? default(TEntities) : DeserializeFile<TEntities>(ScriptFile);
         }
 
         public void Save(TEntities entities) => SerializeToFile(ScriptFile, entities);

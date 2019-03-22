@@ -5,8 +5,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Media.Imaging;
 
 namespace TestApp
@@ -36,9 +34,9 @@ namespace TestApp
         }
     }
 
-    class Program
+    internal class Program
     {
-        static void IconTest(string path)
+        private static void IconTest(string path)
         {
             var png = PathHelper.GetExecutingPath(
                 path
@@ -59,7 +57,7 @@ namespace TestApp
             var p = Process.Start(png);
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var shares = NetworkShares.GetShares("Node2");
 
@@ -87,7 +85,7 @@ namespace TestApp
             IconTest(@"c:\windows\system32\cmd.exe");
             IconTest(@"c:\users\john\Documents");
             IconTest(@"C:\Users\John\Downloads");
-            
+
             var mscName = MscHelper.GetName(@"c:\windows\system32\services.msc");
 
 

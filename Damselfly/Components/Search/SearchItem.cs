@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Media;
 using ST = Damselfly.Components.Search.SearchItemType;
 using SI = Damselfly.Components.Search.SearchItem;
 using Img = System.Windows.Media.ImageSource;
@@ -35,7 +34,7 @@ namespace Damselfly.Components.Search
 
         private static readonly StringMemoizer _tryGetDescriptionMemoizer =
             new StringMemoizer(StringComparer.OrdinalIgnoreCase);
-        
+
         private static readonly ArgLockingMemoizer<string, bool>
             _fileExistsMemoizer = new ArgLockingMemoizer<string, bool>(StringComparer.OrdinalIgnoreCase),
             _directoryExistsMemoizer = new ArgLockingMemoizer<string, bool>(StringComparer.OrdinalIgnoreCase);
@@ -107,12 +106,7 @@ namespace Damselfly.Components.Search
             {
                 var ver = FileVersionInfo.GetVersionInfo(filenameInner);
 
-                if (ver == null || string.IsNullOrWhiteSpace(ver.FileDescription))
-                {
-                    return null;
-                }
-
-                return ver.FileDescription;
+                return ver == null || string.IsNullOrWhiteSpace(ver.FileDescription) ? null : ver.FileDescription;
             }
 
             return _tryGetDescriptionMemoizer.Call(TryGetDescriptionCore, filename);
@@ -128,7 +122,7 @@ namespace Damselfly.Components.Search
 
                 ItemPath = filename,
                 Type = ST.File,
-                Usage = Instance.GetRecord(ST.File, filename),
+                Usage = Instance.GetRecord(ST.File, filename)
             };
 
             return _fromFileMemoizer.Call(FromFileCore, filenameInner);
@@ -141,7 +135,7 @@ namespace Damselfly.Components.Search
                 Name = Path.GetFileName(path),
                 ItemPath = path,
                 Type = ST.Directory,
-                Usage = Instance.GetRecord(ST.Directory, path),
+                Usage = Instance.GetRecord(ST.Directory, path)
             };
 
             return _fromDirectoryMemoizer.Call(FromDirectoryCore, filenameInner);
@@ -154,7 +148,7 @@ namespace Damselfly.Components.Search
                 Name = Path.GetFileNameWithoutExtension(shortcutPath),
                 ItemPath = shortcutPath,
                 Type = ST.StartMenu,
-                Usage = Instance.GetRecord(ST.StartMenu, shortcutPath),
+                Usage = Instance.GetRecord(ST.StartMenu, shortcutPath)
             };
 
             return _fromShortcutMemoizer.Call(FromShortcutCore, filenameInner);
@@ -173,7 +167,7 @@ namespace Damselfly.Components.Search
                     Name = commandInner,
                     ItemPath = t != ST.Command ? commandInner : null,
                     Type = t,
-                    Usage = Instance.GetRecord(t, commandInner),
+                    Usage = Instance.GetRecord(t, commandInner)
                 };
             }
 

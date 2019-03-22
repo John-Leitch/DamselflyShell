@@ -16,8 +16,7 @@ namespace Damselfly.Components
         {
             var si = new STARTUPINFO { cb = Marshal.SizeOf<STARTUPINFO>() };
             var pi = new PROCESS_INFORMATION();
-            var sa = new SECURITY_ATTRIBUTES();
-            sa.nLength = Marshal.SizeOf<SECURITY_ATTRIBUTES>();
+            var sa = new SECURITY_ATTRIBUTES { nLength = Marshal.SizeOf<SECURITY_ATTRIBUTES>() };
 
             ThrowLastErrorIf(
                 !AdvApi32.CreateProcessWithTokenW(

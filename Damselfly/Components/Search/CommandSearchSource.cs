@@ -1,4 +1,5 @@
 ﻿using Components.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -20,7 +21,7 @@ namespace Damselfly.Components.Search
             File.Exists(_cmdFile) ?
                 JsonSerializer
                     .DeserializeFile<string[]>(_cmdFile)
-                    .Distinct()
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
                     .Select(SearchItem.FromCommand)
                     .ToList():
                 new List<SearchItem>();

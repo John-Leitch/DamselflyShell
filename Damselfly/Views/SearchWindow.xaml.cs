@@ -1,6 +1,4 @@
-﻿using Components.Json;
-using Damselfly.ViewModels;
-using System;
+﻿using Damselfly.ViewModels;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +25,7 @@ namespace Damselfly
             SearchItemListBox.Loaded += SearchItemListBox_Loaded;
         }
 
-        void SearchItemListBox_Loaded(object sender, RoutedEventArgs e)
+        private void SearchItemListBox_Loaded(object sender, RoutedEventArgs e)
         {
             SearchViewModel = new SearchViewModel(
                 this,

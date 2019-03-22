@@ -25,3 +25,15 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "RCS1060:Declare each type in separate file.", Justification = "<Pending>", Scope = "type", Target = "~T:Damselfly.Components.KeyboardAutomation")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "RCS1060:Declare each type in separate file.", Justification = "<Pending>", Scope = "type", Target = "~T:Damselfly.Components.MscHelper")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "RCS1060:Declare each type in separate file.", Justification = "<Pending>", Scope = "type", Target = "~T:Damselfly.Components.WindowsPath")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "RCS1016:Use expression-bodied member.", Justification = "<Pending>", Scope = "member", Target = "~P:Damselfly.Components.WindowsPath.Search")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "RCS1016:Use expression-bodied member.", Justification = "<Pending>", Scope = "member", Target = "~P:Damselfly.Components.KeyboardAutomation.Type")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "RCS1016:Use expression-bodied member.", Justification = "<Pending>", Scope = "member", Target = "~P:Damselfly.Components.MscHelper.GetName")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1102:Make class static.", Justification = "<Pending>", Scope = "type", Target = "~T:Damselfly.Components.MscHelper")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1102:Make class static.", Justification = "<Pending>", Scope = "type", Target = "~T:Damselfly.Components.KeyboardAutomation")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1102:Make class static.", Justification = "<Pending>", Scope = "type", Target = "~T:Damselfly.Components.WindowsPath")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Formatting", "RCS1024:Format accessor list.", Justification = "<Pending>", Scope = "member", Target = "~P:Damselfly.Components.KeyboardAutomation.Type")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1035:Remove redundant comma in initializer.", Justification = "<Pending>", Scope = "member", Target = "~M:Damselfly.Components.AphidCompilerResources.ByteCode_70e2acceaabf82d4e806248c43b3f611~System.Collections.Generic.List{Components.Aphid.Parser.AphidExpression}")]

@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static System.IO.Path;
 
 namespace Damselfly.Components.Search.Handlers
@@ -92,7 +90,7 @@ namespace Damselfly.Components.Search.Handlers
             {
                 new SearchStrategy(SearchItemType.Directory, Directory.GetDirectories),
                 new SearchStrategy(SearchItemType.File, Directory.GetFiles),
-                new SearchStrategy(SearchItemType.Directory, GetSharePaths),
+                new SearchStrategy(SearchItemType.Directory, GetSharePaths)
             };
 
             return fsoFuncs
@@ -108,7 +106,7 @@ namespace Damselfly.Components.Search.Handlers
                                 Name = x,
                                 ItemPath = x,
                                 Type = f.Type,
-                                Usage = _context.UsageDb.GetRecord(f.Type, x),
+                                Usage = _context.UsageDb.GetRecord(f.Type, x)
                             });
                     }
                     catch (Exception e)

@@ -257,7 +257,7 @@ namespace Damselfly.Components
             var item = new SearchItem
             {
                 Type = SearchItemType.Command,
-                Name = command,
+                Name = command
             };
 
             if (!viewModel.Search.Commands.Any(y => y.Name == item.Name))
@@ -307,9 +307,7 @@ namespace Damselfly.Components
             }
         }
 
-        public static void ShowError(string command, Exception exception)
-        {
-            MessageBox.Show(
+        public static void ShowError(string command, Exception exception) => MessageBox.Show(
                 //command != null ? 
                 //    string.Format(
                 //        "Error running command {0}:\r\n{1}",
@@ -324,6 +322,5 @@ namespace Damselfly.Components
                 "Error running command",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
-        }
     }
 }
