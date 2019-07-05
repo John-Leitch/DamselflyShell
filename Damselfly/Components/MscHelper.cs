@@ -11,7 +11,7 @@ namespace Damselfly.Components {
         public static GetNameDelegate GetName {
             get {
                 if ((MscHelper._GetName == null)) {
-                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_5023c383d9b5d9dcb77dcc15c7723332());
+                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_87a07b16f7390eff17e8c20b3bd34fdf());
                 }
                 return MscHelper._GetName;
             }
@@ -32,7 +32,7 @@ namespace Damselfly.Components
     
     public static partial class AphidCompilerResources
     {
-        public static List<AphidExpression> ByteCode_5023c383d9b5d9dcb77dcc15c7723332()
+        public static List<AphidExpression> ByteCode_87a07b16f7390eff17e8c20b3bd34fdf()
         {
             return             new List<AphidExpression>
             {

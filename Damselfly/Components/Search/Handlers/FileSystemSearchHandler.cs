@@ -1,10 +1,14 @@
 ﻿using Components;
 using Components.IO;
+using Damselfly.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 using static System.IO.Path;
 
 namespace Damselfly.Components.Search.Handlers
@@ -39,13 +43,13 @@ namespace Damselfly.Components.Search.Handlers
                 new[]
                 {
                     new [] { query, null },
-                    new [] 
-                    { 
+                    new []
+                    {
                         string.Join(
                             separator.ToString(),
                             parts.Take(parts.Length - 1)) +
-                            separator.ToString(), 
-                        parts.Last() 
+                            separator.ToString(),
+                        parts.Last()
                     }
                 } :
                 new[] { new[] { query, null } };
@@ -79,9 +83,157 @@ namespace Damselfly.Components.Search.Handlers
             return m;
         }
 
+        private SearchItem[] RecursiveSearch(string path, string query, int max, Func<string, string, IEnumerable<string>> searchFiles, Func<string, string, IEnumerable<string>> searchDirs)
+        {
+            var search = new Queue<string>();
+            search.Enqueue(path);
+            var nm = max;
+            var all = new SearchItem[0];
+            
+            DateTime lastUpdate = default;
+
+            while (search.Count > 0)
+            {
+                var curPath = search.Dequeue();
+
+                if (DateTime.Now - lastUpdate > TimeSpan.FromMilliseconds(10))
+                {
+                    Dispatcher.CurrentDispatcher.Invoke(() => SearchViewModel.Current.Status = $"{all.Length} matches, searching \"{curPath.Substring(path.Length).TrimStart('\\')}\"");
+                    lastUpdate = DateTime.Now;
+                }
+
+                Console.WriteLine("Searching {0} -> {1}", query, curPath);
+                var isDir = false;
+                var isFirst = true;
+
+                foreach (var f in new Func<(SearchItemType, string[])>[]
+                {
+                    () => (SearchItemType.File, searchFiles(curPath, query).Take(max).ToArray()),
+                    () => (SearchItemType.Directory, searchDirs(curPath, query).Take(max).ToArray()),
+                })
+                {
+                    (SearchItemType, string[]) cur = default;
+                    var success = false;
+                    try
+                    {
+                        cur = f();
+                        success = true;
+                    }
+                    catch
+                    {
+                        
+                    }
+
+                    if (!success)
+                    {
+                        continue;
+                    }
+
+                    max -= cur.Item2.Length;
+                    
+                    all = all
+                        .Concat(cur.Item2
+                            .Select(x => new SearchItem
+                            {
+                                Name = x,
+                                ItemPath = x,
+                                Type = cur.Item1,
+                                Usage = _context.UsageDb.GetRecord(cur.Item1, x)
+                            }))
+                        .ToArray();
+
+                    if (max == 0)
+                    {
+                        return all;
+                    }
+
+                    if (isDir)
+                    {
+                        try
+                        {
+                            foreach (var p in Directory.EnumerateDirectories(curPath))
+                            {
+                                search.Enqueue(p);
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+
+                    isDir = true;
+                }
+            }
+
+            return all;
+        }
+
         private IEnumerable<SearchItem> SearchFileSystem(string path, string query)
         {
             path = CleanPath(path);
+
+            if (query != null && (query.Contains("*") || (query.StartsWith(":") && query.Length > 1)))
+            {
+                try
+                {
+                    if (!Directory.Exists(path))
+                    {
+                        return Array.Empty<SearchItem>();
+                    }
+
+                    if (query.StartsWith("*"))
+                    {
+                        return RecursiveSearch(
+                            path,
+                            query,
+                            20,
+                            Directory.EnumerateFiles,
+                            Directory.EnumerateDirectories);
+                    }
+                    else
+                    {
+                        return RecursiveSearch(
+                            path,
+                            query,
+                            20,
+                            (p, q) => Directory.EnumerateFiles(p).Where(x => Regex.IsMatch(x, q.Substring(1), RegexOptions.Compiled)),
+                            (p, q) => Directory.EnumerateDirectories(p).Where(x => Regex.IsMatch(x, q.Substring(1), RegexOptions.Compiled)));
+                    }
+
+                    //return (query.StartsWith("*") ?
+
+
+                    //(new[]{
+                    //    (SearchItemType.File, Directory.EnumerateFiles(path, query, SearchOption.AllDirectories)),
+                    //    (SearchItemType.Directory, Directory.EnumerateDirectories(path, query, SearchOption.AllDirectories)),
+
+                    //}) :
+                    //:
+                    //return new[]{
+                    //    (SearchItemType.File, Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories)),
+                    //    (SearchItemType.Directory, Directory.EnumerateDirectories(path, "*", SearchOption.AllDirectories)),
+
+                    //}
+                    //    .SelectMany(y => y.Item2
+                    //    .Where(x => Regex.IsMatch(x, query.Substring(1), RegexOptions.Compiled))
+                    //    .Take(20)
+                    //    .Select(x => new SearchItem
+                    //    {
+                    //        Name = x,
+                    //        ItemPath = x,
+                    //        Type = y.Item1,
+                    //        Usage = _context.UsageDb.GetRecord(y.Item1, x)
+                    //    }))
+                    //    .ToArray();
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.ToString());
+
+                    return Array.Empty<SearchItem>();
+                }
+            }
 
             bool pred(string x) =>
                 query == null || GetFileName(x).IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;

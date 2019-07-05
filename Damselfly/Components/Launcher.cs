@@ -10,7 +10,7 @@ namespace Damselfly.Components
         public static void Launch(string command, bool asAdmin)
         {
             var args = string.Format(
-                "{0}{1}",
+                "run {0}{1}",
                 asAdmin ? "-admin " : "",
                 WindowsPath.PrepareFilename(command));
 

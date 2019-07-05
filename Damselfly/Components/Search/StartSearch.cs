@@ -64,11 +64,14 @@ namespace Damselfly.Components.Search
                 .Search(query)
                 //.Distinct(x => x.Name)
                 .OrderByDescending(x => x.Usage.HitCount)
+                .ThenByDescending(x =>
+                    query.Equals(x.Name, StringComparison.OrdinalIgnoreCase) ||
+                    query.Equals(x.ItemPath, StringComparison.OrdinalIgnoreCase))
                 .ThenBy(x => x.Name)
                 .Take(200);
 
-        public void SearchAsync(string query, Action<IEnumerable<SearchItem>> callback) =>
-            ThreadPool.QueueUserWorkItem(x => callback(Search(query)));
+        public Thread SearchAsync(string query, Action<string, IEnumerable<SearchItem>> callback) =>
+            new Thread(x => callback((string)x, Search(Environment.ExpandEnvironmentVariables(query)))).Do(x => x.IsBackground = true).Do(x => x.Start(query));
 
         public void Save()
         {

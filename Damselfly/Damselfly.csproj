@@ -39,6 +39,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -72,14 +73,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
+    <!-- <Reference Include="System.Data" /> -->
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Web.Extensions" />
+    <!-- <Reference Include="System.Web.Extensions" /> -->
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
+    <!-- <Reference Include="System.Data.DataSetExtensions" /> -->
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -244,7 +245,8 @@
 ) ELSE IF EXIST $(TargetDir)Aphid64.exe (
     set a=$(TargetDir)Aphid64.exe
 )
-IF NOT EXIST "$(TargetDir)Run.exe" %25a%25 $(TargetDir)Tools\MakeExe.alx Tools\Run.alx $(TargetDir)Run.exe</PostBuildEvent>
+IF NOT EXIST "$(TargetDir)Run.exe" %25a%25 $(TargetDir)Tools\MakeExe.alx Tools\Run.alx $(TargetDir)Run.exe
+IF NOT EXIST "$(TargetDir)Ngen.exe" %25a%25 $(TargetDir)Tools\MakeExe.alx Tools\Ngen.alx $(TargetDir)Ngen.exe</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

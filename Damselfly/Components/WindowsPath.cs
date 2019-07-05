@@ -11,7 +11,7 @@ namespace Damselfly.Components {
         public static SearchDelegate Search {
             get {
                 if ((WindowsPath._Search == null)) {
-                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_9e3ad288cd3e3c314503a87285e90a12());
+                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_12ffeb9752f28302f47ce5facbf253d5());
                 }
                 return WindowsPath._Search;
             }
@@ -34,7 +34,7 @@ namespace Damselfly.Components {
         public static PrepareFilenameDelegate PrepareFilename {
             get {
                 if ((WindowsPath._PrepareFilename == null)) {
-                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_9e3ad288cd3e3c314503a87285e90a12());
+                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_12ffeb9752f28302f47ce5facbf253d5());
                 }
                 return WindowsPath._PrepareFilename;
             }
@@ -55,7 +55,7 @@ namespace Damselfly.Components
     
     public static partial class AphidCompilerResources
     {
-        public static List<AphidExpression> ByteCode_9e3ad288cd3e3c314503a87285e90a12()
+        public static List<AphidExpression> ByteCode_12ffeb9752f28302f47ce5facbf253d5()
         {
             return             new List<AphidExpression>
             {
@@ -304,7 +304,7 @@ namespace Damselfly.Components
                                                                 new List<AphidExpression>
                                                                 {
                                                                     new StringExpression(
-                                                                        "'\\'"
+                                                                        "'\\\\'"
                                                                     ),
                                                                 }
                                                             ),
@@ -675,7 +675,7 @@ namespace Damselfly.Components
                                                 new List<AphidExpression>
                                                 {
                                                     new StringExpression(
-                                                        "'\t'"
+                                                        "'\\t'"
                                                     ),
                                                 }
                                             ),

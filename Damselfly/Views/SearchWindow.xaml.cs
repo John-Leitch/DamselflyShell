@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace Damselfly
 {
@@ -20,9 +21,22 @@ namespace Damselfly
         public SearchWindow()
         {
             InitializeComponent();
-            Top = SystemParameters.PrimaryScreenHeight - Height - 40;
+            Loaded += SearchWindow_Loaded;
+            this.GotFocus += (o, e) =>
+            {
+                Top = SystemParameters.PrimaryScreenHeight - Height - 30;
+                Left = 0;
+            };
+
+            Top = SystemParameters.PrimaryScreenHeight - Height - 30;
             Left = 0;
             SearchItemListBox.Loaded += SearchItemListBox_Loaded;
+        }
+
+        private void SearchWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+            
         }
 
         private void SearchItemListBox_Loaded(object sender, RoutedEventArgs e)
@@ -33,7 +47,11 @@ namespace Damselfly
                 SearchItemListBox,
                 (ScrollViewer)VisualTreeHelper.GetChild(
                     VisualTreeHelper.GetChild(SearchItemListBox, 0),
-                    0));
+                    0))
+                {
+                    StatusFadeIn = ((Storyboard)FindResource("StatusFadeIn")),
+                    StatusFadeOut = ((Storyboard)FindResource("StatusFadeOut"))
+                };
 
             SearchViewModel.Init();
             PreviewKeyDown += SearchViewModel.Control_PreviewKeyDown;

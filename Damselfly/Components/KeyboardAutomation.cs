@@ -11,7 +11,7 @@ namespace Damselfly.Components {
         public static TypeDelegate Type {
             get {
                 if ((KeyboardAutomation._Type == null)) {
-                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_70e2acceaabf82d4e806248c43b3f611());
+                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_ce09d37a912bda1972f32c816c9a8656());
                 }
                 return KeyboardAutomation._Type;
             }
@@ -32,7 +32,7 @@ namespace Damselfly.Components
     
     public static partial class AphidCompilerResources
     {
-        public static List<AphidExpression> ByteCode_70e2acceaabf82d4e806248c43b3f611()
+        public static List<AphidExpression> ByteCode_ce09d37a912bda1972f32c816c9a8656()
         {
             return             new List<AphidExpression>
             {

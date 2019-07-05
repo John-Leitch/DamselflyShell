@@ -17,6 +17,9 @@ using static System.Console;
 using static Components.PInvoke.User32;
 using static Components.PInvoke.Win32;
 using System.Windows.Threading;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 
 namespace Damselfly.ViewModels
 {
@@ -45,6 +48,34 @@ namespace Damselfly.ViewModels
             }
         }
 
+        private string _status;
+
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                SetProperty(ref _status, value);
+
+
+                StatusVisibility = _status == null ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
+        private Visibility _statusVisibility = Visibility.Collapsed;
+
+        public Visibility StatusVisibility
+        {
+            get => _statusVisibility;
+            set
+            {
+                if (_statusVisibility != value)
+                {
+                    SetProperty(ref _statusVisibility, value);
+                }
+            }
+        }
+
         private SearchItem _selectedMatch;
 
         public SearchItem SelectedMatch
@@ -67,6 +98,10 @@ namespace Damselfly.ViewModels
 
         public StartSearch Search { get; }
 
+        public Storyboard StatusFadeIn { get; set; }
+
+        public Storyboard StatusFadeOut { get; set; }
+
         public ObservableCollection<SearchItem> Matches { get; }
 
         public bool IsHandled { get; set; }
@@ -74,12 +109,15 @@ namespace Damselfly.ViewModels
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
 
+        public static SearchViewModel Current;
+
         public SearchViewModel(
             SearchWindow window,
             TextBox queryTextBox,
             ListBox queryListBox,
             ScrollViewer queryScrollViewer)
         {
+            Current = this;
             Search = new StartSearch();
             Window = window;
             Matches = new ObservableCollection<SearchItem>();
@@ -101,29 +139,100 @@ namespace Damselfly.ViewModels
             JsonRepository.LoadOrCreate(out _globalBindings);
         }
 
-          
+        private object _querySync = new object(), _nextQuerySync = new object();
+
+        private string _nextQuery;
+
+        private Thread st = null;
+
+        private string FormatStatusQuery(string query) =>
+            (query == null || query.Trim().Length == 0) ? "" :
+            !query.Contains("'") ? string.Format("'{0}'", query) :
+            !query.Contains('"') ? string.Format("\"{0}\"", query) :
+            query;
 
         private void QueryChanged()
         {
             QueryError = "";
 
+            lock (_nextQuerySync)
+            {
+                if (st != null)
+                {
+                    st.Abort();
+                    st = null;
+                }
+            }
+
+            
+            Status = $"Executing query {FormatStatusQuery(Query)}";
+            StatusFadeIn.Begin();
+
+            //var token = ;
             try
             {
-                Search.SearchAsync(Query, x =>
+                void queryHandler(string query, IEnumerable<SearchItem> x)
                 {
-                    Window.Freeze(() =>
+                    if (!Monitor.TryEnter(_querySync))
                     {
-                        Matches.Clear();
 
-                        foreach (var m in x)
+                        //throw new InvalidOperationException();
+                    }
+
+                    try
+                    {
+                        var x2 = x.ToArray();
+
+                        Window.Dispatcher.Invoke(() =>
                         {
-                            //m.ParentElement = _queryListBox;
-                            Matches.Add(m);
+                            
+                            Matches.Clear();
+                            var firstSet = false;
+                            SelectedMatch = null;
+
+                            foreach (var m in x2)
+                            {
+                                if (!firstSet)
+                                {
+                                    SelectedMatch = m;
+                                    firstSet = true;
+                                }
+
+                                Matches.Add(m);
+                            }
+
+                            Status = $"Done executing query {FormatStatusQuery(query)}";
+                            StatusFadeOut.Begin();
+
+                        });
+                    }
+                    finally
+                    {
+                        lock (_nextQuerySync)
+                        {
+                            st = null;
                         }
 
-                        SelectedMatch = Matches.FirstOrDefault();
-                    });
-                });
+                        Monitor.Exit(_querySync);
+                        
+
+                        //lock (_nextQuerySync)
+                        //{
+                        //    if (_nextQuery != null)
+                        //    {
+                        //        st = Search.SearchAsync(Query, queryHandler);
+                        //        _nextQuery = null;
+                        //    }
+                        //}
+                    }
+                }
+
+                lock (_nextQuerySync)
+                {
+                    st = Search.SearchAsync(Query, queryHandler);
+                }
+
+
             }
             catch (UnauthorizedAccessException e)
             {
@@ -140,7 +249,8 @@ namespace Damselfly.ViewModels
                     SelectedMatch = Matches.First();
                 }
                 else
-                {                    return;
+                {
+                    return;
                 }
             }
             else

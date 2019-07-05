@@ -12,11 +12,28 @@
         Height="500"
         Topmost="False"
         BorderThickness="2"
-        BorderBrush="#FFD0D1D7">
+        BorderBrush="#FFD0D1D7"
+        RenderOptions.BitmapScalingMode="NearestNeighbor"
+        RenderOptions.CachingHint="Cache"
+        RenderOptions.EdgeMode="Aliased">
+    <Window.Resources>
+        <Storyboard x:Key="StatusFadeIn">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                 Storyboard.TargetName="StatusText"
+                             BeginTime="00:00:00.5" From="0.0" To="1.0" Duration="0:0:0.2"/>
+        </Storyboard>
+        <Storyboard x:Key="StatusFadeOut">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                 Storyboard.TargetName="StatusText"
+                             To="0.0" Duration="0:0:0.2"/>
+        </Storyboard>
+    </Window.Resources>
     <Grid>
+        
         
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -24,6 +41,7 @@
                  Background="Transparent"
                  ItemsSource="{Binding Matches}" 
                  SelectedItem="{Binding SelectedMatch,Mode=TwoWay}"
+                 Grid.RowSpan="2"
                  Margin="4,4,4,0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -41,8 +59,14 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <TextBlock IsHitTestVisible="False" Text="{Binding QueryError}" />
-        <TextBox x:Name="QueryTextBox" Margin="4" Grid.Row="1" Height="24" 
-                 VerticalContentAlignment="Center"
-                 Text="{Binding Path=Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        
+        
+        <TextBox IsReadOnly="True" x:Name="StatusText" Text="{Binding Status}"
+                 Margin="4,4,4,0"  Grid.Row="1" Height="24" VerticalContentAlignment="Center" />
+
+        <TextBox x:Name="QueryTextBox" Grid.Row="2" Height="24" 
+                 VerticalContentAlignment="Center" Margin="4"
+                 Text="{Binding Path=Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,Delay=100}" />
     </Grid>
 </Window>
