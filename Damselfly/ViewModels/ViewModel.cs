@@ -12,13 +12,8 @@ namespace Damselfly.ViewModels
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
 
-        private void InvokePropertyChanged([CallerMemberName] string callerName = null)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(callerName));
-            }
-        }
+        protected void InvokePropertyChanged([CallerMemberName] string callerName = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(callerName));
 
         protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string callerName = null)
         {

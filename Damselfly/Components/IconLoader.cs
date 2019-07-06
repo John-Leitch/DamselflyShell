@@ -8,6 +8,9 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using static Components.PInvoke.Shell32;
+using FA = System.IO.FileAttributes;
+using HandleCache = Components.ArgLockingMemoizer<string, System.IntPtr>;
 
 namespace Damselfly.Components
 {
@@ -21,46 +24,73 @@ namespace Damselfly.Components
 
         public static IntPtr GetHandle(string path) => _pathMemoizer.Call(GetHandleCore, path);
 
-        private static BitmapSource GetSourceCore(IntPtr icon) =>
-            Imaging.CreateBitmapSourceFromHIcon(
+        private static BitmapSource GetSourceCore(IntPtr icon)
+        {
+            if (icon == IntPtr.Zero)
+            {
+                icon = SystemIcons.Error.Handle;
+            }
+
+            var bmp = Imaging.CreateBitmapSourceFromHIcon(
                 icon,
                 Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
+                BitmapSizeOptions.FromWidthAndHeight(16, 16));
+
+            bmp.Freeze();
+
+            return bmp;
+        }
+
+        //BitmapSizeOptions.FromWidthAndHeight(32, 32));
 
         private static IntPtr GetHandleCore(string path)
         {
-            IntPtr handle;
-
             var fullPath = File.Exists(path) || Directory.Exists(path) || path.StartsWith(@"\\") ?
                 path :
                 WindowsPath.Search(path);
 
-            if (!Directory.Exists(fullPath) && !File.Exists(fullPath))
+            if (File.Exists(fullPath))
             {
+                Console.WriteLine("File Full Path Icon");
+                return GetFileIcon(fullPath);
+                //return Icon.ExtractAssociatedIcon(fullPath).Handle;
+            }
+            else if (Directory.Exists(fullPath))
+            {
+                Console.WriteLine("Dir Full Path Icon");
+                return GetDirectoryIcon(fullPath);                
+            }
+            else
+            {
+                Console.WriteLine("Error Icon");
                 return SystemIcons.Error.Handle;
-            }
 
-            try
-            {
-
-                return Icon.ExtractAssociatedIcon(fullPath).Handle;
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError($"Error extracting associated icon:\r\n{e}\r\n");
-                var shinfo = new SHFILEINFO();
-
-#pragma warning disable ERP022 // Catching everything considered harmful.
-                return Shell32.SHGetFileInfo(
-                    fullPath,
-                    0,
-                    ref shinfo,
-                    (uint)Marshal.SizeOf(shinfo),
-                    Shell32.SHGFI_ICON | Shell32.SHGFI_SMALLICON) != IntPtr.Zero ?
-                        shinfo.hIcon :
-                        SystemIcons.Application.Handle;
-#pragma warning restore ERP022 // Catching everything considered harmful.
             }
         }
+
+        private static HandleCache _fileMemoizer = new HandleCache(), _dirMemoizer = new HandleCache();
+
+        public static IntPtr GetFileIcon(string path) => _fileMemoizer.Call(x => GetShellInfo(x, FA.Normal), path);
+
+        public static IntPtr GetDirectoryIcon(string path) => _dirMemoizer.Call(x => GetShellInfo(x, FA.Directory), path);
+
+        public static IntPtr GetShellInfo(string path, FA attributes)
+        {
+            var shinfo = new SHFILEINFO();
+
+            return SHGetFileInfo(
+                path,
+                (uint)attributes,
+                ref shinfo,
+                (uint) Marshal.SizeOf(shinfo),
+                SHGFI_ICON |
+                    SHGFI_SMALLICON |
+                    //SHGFI_LARGEICON |
+                    SHGFI_USEFILEATTRIBUTES |
+                    SHGFI_ADDOVERLAYS) != IntPtr.Zero ?
+                    shinfo.hIcon :
+                    SystemIcons.Application.Handle;
+        }
+
     }
 }

@@ -173,7 +173,7 @@ namespace Damselfly.ViewModels
             {
                 void queryHandler(string query, IEnumerable<SearchItem> x)
                 {
-                    if (!Monitor.TryEnter(_querySync))
+                    //if (!Monitor.TryEnter(_querySync))
                     {
 
                         //throw new InvalidOperationException();
@@ -213,7 +213,7 @@ namespace Damselfly.ViewModels
                             st = null;
                         }
 
-                        Monitor.Exit(_querySync);
+                        //Monitor.Exit(_querySync);
                         
 
                         //lock (_nextQuerySync)

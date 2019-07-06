@@ -15,10 +15,7 @@ namespace Components
 
         private bool ScriptFileExists() => File.Exists(ScriptFile);
 
-        public TEntities Load()
-        {
-            return !ScriptFileExists() ? default(TEntities) : DeserializeFile<TEntities>(ScriptFile);
-        }
+        public TEntities Load() => !ScriptFileExists() ? default : DeserializeFile<TEntities>(ScriptFile);
 
         public void Save(TEntities entities) => SerializeToFile(ScriptFile, entities);
     }

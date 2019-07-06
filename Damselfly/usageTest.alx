@@ -1,0 +1,3 @@
+#'std';
+#'io';
+io.file.readText('bin/x64/release/usage.json') ~: ['\\\\u00', '\\x'] |> deserialize |> dump

@@ -13,7 +13,7 @@ namespace Damselfly.Components
 
         public static void Attach()
         {
-            if (!Debugger.IsAttached)
+            if (false || !Debugger.IsAttached)
             {
                 AttachTime = DateTime.Now;
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;

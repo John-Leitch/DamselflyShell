@@ -39,7 +39,7 @@ namespace Damselfly.Components
                             }))
                 .ToArray())
             {
-                p.WaitForExit();
+                //p.WaitForExit();
             }
 #endif
         }

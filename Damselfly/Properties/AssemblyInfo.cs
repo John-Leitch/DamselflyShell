@@ -6,7 +6,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Damselfly Custom Shell")]
-[assembly: AssemblyDescription("A custom shel for Windows.")]
+[assembly: AssemblyDescription("A custom shell for Windows.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("AutoSec Tools LLC")]
 [assembly: AssemblyProduct("Damselfly Custom Shell")]

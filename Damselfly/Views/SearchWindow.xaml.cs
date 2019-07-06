@@ -1,4 +1,6 @@
-﻿using Damselfly.ViewModels;
+﻿using Components;
+using Components.External;
+using Damselfly.ViewModels;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,11 +9,12 @@ using System.Windows.Media.Animation;
 
 namespace Damselfly
 {
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public partial class SearchWindow : Window
+    public partial class SearchWindow : Window, IAutoSingleton<SearchWindow>
     {
         public SearchViewModel SearchViewModel { get; private set; }
 
@@ -20,22 +23,8 @@ namespace Damselfly
 
         public SearchWindow()
         {
+            this.Init();            
             InitializeComponent();
-            Loaded += SearchWindow_Loaded;
-            this.GotFocus += (o, e) =>
-            {
-                Top = SystemParameters.PrimaryScreenHeight - Height - 30;
-                Left = 0;
-            };
-
-            Top = SystemParameters.PrimaryScreenHeight - Height - 30;
-            Left = 0;
-            SearchItemListBox.Loaded += SearchItemListBox_Loaded;
-        }
-
-        private void SearchWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            
             
         }
 
@@ -57,6 +46,12 @@ namespace Damselfly
             PreviewKeyDown += SearchViewModel.Control_PreviewKeyDown;
             IsVisibleChanged += SearchViewModel.Control_IsVisibleChanged;
             DataContext = SearchViewModel;
+        }
+
+        private void Window_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Top = SystemParameters.PrimaryScreenHeight - Height - 30;
+            Left = 0;
         }
     }
 }
