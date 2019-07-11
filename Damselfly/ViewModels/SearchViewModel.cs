@@ -16,15 +16,12 @@ using System.Windows.Interop;
 using static System.Console;
 using static Components.PInvoke.User32;
 using static Components.PInvoke.Win32;
-using System.Windows.Threading;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Media.Animation;
 
 namespace Damselfly.ViewModels
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public class SearchViewModel : ViewModel
+    public partial class SearchViewModel
     {
         private Dictionary<string, GlobalHotkeyBinding> _globalBindings = new Dictionary<string, GlobalHotkeyBinding>();
 
@@ -36,78 +33,67 @@ namespace Damselfly.ViewModels
 
         private readonly ScrollViewer _queryScrollViewer;
 
-        private string _query;
+        //private string _query;
 
-        public string Query
-        {
-            get => _query;
-            set
-            {
-                SetProperty(ref _query, value);
-                QueryChanged();
-            }
-        }
+        //public string Query
+        //{
+        //    get => _query;
+        //    set
+        //    {
+        //        SetProperty(ref _query, value);
+        //        QueryChanged();
+        //    }
+        //}
 
-        private string _status;
+        //private string _status;
 
-        public string Status
-        {
-            get => _status;
-            set
-            {
-                SetProperty(ref _status, value);
+        //public string Status
+        //{
+        //    get => _status;
+        //    set
+        //    {
+        //        SetProperty(ref _status, value);
 
 
-                StatusVisibility = _status == null ? Visibility.Collapsed : Visibility.Visible;
-            }
-        }
+        //        StatusVisibility = _status == null ? Visibility.Collapsed : Visibility.Visible;
+        //    }
+        //}
 
-        private Visibility _statusVisibility = Visibility.Collapsed;
+        //private Visibility _statusVisibility = Visibility.Collapsed;
 
-        public Visibility StatusVisibility
-        {
-            get => _statusVisibility;
-            set
-            {
-                if (_statusVisibility != value)
-                {
-                    SetProperty(ref _statusVisibility, value);
-                }
-            }
-        }
+        //public Visibility StatusVisibility
+        //{
+        //    get => _statusVisibility;
+        //    set
+        //    {
+        //        if (_statusVisibility != value)
+        //        {
+        //            SetProperty(ref _statusVisibility, value);
+        //        }
+        //    }
+        //}
 
-        private SearchItem _selectedMatch;
+        //private SearchItem _SelectedMatch;
 
-        public SearchItem SelectedMatch
-        {
-            get => _selectedMatch;
-            set => SetProperty(ref _selectedMatch, value);
-        }
+        //public SearchItem SelectedMatch
+        //{
+        //    get => _SelectedMatch;
+        //    set => SetProperty(ref _SelectedMatch, value);
+        //}
 
-        private string _queryError;
+        //private string _queryError;
 
-        public string QueryError
-        {
-            get => _queryError;
-            set => SetProperty(ref _queryError, value);
-        }
+        //public string QueryError
+        //{
+        //    get => _queryError;
+        //    set => SetProperty(ref _queryError, value);
+        //}
 
-        public SearchWindow Window { get; }
+        //public SearchWindow Window { get; }
 
-        public TextBox QueryTextBox { get; }
+        //public TextBox QueryTextBox { get; }        
 
-        public StartSearch Search { get; }
-
-        public Storyboard StatusFadeIn { get; set; }
-
-        public Storyboard StatusFadeOut { get; set; }
-
-        public ObservableCollection<SearchItem> Matches { get; }
-
-        public bool IsHandled { get; set; }
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => ToString();
+        public ObservableCollection<SearchItem> Matches { get; }       
 
         public static SearchViewModel Current;
 
@@ -139,9 +125,11 @@ namespace Damselfly.ViewModels
             JsonRepository.LoadOrCreate(out _globalBindings);
         }
 
-        private object _querySync = new object(), _nextQuerySync = new object();
+        private readonly object _nextQuerySync = new object();
 
         private string _nextQuery;
+
+        partial void OnStatusChanged() => StatusVisibility = _Status == null ? Visibility.Collapsed : Visibility.Visible;
 
         private Thread st = null;
 
@@ -151,7 +139,7 @@ namespace Damselfly.ViewModels
             !query.Contains('"') ? string.Format("\"{0}\"", query) :
             query;
 
-        private void QueryChanged()
+        partial void OnQueryChanged()
         {
             QueryError = "";
 
@@ -242,7 +230,7 @@ namespace Damselfly.ViewModels
 
         private void MoveMatch(Func<int, bool> check, Func<int, SearchItem> getOther)
         {
-            if (_selectedMatch == null)
+            if (_SelectedMatch == null)
             {
                 if (Matches.Any())
                 {
@@ -255,7 +243,7 @@ namespace Damselfly.ViewModels
             }
             else
             {
-                var i = Matches.IndexOf(_selectedMatch);
+                var i = Matches.IndexOf(_SelectedMatch);
 
                 if (check(i))
                 {
@@ -270,8 +258,8 @@ namespace Damselfly.ViewModels
         {
             DependencyObject c;
 
-            if (_selectedMatch == null ||
-                (c = _queryListBox.ItemContainerGenerator.ContainerFromItem(_selectedMatch)) == null)
+            if (_SelectedMatch == null ||
+                (c = _queryListBox.ItemContainerGenerator.ContainerFromItem(_SelectedMatch)) == null)
             {
                 return;
             }
@@ -285,11 +273,11 @@ namespace Damselfly.ViewModels
 
         public void CompleteQuery()
         {
-            if (_selectedMatch != null)
+            if (_SelectedMatch != null)
             {
-                Query = _selectedMatch.Type != SearchItemType.Directory ?
-                    _selectedMatch.Name :
-                    _selectedMatch.ItemPath + Path.DirectorySeparatorChar.ToString();
+                Query = _SelectedMatch.Type != SearchItemType.Directory ?
+                    _SelectedMatch.Name :
+                    _SelectedMatch.ItemPath + Path.DirectorySeparatorChar.ToString();
             }
         }
 
@@ -308,24 +296,24 @@ namespace Damselfly.ViewModels
 
         public void DeleteSelectedMatch()
         {
-            if (_selectedMatch == null)
+            if (_SelectedMatch == null)
             {
                 return;
             }
 
             var actions = new List<Action>();
 
-            if (Search.Commands.Contains(_selectedMatch))
+            if (Search.Commands.Contains(_SelectedMatch))
             {
-                actions.Add(() => Search.Commands.Remove(_selectedMatch));
+                actions.Add(() => Search.Commands.Remove(_SelectedMatch));
             }
 
-            if (!Search.UsageDb.TryGetValue(_selectedMatch.Type, out var records))
+            if (!Search.UsageDb.TryGetValue(_SelectedMatch.Type, out var records))
             {
                 return;
             }
 
-            foreach (var n in new[] { _selectedMatch.Name, _selectedMatch.ItemPath })
+            foreach (var n in new[] { _SelectedMatch.Name, _SelectedMatch.ItemPath })
             {
                 if (n != null &&
                     records.ContainsKey(n) &&
@@ -342,7 +330,7 @@ namespace Damselfly.ViewModels
             }
 
             var result = MessageBox.Show(
-                string.Format("Are you sure you want to delete \"{0}\"?", _selectedMatch.Name),
+                string.Format("Are you sure you want to delete \"{0}\"?", _SelectedMatch.Name),
                 "Confirm",
                 MessageBoxButton.YesNo);
 

@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using static System.IO.Path;
 
@@ -57,7 +56,8 @@ namespace Damselfly.Components.Search.Handlers
             return potentialPathQueries
                 .ForceUnbufferedPerProcessorParallelism(1)
                 .FirstOrDefault(x =>
-                    (x[0][x[0].Length - 1] == DirectorySeparatorChar && Directory.Exists(x[0])) ||
+                    (x[0][x[0].Length - 1] == DirectorySeparatorChar &&
+                    FileSystemCache.DirectoryExists(x[0])) ||
                     IsHost(x[0]))
                 .Then(x => x != null ? SearchFileSystem(x[0], x[1]) : Array.Empty<SearchItem>());
 
@@ -177,7 +177,7 @@ namespace Damselfly.Components.Search.Handlers
             {
                 try
                 {
-                    if (!Directory.Exists(path))
+                    if (!FileSystemCache.DirectoryExists(path))
                     {
                         return Array.Empty<SearchItem>();
                     }

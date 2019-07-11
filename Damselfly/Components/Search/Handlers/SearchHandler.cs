@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using Damselfly.ViewModels;
 
 namespace Damselfly.Components.Search.Handlers
 {
@@ -7,9 +8,6 @@ namespace Damselfly.Components.Search.Handlers
     public abstract class SearchHandler
     {
         protected StartSearch _context;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => ToString();
 
         public void Init(StartSearch context) => _context = context;
 

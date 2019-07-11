@@ -1,9 +1,9 @@
-using global::Components.Aphid.Parser;
 using global::Components.Aphid.Interpreter;
 
-namespace Damselfly.Components {
-    
-    
+namespace Damselfly.Components
+{
+
+
     public partial class WindowsPath {
         
         private static SearchDelegate _Search;
@@ -11,7 +11,7 @@ namespace Damselfly.Components {
         public static SearchDelegate Search {
             get {
                 if ((WindowsPath._Search == null)) {
-                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_12ffeb9752f28302f47ce5facbf253d5());
+                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_2b66a1294d1348d16afa9f1be3ac8813());
                 }
                 return WindowsPath._Search;
             }
@@ -24,9 +24,10 @@ namespace Damselfly.Components {
     }
 }
 
-namespace Damselfly.Components {
-    
-    
+namespace Damselfly.Components
+{
+
+
     public partial class WindowsPath {
         
         private static PrepareFilenameDelegate _PrepareFilename;
@@ -34,7 +35,7 @@ namespace Damselfly.Components {
         public static PrepareFilenameDelegate PrepareFilename {
             get {
                 if ((WindowsPath._PrepareFilename == null)) {
-                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_12ffeb9752f28302f47ce5facbf253d5());
+                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_2b66a1294d1348d16afa9f1be3ac8813());
                 }
                 return WindowsPath._PrepareFilename;
             }
@@ -52,10 +53,10 @@ namespace Damselfly.Components
     using global::Components.Aphid.Lexer;
     using global::Components.Aphid.Parser;
     using System.Collections.Generic;
-    
+
     public static partial class AphidCompilerResources
     {
-        public static List<AphidExpression> ByteCode_12ffeb9752f28302f47ce5facbf253d5()
+        public static List<AphidExpression> ByteCode_2b66a1294d1348d16afa9f1be3ac8813()
         {
             return             new List<AphidExpression>
             {
@@ -102,6 +103,72 @@ namespace Damselfly.Components
                         }
                     ),
                     false
+                ),
+                new BinaryOperatorExpression(
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "File",
+                            new List<IdentifierExpression>
+                            {
+                            }
+                        ),
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "Exists",
+                            new List<IdentifierExpression>
+                            {
+                            }
+                        )
+                    ),
+                    AphidTokenType.AssignmentOperator,
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "FileSystemCache",
+                            new List<IdentifierExpression>
+                            {
+                            }
+                        ),
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "FileExists",
+                            new List<IdentifierExpression>
+                            {
+                            }
+                        )
+                    )
+                ),
+                new BinaryOperatorExpression(
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Directory",
+                            new List<IdentifierExpression>
+                            {
+                            }
+                        ),
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "Exists",
+                            new List<IdentifierExpression>
+                            {
+                            }
+                        )
+                    ),
+                    AphidTokenType.AssignmentOperator,
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "FileSystemCache",
+                            new List<IdentifierExpression>
+                            {
+                            }
+                        ),
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "DirectoryExists",
+                            new List<IdentifierExpression>
+                            {
+                            }
+                        )
+                    )
                 ),
                 new BinaryOperatorExpression(
                     new IdentifierExpression(

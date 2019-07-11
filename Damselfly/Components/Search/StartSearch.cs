@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Components;
 using System.Diagnostics;
+using Damselfly.ViewModels;
 
 namespace Damselfly.Components.Search
 {

@@ -4,6 +4,9 @@ using Components;
 using Damselfly.Components;
 using System;
 
+File.Exists = FileSystemCache.FileExists;
+Directory.Exists = FileSystemCache.DirectoryExists;
+
 var expand = @(p) $(var t = p |> Environment.ExpandEnvironmentVariables) p: p, expand(t);
 var paths = '%PATH%' |> expand @() $_.Split(';') -> (@()$_.TrimEnd('\\')) -? @!= '' !?;
 var exts = [ '', '.exe', '.cmd', '.bat' ];

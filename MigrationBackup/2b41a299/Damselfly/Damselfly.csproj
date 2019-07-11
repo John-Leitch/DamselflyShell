@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.3.2.0-beta3-final\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.3.2.0-beta3-final\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,8 +39,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -86,7 +86,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="Views\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
@@ -111,16 +111,12 @@
       <DependentUpon>MscHelper.alx</DependentUpon>
     </Compile>
     <Compile Include="Components\NativeProcess.cs" />
-    <Compile Include="Components\PathCache.cs" />
     <Compile Include="Components\PathHelper.cs" />
     <Compile Include="Components\Scripts.cs" />
     <Compile Include="Components\Search\CommandSearchSource.cs" />
-    <Compile Include="Components\FileSystemCache.cs" />
     <Compile Include="Components\Search\Handlers\EmptySearchHandler.cs" />
     <Compile Include="Components\Search\Handlers\FileSystemSearchHandler.cs" />
     <Compile Include="Components\Search\Handlers\StandardSearchHandler.cs" />
-    <Compile Include="Components\Search\ImageSourceBackgroundWorker.cs" />
-    <Compile Include="Components\Search\SearchItemBuilder.cs" />
     <Compile Include="Components\Search\SearchSource.cs" />
     <Compile Include="Components\Search\Handlers\SearchHandler.cs" />
     <Compile Include="Components\Search\SearchItem.cs" />
@@ -139,27 +135,24 @@
       <DependentUpon>WindowsPath.alx</DependentUpon>
     </Compile>
     <Compile Include="DamselflyConfig.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
-    <Compile Include="ViewModels\ViewModels.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ViewModels.alx</DependentUpon>
-    </Compile>
-    <Page Include="SearchWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="Views\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SearchWindow.xaml.cs">
+    <Compile Include="Views\SearchWindow.xaml.cs">
       <DependentUpon>SearchWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -187,10 +180,7 @@
       <Generator>AphidCodeDomGenerator</Generator>
       <LastGenOutput>WindowsPath.cs</LastGenOutput>
     </None>
-    <None Include="ViewModels\ViewModels.alx">
-      <Generator>AphidCodeDomGenerator</Generator>
-      <LastGenOutput>ViewModels.cs</LastGenOutput>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -206,16 +196,6 @@
       <Project>{4249db75-bbb6-4cc4-b046-3170dd1d3bc1}</Project>
       <Name>Components.Aphid</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers">
-      <Version>3.2.0-beta3-final</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -233,6 +213,12 @@
 IF NOT EXIST "$(TargetDir)Run.exe" %25a%25 $(TargetDir)Tools\MakeExe.alx Tools\Run.alx $(TargetDir)Run.exe
 IF NOT EXIST "$(TargetDir)Ngen.exe" %25a%25 $(TargetDir)Tools\MakeExe.alx Tools\Ngen.alx $(TargetDir)Ngen.exe</PostBuildEvent>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.3.2.0-beta3-final\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.3.2.0-beta3-final\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

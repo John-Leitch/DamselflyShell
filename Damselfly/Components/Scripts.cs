@@ -9,7 +9,6 @@ namespace Damselfly.Components
     {
         public static void Init()
         {
-            return;
 #if !DEBUG
             
             var aphid = PathHelper.GetExecutingPath(

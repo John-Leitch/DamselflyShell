@@ -1,9 +1,9 @@
-using global::Components.Aphid.Parser;
 using global::Components.Aphid.Interpreter;
 
-namespace Damselfly.Components {
-    
-    
+namespace Damselfly.Components
+{
+
+
     public partial class MscHelper {
         
         private static GetNameDelegate _GetName;
@@ -29,7 +29,7 @@ namespace Damselfly.Components
     using global::Components.Aphid.Lexer;
     using global::Components.Aphid.Parser;
     using System.Collections.Generic;
-    
+
     public static partial class AphidCompilerResources
     {
         public static List<AphidExpression> ByteCode_87a07b16f7390eff17e8c20b3bd34fdf()

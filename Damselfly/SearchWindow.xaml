@@ -14,7 +14,8 @@
         BorderThickness="2"
         BorderBrush="#FFD0D1D7"
         RenderOptions.CachingHint="Cache"
-        GotFocus="Window_GotFocus">
+        GotFocus="Window_GotFocus"
+        Loaded="Window_Loaded">
     <Window.Resources>
         <Storyboard x:Key="StatusFadeIn">
             <DoubleAnimation Storyboard.TargetProperty="Opacity"

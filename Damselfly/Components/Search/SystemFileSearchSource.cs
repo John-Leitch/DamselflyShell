@@ -1,4 +1,5 @@
 ﻿using Components;
+using Damselfly.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,16 +36,14 @@ namespace Damselfly.Components.Search
                 .SelectMany(x => GetDirectoryFiles(x.Directory, x.Extension))                
                 .SelectMany(x => new[]
                 {
-                    SearchItem.FromFile(x),
-                    SearchItem.FromCommand(x)
+                    SearchItemBuilder.FromFile(x),
+                    SearchItemBuilder.FromCommand(x)
                 })
                 .ToList();
 
         private static IEnumerable<string> GetDirectoryFiles(string directory, string extension) =>
-            Directory
-                .GetFiles(Environment.ExpandEnvironmentVariables(directory))
-                .Where(x => x.EndsWith(
-                    "." + extension,
-                    StringComparison.InvariantCultureIgnoreCase));
+            Directory.GetFiles(
+                Environment.ExpandEnvironmentVariables(directory),
+                "*." + extension);
     }
 }

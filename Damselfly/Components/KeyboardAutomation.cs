@@ -1,9 +1,9 @@
-using global::Components.Aphid.Parser;
 using global::Components.Aphid.Interpreter;
 
-namespace Damselfly.Components {
-    
-    
+namespace Damselfly.Components
+{
+
+
     public partial class KeyboardAutomation {
         
         private static TypeDelegate _Type;
@@ -29,7 +29,7 @@ namespace Damselfly.Components
     using global::Components.Aphid.Lexer;
     using global::Components.Aphid.Parser;
     using System.Collections.Generic;
-    
+
     public static partial class AphidCompilerResources
     {
         public static List<AphidExpression> ByteCode_ce09d37a912bda1972f32c816c9a8656()

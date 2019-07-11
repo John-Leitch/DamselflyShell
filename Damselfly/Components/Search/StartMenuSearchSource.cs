@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Damselfly.ViewModels;
 
 namespace Damselfly.Components.Search
 {
@@ -30,7 +31,7 @@ namespace Damselfly.Components.Search
                 .SelectMany(x => Directory.GetFiles(x, "*", SearchOption.AllDirectories))
                 .Where(x => _extensions
                     .Any(y => x.EndsWith("." + y, StringComparison.InvariantCultureIgnoreCase)))
-                .Select(SearchItem.FromShortcut)
+                .Select(SearchItemBuilder.FromShortcut)
                 .ToList();
     }
 }

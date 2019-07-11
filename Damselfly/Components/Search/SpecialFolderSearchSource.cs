@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Damselfly.ViewModels;
 
 namespace Damselfly.Components.Search
 {
@@ -39,7 +40,7 @@ namespace Damselfly.Components.Search
                 .Select(Environment.GetFolderPath)
                 .Concat(new[] { downloads })
                 .Where(x => !string.IsNullOrEmpty(x))
-                .Select(SearchItem.FromDirectory)
+                .Select(SearchItemBuilder.FromDirectory)
                 .ToList();
         }
     }

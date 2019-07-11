@@ -1,25 +1,29 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿//using System;
+//using System.ComponentModel;
+//using System.Diagnostics;
+//using System.Runtime.CompilerServices;
 
-namespace Damselfly.ViewModels
-{
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public abstract class ViewModel : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
+//namespace Damselfly.ViewModels
+//{
+//    [DebuggerDisplay("{DebuggerDisplay,nq}")]
+//    public abstract class ViewModel : INotifyPropertyChanged
+//    {
+//        //public event EventHandler TestPropertyChanging, TestPropertyChanged;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => ToString();
+//        //public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void InvokePropertyChanged([CallerMemberName] string callerName = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(callerName));
+//        //[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+//        //private string DebuggerDisplay => ToString();
 
-        protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string callerName = null)
-        {
-            property = value;
-            InvokePropertyChanged(callerName);
-        }
+//        //protected void InvokePropertyChanged([CallerMemberName] string callerName = null) =>
+//        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(callerName));
 
-    }
-}
+//        protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string callerName = null)
+//        {
+            
+//            property = value;
+//            InvokePropertyChanged(callerName);
+//        }
+
+//    }
+//}

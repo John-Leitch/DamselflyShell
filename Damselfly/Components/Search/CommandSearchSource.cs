@@ -1,4 +1,5 @@
 ﻿using Components.Json;
+using Damselfly.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +23,7 @@ namespace Damselfly.Components.Search
                 JsonSerializer
                     .DeserializeFile<string[]>(_cmdFile)
                     .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .Select(SearchItem.FromCommand)
+                    .SelectMany(SearchItemBuilder.ManyFromCommand)
                     .ToList():
                 new List<SearchItem>();
 

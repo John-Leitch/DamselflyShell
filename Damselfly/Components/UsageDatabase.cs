@@ -3,8 +3,10 @@ using Components.Json;
 using Damselfly.Components.Search;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using RecordTable = System.Collections.Generic.Dictionary<
+    string,
+    System.Collections.Generic.Dictionary<string, Damselfly.Components.UsageRecord>>;
 
 namespace Damselfly.Components
 {
@@ -31,7 +33,7 @@ namespace Damselfly.Components
             }
         }
 
-        private Dictionary<string, Dictionary<string, UsageRecord>> ToSerializable() =>
+        private RecordTable ToSerializable() =>
             this.ToDictionary(
                 x => x.Key.ToString(),
                 x => x.Value
@@ -44,10 +46,9 @@ namespace Damselfly.Components
 
         public static UsageDatabase Load()
         {
-            if (File.Exists(_usageFile))
+            if (FileSystemCache.FileExists(_usageFile))
             {
-                var t = JsonSerializer.DeserializeFile<Dictionary<string, Dictionary<string, UsageRecord>>>(
-                    _usageFile);
+                var t = JsonSerializer.DeserializeFile<RecordTable>(_usageFile);
 
                 return t != null ? FromSerializable(t) : new UsageDatabase();
             }
@@ -63,7 +64,7 @@ namespace Damselfly.Components
             }
         }
 
-        private static UsageDatabase FromSerializable(Dictionary<string, Dictionary<string, UsageRecord>> table)
+        private static UsageDatabase FromSerializable(RecordTable table)
         {
             var db = new UsageDatabase();
 

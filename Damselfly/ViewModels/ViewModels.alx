@@ -1,0 +1,31 @@
+﻿@{
+    ViewModel;
+
+    using Damselfly.Components;
+    using Damselfly.Components.Search;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+    using System.Windows.Media.Animation;
+
+    Damselfly.ViewModels;    
+
+    class SearchViewModel {
+        SearchWindow Window,
+        TextBox QueryTextBox,
+        StartSearch Search,
+        Storyboard StatusFadeIn, StatusFadeOut,
+        bool IsHandled,
+        string Query, QueryError, Output, Status,
+        Visibility StatusVisibility, 
+        SearchItem SelectedMatch,
+    };
+
+    class SearchItem {
+        ImageSource SearchItemSource,
+        SearchItemType Type,
+        string ItemPath, Name,
+        UsageRecord Usage,
+    }
+};
+
