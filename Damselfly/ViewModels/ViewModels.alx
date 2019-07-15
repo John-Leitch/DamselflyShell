@@ -3,22 +3,29 @@
 
     using Damselfly.Components;
     using Damselfly.Components.Search;
+    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
 
-    Damselfly.ViewModels;    
+    Damselfly.ViewModels;
+
+    show ? Visibility.Visible : Visibility.Collapsed;
 
     class SearchViewModel {
         SearchWindow Window,
+        bool SearchOpen,           // Todo: infer var declaration of 
+            show SearchVisibility, // SearchVisibility from this binding
+        
         TextBox QueryTextBox,
         StartSearch Search,
         Storyboard StatusFadeIn, StatusFadeOut,
         bool IsHandled,
         string Query, QueryError, Output, Status,
-        Visibility StatusVisibility, 
         SearchItem SelectedMatch,
+        SearchItem list Matches,
+        Visibility SearchVisibility, StatusVisibility,
     };
 
     class SearchItem {

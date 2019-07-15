@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using static Components.Json.JsonSerializer;
+using static Utf8Json.JsonSerializer;
 
 namespace Components
 {
@@ -15,8 +15,8 @@ namespace Components
 
         private bool ScriptFileExists() => File.Exists(ScriptFile);
 
-        public TEntities Load() => !ScriptFileExists() ? default : DeserializeFile<TEntities>(ScriptFile);
+        public TEntities Load() => !ScriptFileExists() ? default : Deserialize<TEntities>(File.ReadAllBytes(ScriptFile));
 
-        public void Save(TEntities entities) => SerializeToFile(ScriptFile, entities);
+        public void Save(TEntities entities) => File.WriteAllBytes(ScriptFile, Serialize(entities));
     }
 }

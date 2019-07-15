@@ -98,11 +98,11 @@ namespace Damselfly.Components.Search.Handlers
 
                 if (DateTime.Now - lastUpdate > TimeSpan.FromMilliseconds(10))
                 {
-                    Dispatcher.CurrentDispatcher.Invoke(() => SearchViewModel.Current.Status = $"{all.Length} matches, searching \"{curPath.Substring(path.Length).TrimStart('\\')}\"");
+                    SearchWindow.Current.Dispatcher.Invoke(() => SearchViewModel.Current.Status = $"{all.Length} matches, searching \"{curPath.Substring(path.Length).TrimStart('\\')}\"");
                     lastUpdate = DateTime.Now;
                 }
 
-                Console.WriteLine("Searching {0} -> {1}", query, curPath);
+                //Console.WriteLine("Searching {0} -> {1}", query, curPath);
                 var isDir = false;
                 var isFirst = true;
 
@@ -132,14 +132,7 @@ namespace Damselfly.Components.Search.Handlers
                     max -= cur.Item2.Length;
                     
                     all = all
-                        .Concat(cur.Item2
-                            .Select(x => new SearchItem
-                            {
-                                Name = x,
-                                ItemPath = x,
-                                Type = cur.Item1,
-                                Usage = _context.UsageDb.GetRecord(cur.Item1, x)
-                            }))
+                        .Concat(cur.Item2.Select(x => new SearchItem(x, cur.Item1)))
                         .ToArray();
 
                     if (max == 0)
@@ -253,13 +246,7 @@ namespace Damselfly.Components.Search.Handlers
                         return f
                             .GetItems(path)
                             .Where(pred)
-                            .Select(x => new SearchItem
-                            {
-                                Name = x,
-                                ItemPath = x,
-                                Type = f.Type,
-                                Usage = _context.UsageDb.GetRecord(f.Type, x)
-                            });
+                            .Select(x => new SearchItem(x, f.Type));
                     }
                     catch (Exception e)
                     {

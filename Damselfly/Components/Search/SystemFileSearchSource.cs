@@ -34,11 +34,11 @@ namespace Damselfly.Components.Search
                 .ForceUnbufferedPerProcessorParallelism()
                 .SelectMany(x => _extensions.Select(y => new { Directory = x, Extension = y }))
                 .SelectMany(x => GetDirectoryFiles(x.Directory, x.Extension))                
-                .SelectMany(x => new[]
-                {
-                    SearchItemBuilder.FromFile(x),
-                    SearchItemBuilder.FromCommand(x)
-                })
+                .SelectMany(x =>
+                    SearchItemBuilder
+                        .FromFile(x)
+                        .Concat(SearchItemBuilder
+                            .FromCommand(x)))
                 .ToList();
 
         private static IEnumerable<string> GetDirectoryFiles(string directory, string extension) =>

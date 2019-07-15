@@ -1,9 +1,9 @@
+using global::Components.Aphid.Parser;
 using global::Components.Aphid.Interpreter;
 
-namespace Damselfly.Components
-{
-
-
+namespace Damselfly.Components.Input {
+    
+    
     public partial class KeyboardAutomation {
         
         private static TypeDelegate _Type;
@@ -11,7 +11,7 @@ namespace Damselfly.Components
         public static TypeDelegate Type {
             get {
                 if ((KeyboardAutomation._Type == null)) {
-                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_ce09d37a912bda1972f32c816c9a8656());
+                    new AphidInterpreter().Interpret(AphidCompilerResources.ByteCode_360bdcb5815c182907691e1bb2593d82());
                 }
                 return KeyboardAutomation._Type;
             }
@@ -24,17 +24,16 @@ namespace Damselfly.Components
     }
 }
 
-namespace Damselfly.Components
+namespace Damselfly.Components.Input
 {
     using global::Components.Aphid.Lexer;
     using global::Components.Aphid.Parser;
     using System.Collections.Generic;
-
+    
     public static partial class AphidCompilerResources
     {
-        public static List<AphidExpression> ByteCode_ce09d37a912bda1972f32c816c9a8656()
-        {
-            return             new List<AphidExpression>
+        public static List<AphidExpression> ByteCode_360bdcb5815c182907691e1bb2593d82() =>
+            new List<AphidExpression>
             {
                 new LoadScriptExpression(
                     new StringExpression(
@@ -49,15 +48,24 @@ namespace Damselfly.Components
                 new UnaryOperatorExpression(
                     AphidTokenType.usingKeyword,
                     new BinaryOperatorExpression(
-                        new IdentifierExpression(
-                            "Damselfly",
-                            new List<IdentifierExpression>
-                            {
-                            }
+                        new BinaryOperatorExpression(
+                            new IdentifierExpression(
+                                "Damselfly",
+                                new List<IdentifierExpression>
+                                {
+                                }
+                            ),
+                            AphidTokenType.MemberOperator,
+                            new IdentifierExpression(
+                                "Components",
+                                new List<IdentifierExpression>
+                                {
+                                }
+                            )
                         ),
                         AphidTokenType.MemberOperator,
                         new IdentifierExpression(
-                            "Components",
+                            "Input",
                             new List<IdentifierExpression>
                             {
                             }
@@ -158,7 +166,6 @@ namespace Damselfly.Components
                 ),
             }
 ;
-        }
     }
 }
 

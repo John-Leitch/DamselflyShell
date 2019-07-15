@@ -10,9 +10,8 @@ namespace Damselfly.ViewModels
     
     public static partial class AphidCompilerResources
     {
-        public static List<AphidExpression> ByteCode_cdd2a092a6a30fcd295314341aca114a()
-        {
-            return             new List<AphidExpression>
+        public static List<AphidExpression> ByteCode_fe2b570157c4f039b6e6e1feec1c5720() =>
+            new List<AphidExpression>
             {
                 new FunctionExpression(
                     new List<AphidExpression>
@@ -66,6 +65,34 @@ namespace Damselfly.ViewModels
                                 AphidTokenType.MemberOperator,
                                 new IdentifierExpression(
                                     "Search",
+                                    new List<IdentifierExpression>
+                                    {
+                                    }
+                                )
+                            ),
+                            false
+                        ),
+                        new UnaryOperatorExpression(
+                            AphidTokenType.usingKeyword,
+                            new BinaryOperatorExpression(
+                                new BinaryOperatorExpression(
+                                    new IdentifierExpression(
+                                        "System",
+                                        new List<IdentifierExpression>
+                                        {
+                                        }
+                                    ),
+                                    AphidTokenType.MemberOperator,
+                                    new IdentifierExpression(
+                                        "Collections",
+                                        new List<IdentifierExpression>
+                                        {
+                                        }
+                                    )
+                                ),
+                                AphidTokenType.MemberOperator,
+                                new IdentifierExpression(
+                                    "ObjectModel",
                                     new List<IdentifierExpression>
                                     {
                                     }
@@ -200,6 +227,45 @@ namespace Damselfly.ViewModels
                                 }
                             )
                         ),
+                        new TernaryOperatorExpression(
+                            AphidTokenType.ConditionalOperator,
+                            new IdentifierExpression(
+                                "show",
+                                new List<IdentifierExpression>
+                                {
+                                }
+                            ),
+                            new BinaryOperatorExpression(
+                                new IdentifierExpression(
+                                    "Visibility",
+                                    new List<IdentifierExpression>
+                                    {
+                                    }
+                                ),
+                                AphidTokenType.MemberOperator,
+                                new IdentifierExpression(
+                                    "Visible",
+                                    new List<IdentifierExpression>
+                                    {
+                                    }
+                                )
+                            ),
+                            new BinaryOperatorExpression(
+                                new IdentifierExpression(
+                                    "Visibility",
+                                    new List<IdentifierExpression>
+                                    {
+                                    }
+                                ),
+                                AphidTokenType.MemberOperator,
+                                new IdentifierExpression(
+                                    "Collapsed",
+                                    new List<IdentifierExpression>
+                                    {
+                                    }
+                                )
+                            )
+                        ),
                         new ObjectExpression(
                             new List<BinaryOperatorExpression>
                             {
@@ -232,6 +298,60 @@ namespace Damselfly.ViewModels
                                 ),
                                 new BinaryOperatorExpression(
                                     new IdentifierExpression(
+                                        "SearchOpen",
+                                        new List<IdentifierExpression>
+                                        {
+                                            new IdentifierExpression(
+                                                "bool",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                        }
+                                    ),
+                                    AphidTokenType.ColonOperator,
+                                    new IdentifierExpression(
+                                        "SearchOpen",
+                                        new List<IdentifierExpression>
+                                        {
+                                            new IdentifierExpression(
+                                                "bool",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                        }
+                                    )
+                                ),
+                                new BinaryOperatorExpression(
+                                    new IdentifierExpression(
+                                        "SearchVisibility",
+                                        new List<IdentifierExpression>
+                                        {
+                                            new IdentifierExpression(
+                                                "show",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                        }
+                                    ),
+                                    AphidTokenType.ColonOperator,
+                                    new IdentifierExpression(
+                                        "SearchVisibility",
+                                        new List<IdentifierExpression>
+                                        {
+                                            new IdentifierExpression(
+                                                "show",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                        }
+                                    )
+                                ),
+                                new BinaryOperatorExpression(
+                                    new IdentifierExpression(
                                         "QueryTextBox",
                                         new List<IdentifierExpression>
                                         {
@@ -427,7 +547,73 @@ namespace Damselfly.ViewModels
                                 ),
                                 new BinaryOperatorExpression(
                                     new IdentifierExpression(
-                                        "StatusVisibility",
+                                        "SelectedMatch",
+                                        new List<IdentifierExpression>
+                                        {
+                                            new IdentifierExpression(
+                                                "SearchItem",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                        }
+                                    ),
+                                    AphidTokenType.ColonOperator,
+                                    new IdentifierExpression(
+                                        "SelectedMatch",
+                                        new List<IdentifierExpression>
+                                        {
+                                            new IdentifierExpression(
+                                                "SearchItem",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                        }
+                                    )
+                                ),
+                                new BinaryOperatorExpression(
+                                    new IdentifierExpression(
+                                        "Matches",
+                                        new List<IdentifierExpression>
+                                        {
+                                            new IdentifierExpression(
+                                                "SearchItem",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                            new IdentifierExpression(
+                                                "list",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                        }
+                                    ),
+                                    AphidTokenType.ColonOperator,
+                                    new IdentifierExpression(
+                                        "Matches",
+                                        new List<IdentifierExpression>
+                                        {
+                                            new IdentifierExpression(
+                                                "SearchItem",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                            new IdentifierExpression(
+                                                "list",
+                                                new List<IdentifierExpression>
+                                                {
+                                                }
+                                            ),
+                                        }
+                                    )
+                                ),
+                                new BinaryOperatorExpression(
+                                    new IdentifierExpression(
+                                        "SearchVisibility",
                                         new List<IdentifierExpression>
                                         {
                                             new IdentifierExpression(
@@ -440,7 +626,7 @@ namespace Damselfly.ViewModels
                                     ),
                                     AphidTokenType.ColonOperator,
                                     new IdentifierExpression(
-                                        "StatusVisibility",
+                                        "SearchVisibility",
                                         new List<IdentifierExpression>
                                         {
                                             new IdentifierExpression(
@@ -454,28 +640,16 @@ namespace Damselfly.ViewModels
                                 ),
                                 new BinaryOperatorExpression(
                                     new IdentifierExpression(
-                                        "SelectedMatch",
+                                        "StatusVisibility",
                                         new List<IdentifierExpression>
                                         {
-                                            new IdentifierExpression(
-                                                "SearchItem",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
                                         }
                                     ),
                                     AphidTokenType.ColonOperator,
                                     new IdentifierExpression(
-                                        "SelectedMatch",
+                                        "StatusVisibility",
                                         new List<IdentifierExpression>
                                         {
-                                            new IdentifierExpression(
-                                                "SearchItem",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
                                         }
                                     )
                                 ),
@@ -637,7 +811,6 @@ namespace Damselfly.ViewModels
                 ),
             }
 ;
-        }
     }
 }
 
@@ -645,6 +818,7 @@ namespace Damselfly.ViewModels
 {
     using Damselfly.Components;
     using Damselfly.Components.Search;
+    using System.Collections.ObjectModel;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
@@ -667,6 +841,25 @@ namespace Damselfly.ViewModels
                 OnWindowChangedInternal();
                 OnWindowChanged();
                 InvokePropertyChanged("Window");
+            }
+        }
+
+        private bool _SearchOpen;
+
+        public bool SearchOpen
+        {
+            get
+            {
+                return _SearchOpen;
+            }
+            set
+            {
+                SearchOpenChanging?.Invoke(this, System.EventArgs.Empty);
+                _SearchOpen = value;
+                SearchOpenChanged?.Invoke(this, System.EventArgs.Empty);
+                OnSearchOpenChangedInternal();
+                OnSearchOpenChanged();
+                InvokePropertyChanged("SearchOpen");
             }
         }
 
@@ -841,25 +1034,6 @@ namespace Damselfly.ViewModels
             }
         }
 
-        private Visibility _StatusVisibility;
-
-        public Visibility StatusVisibility
-        {
-            get
-            {
-                return _StatusVisibility;
-            }
-            set
-            {
-                StatusVisibilityChanging?.Invoke(this, System.EventArgs.Empty);
-                _StatusVisibility = value;
-                StatusVisibilityChanged?.Invoke(this, System.EventArgs.Empty);
-                OnStatusVisibilityChangedInternal();
-                OnStatusVisibilityChanged();
-                InvokePropertyChanged("StatusVisibility");
-            }
-        }
-
         private SearchItem _SelectedMatch;
 
         public SearchItem SelectedMatch
@@ -879,10 +1053,74 @@ namespace Damselfly.ViewModels
             }
         }
 
+        private ObservableCollection<SearchItem> _Matches;
+
+        public ObservableCollection<SearchItem> Matches
+        {
+            get
+            {
+                return _Matches;
+            }
+            set
+            {
+                MatchesChanging?.Invoke(this, System.EventArgs.Empty);
+                _Matches = value;
+                MatchesChanged?.Invoke(this, System.EventArgs.Empty);
+                OnMatchesChangedInternal();
+                OnMatchesChanged();
+                InvokePropertyChanged("Matches");
+            }
+        }
+
+        private Visibility _SearchVisibility;
+
+        public Visibility SearchVisibility
+        {
+            get
+            {
+                return _SearchVisibility;
+            }
+            set
+            {
+                SearchVisibilityChanging?.Invoke(this, System.EventArgs.Empty);
+                _SearchVisibility = value;
+                SearchVisibilityChanged?.Invoke(this, System.EventArgs.Empty);
+                OnSearchVisibilityChangedInternal();
+                OnSearchVisibilityChanged();
+                InvokePropertyChanged("SearchVisibility");
+            }
+        }
+
+        private Visibility _StatusVisibility;
+
+        public Visibility StatusVisibility
+        {
+            get
+            {
+                return _StatusVisibility;
+            }
+            set
+            {
+                StatusVisibilityChanging?.Invoke(this, System.EventArgs.Empty);
+                _StatusVisibility = value;
+                StatusVisibilityChanged?.Invoke(this, System.EventArgs.Empty);
+                OnStatusVisibilityChangedInternal();
+                OnStatusVisibilityChanged();
+                InvokePropertyChanged("StatusVisibility");
+            }
+        }
+
         public event System.EventHandler WindowChanging, WindowChanged;
         partial void OnWindowChanged();
         private void OnWindowChangedInternal()
         {
+        }
+        
+        public event System.EventHandler SearchOpenChanging, SearchOpenChanged;
+        partial void OnSearchOpenChanged();
+        private void OnSearchOpenChangedInternal()
+        {
+            SearchVisibility = SearchOpen ? Visibility.Visible : Visibility.Collapsed;
         }
         
         public event System.EventHandler QueryTextBoxChanging, QueryTextBoxChanged;
@@ -939,15 +1177,27 @@ namespace Damselfly.ViewModels
         {
         }
         
-        public event System.EventHandler StatusVisibilityChanging, StatusVisibilityChanged;
-        partial void OnStatusVisibilityChanged();
-        private void OnStatusVisibilityChangedInternal()
-        {
-        }
-        
         public event System.EventHandler SelectedMatchChanging, SelectedMatchChanged;
         partial void OnSelectedMatchChanged();
         private void OnSelectedMatchChangedInternal()
+        {
+        }
+        
+        public event System.EventHandler MatchesChanging, MatchesChanged;
+        partial void OnMatchesChanged();
+        private void OnMatchesChangedInternal()
+        {
+        }
+        
+        public event System.EventHandler SearchVisibilityChanging, SearchVisibilityChanged;
+        partial void OnSearchVisibilityChanged();
+        private void OnSearchVisibilityChangedInternal()
+        {
+        }
+        
+        public event System.EventHandler StatusVisibilityChanging, StatusVisibilityChanged;
+        partial void OnStatusVisibilityChanged();
+        private void OnStatusVisibilityChangedInternal()
         {
         }
         

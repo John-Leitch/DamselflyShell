@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using Img = System.Windows.Media.ImageSource;
 using ST = Damselfly.Components.Search.SearchItemType;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace Damselfly.Components.Search
 {
@@ -42,8 +43,17 @@ namespace Damselfly.Components.Search
                                 continue;
                             }
 
-                            var img = IconLoader.LoadSource(imgTup);
-                            _dispatcher.Value.BeginInvoke(() => callback(img));
+                            try
+                            {
+                                var img = IconLoader.LoadSource(imgTup);
+                                _dispatcher.Value.BeginInvoke(() => callback(img));
+                            }
+                            catch (Exception e)
+                            {
+                                Trace.WriteLine(string.Format("IconLoader error: {0}", e));
+                                var errImg = IconLoader.LoadSource(SystemIcons.Error.Handle);
+                                _dispatcher.Value.BeginInvoke(() => callback(errImg));
+                            }
 
                         }
                     })

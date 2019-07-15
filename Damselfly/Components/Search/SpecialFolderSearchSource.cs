@@ -40,7 +40,7 @@ namespace Damselfly.Components.Search
                 .Select(Environment.GetFolderPath)
                 .Concat(new[] { downloads })
                 .Where(x => !string.IsNullOrEmpty(x))
-                .Select(SearchItemBuilder.FromDirectory)
+                .SelectMany(SearchItemBuilder.FromDirectory)
                 .ToList();
         }
     }

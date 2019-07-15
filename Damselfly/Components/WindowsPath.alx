@@ -1,16 +1,14 @@
 ﻿#'Std';
+#'Meta/Code/Compiler';
 
 using Components;
 using Damselfly.Components;
-using System;
-
-File.Exists = FileSystemCache.FileExists;
-Directory.Exists = FileSystemCache.DirectoryExists;
+using System; 
 
 var expand = @(p) $(var t = p |> Environment.ExpandEnvironmentVariables) p: p, expand(t);
 var paths = '%PATH%' |> expand @() $_.Split(';') -> (@()$_.TrimEnd('\\')) -? @!= '' !?;
 var exts = [ '', '.exe', '.cmd', '.bat' ];
-
+ 
 // Todo: probably introduces low-sev squatting vuln via multiple extensions, fix.
 export string WindowsPath.Search = @(string path)
 	paths-<(@(p) exts->@(e) Path.Combine(p, path + e)) @aq.first(File.Exists);
@@ -19,7 +17,7 @@ export string WindowsPath.PrepareFilename = @(string cmd)
     !cmd.Contains(' ') && !cmd.Contains('\t') ? cmd :
     Directory.Exists(cmd) ? '"{0}"' :: [ cmd ] :
     quoteFilename(cmd);
-
+     
 var quoteFilename = @(string cmd)
     (var f = cmd
         |> ArgLexer.GetTokenInfo
@@ -31,3 +29,55 @@ var quoteFilename = @(string cmd)
         @aq.first(@(x) File.Exists(x.path))) != null ?
         '"{0}"{1}' :: [ f.path, f.hasArgs ? cmd.Substring(f.token.EndOffset - 1) : '' ] :
         cmd;
+
+export bool WindowsPath.IsValidPath = @(string path)
+    !(Path.GetInvalidPathChars() =? path.Contains);
+
+export bool WindowsPath.IsValidFileName = @(string fileName) 
+    !(Path.GetInvalidFileNameChars() =? fileName.Contains);
+
+export bool WindowsPath.JitCompile = @{
+    var setExport = @(exportMember, clrFunc) {
+        var del = clrFunc.Members[0].CreateDelegate(WindowsPath[exportName + 'Delegate']);
+        exportMember = del;
+    };
+      
+    head('Building');  
+        
+    var csUnits = 
+        [  
+            { name:'FileName', func: Path.GetInvalidFileNameChars },
+            { name:'Path', func: Path.GetInvalidPathChars },
+        ]
+        ->@(s) strOut(@{%>
+            namespace Damselfly.Components
+            {
+                   public static partial class WindowsPath
+                {
+                    public static bool IsValid<%= s.name %>(string <%= (var localName = s.name | convention.camelCase) %>)
+                    { 
+                        for (var i = 0; i < <%= localName %>.Length; i++)
+                        {
+                            var c = <%= localName %>[i];
+
+                            switch (c)
+                            {
+                                <%= s.func()->(@()$_.byte())->hex->@format("case '\\x{0}':")@join('\r\n') %>
+                                    return false;                                    
+                            }
+                        }
+
+                        return true;
+                    }
+                }
+            }
+        <%})
+    .ToString();
+
+    var results = csUnits @join('\r\n') |> csharp.compileAsm;
+    var t = results.CompiledAssembly.GetType('Damselfly.Components.WindowsPath');
+    
+    WindowsPath.IsValidFileName = t.IsValidFileName.Members[0].CreateDelegate(WindowsPath.IsValidFileNameDelegate);
+    WindowsPath.IsValidPath = t.IsValidPath.Members[0].CreateDelegate(WindowsPath.IsValidPathDelegate);
+};
+

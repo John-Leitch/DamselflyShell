@@ -14,6 +14,7 @@ using HandleCache = Components.ArgLockingMemoizer<string, System.IntPtr>;
 using static Damselfly.Components.FileSystemCache;
 using ST = Damselfly.Components.Search.SearchItemType;
 using Img = System.Windows.Media.ImageSource;
+using System.IO;
 
 namespace Damselfly.Components
 {
@@ -47,11 +48,11 @@ namespace Damselfly.Components
                 DirectoryExists(path) ||
                 path.StartsWith(@"\\") ?
                     path :
-                    WindowsPath.Search(path);
+                    WindowsPath.Search(path) ?? path;
 
             if (FileExists(fullPath))
             {
-                Console.WriteLine("File Full Path Icon");
+                //Console.WriteLine("File Full Path Icon");
                 var ptr = GetFileIcon(fullPath);
 
                 if (_systemIconHandles.Contains(ptr))
@@ -64,12 +65,12 @@ namespace Damselfly.Components
             }
             else if (DirectoryExists(fullPath))
             {
-                Console.WriteLine("Dir Full Path Icon");
+                //Console.WriteLine("Dir Full Path Icon");
                 return GetDirectoryIcon(fullPath);                
             }
             else
             {
-                Console.WriteLine("Error Icon");
+                //Console.WriteLine("Error Icon");
                 return SystemIcons.Error.Handle;
 
             }
@@ -85,7 +86,9 @@ namespace Damselfly.Components
                 {
                     var icon = Icon.ExtractAssociatedIcon(path);
 
-                    if (icon != null && icon.Handle != IntPtr.Zero && !IsSystemIcon(icon.Handle))
+                    if (icon != null && icon.Handle != IntPtr.Zero &&
+                        ((!IsSystemIcon(icon.Handle) ||
+                        (ptr == SystemIcons.Error.Handle && icon.Handle != ptr))))
                     {
                         return icon.Handle;
                     }
@@ -148,7 +151,9 @@ namespace Damselfly.Components
             {
                 h = GetFileIcon(itemPath);
             }
-            else if (type != ST.Command)
+            //else if ()
+            else if (WindowsPath.IsValidPath(itemPath) && type != ST.Command)
+            //else if (itemPath.Contains(Path.))
             {
                 h = GetHandle(itemPath);
             }

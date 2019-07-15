@@ -1,5 +1,5 @@
 ﻿#'Core/Operators';
 #'Automation/Keyboard';
-using Damselfly.Components;
+using Damselfly.Components.Input;
 using System.Test;
 export KeyboardAutomation.Type = @(string text) text |> keyboard.type;

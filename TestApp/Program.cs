@@ -1,6 +1,9 @@
-﻿using Components.IO;
+﻿using Components.Aphid.Interpreter;
+using Components.Aphid.TypeSystem;
+using Components.IO;
 using Components.PInvoke;
 using Damselfly.Components;
+using Damselfly.Components.Naming;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -36,29 +39,37 @@ namespace TestApp
 
     internal class Program
     {
-        private static void IconTest(string path)
-        {
-            var png = PathHelper.GetExecutingPath(
-                path
-                    .Replace(':', '$')
-                    .Replace('\\', '$') +
-                ".png");
+        //private static void IconTest(string path)
+        //{
+        //    var png = PathHelper.GetExecutingPath(
+        //        path
+        //            .Replace(':', '$')
+        //            .Replace('\\', '$') +
+        //        ".png");
 
-            var handle = IconLoader.GetHandle(path);
-            var source = IconLoader.GetSource(handle);
-            var encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(source));
+        //    var handle = IconLoader.LoadSource(path);
+        //    var source = IconLoader.LoadSource(handle);
+        //    var encoder = new PngBitmapEncoder();
+        //    encoder.Frames.Add(BitmapFrame.Create(source));
 
-            using (var f = File.Create(png))
-            {
-                encoder.Save(f);
-            }
+        //    using (var f = File.Create(png))
+        //    {
+        //        encoder.Save(f);
+        //    }
 
-            var p = Process.Start(png);
-        }
+        //    var p = Process.Start(png);
+        //}
 
         private static void Main(string[] args)
         {
+            var strat = new FrequencyStrategy();
+
+            var results = Directory.EnumerateFiles(@"c:\source", "*", SearchOption.AllDirectories)
+                .SelectMany(x => strat.Call(x))
+                .OrderByDescending(x => x.Weight)
+                .ToArray();
+
+            //var cli = TestNs.AphidCompilerResources.Library_Cli();
             var shares = NetworkShares.GetShares("Node2");
 
 
@@ -82,9 +93,9 @@ namespace TestApp
 
             //Kernel32.OpenProcess(ProcessAccessFlags.DuplicateHandle
 
-            IconTest(@"c:\windows\system32\cmd.exe");
-            IconTest(@"c:\users\john\Documents");
-            IconTest(@"C:\Users\John\Downloads");
+            //IconTest(@"c:\windows\system32\cmd.exe");
+            //IconTest(@"c:\users\john\Documents");
+            //IconTest(@"C:\Users\John\Downloads");
 
             var mscName = MscHelper.GetName(@"c:\windows\system32\services.msc");
 
@@ -122,8 +133,8 @@ namespace TestApp
                 "ToolbarWindow32");
             var hWnd = User32.FindWindow("Shell_TrayWnd", null);
             hWnd = User32.FindWindowEx(hWnd, IntPtr.Zero, "TrayNotifyWnd", null);
-            var icon1 = IconLoader.GetHandle(@"c:\temp\test");
-            var icon2 = IconLoader.GetHandle(@"c:\temp\test2");
+            //var icon1 = IconLoader.GetHandle(@"c:\temp\test");
+            //var icon2 = IconLoader.GetHandle(@"c:\temp\test2");
 
         }
     }

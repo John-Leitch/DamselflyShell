@@ -1,4 +1,6 @@
-﻿using Components;
+﻿using System.Reflection;
+
+using Components;
 using Components.PInvoke;
 using Damselfly.Components;
 using Damselfly.Components.Input;
@@ -17,85 +19,41 @@ using static System.Console;
 using static Components.PInvoke.User32;
 using static Components.PInvoke.Win32;
 using System.Threading;
+using Damselfly.Components.Input.Routing;
 
 namespace Damselfly.ViewModels
 {
+
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public partial class SearchViewModel
+    public partial class SearchViewModel //: IPreviewKeyDownSource, IInputSink<IConfirmationSource>, IInputSink<IWinKeySource>
     {
-        private Dictionary<string, GlobalHotkeyBinding> _globalBindings = new Dictionary<string, GlobalHotkeyBinding>();
+        public InputHub InputHub { get; }
 
-        private readonly double _widthDelta, _minWidth, _maxWidth;
+        //public event KeyEventHandler PreviewKeyDown
+        //{
+        //    add { QueryTextBox.PreviewKeyDown += value; }
+        //    remove { QueryTextBox.PreviewKeyDown -= value; }
+        //}
 
-        private double _lastWidth = -1;
+        public static SearchViewModel Current;
 
         private readonly ListBox _queryListBox;
 
         private readonly ScrollViewer _queryScrollViewer;
 
-        //private string _query;
+        private readonly double _widthDelta, _minWidth, _maxWidth;
 
-        //public string Query
-        //{
-        //    get => _query;
-        //    set
-        //    {
-        //        SetProperty(ref _query, value);
-        //        QueryChanged();
-        //    }
-        //}
+        private readonly object _nextQuerySync = new object();
+        
+        private double _lastWidth = -1;
 
-        //private string _status;
+        private Thread st = null;
 
-        //public string Status
-        //{
-        //    get => _status;
-        //    set
-        //    {
-        //        SetProperty(ref _status, value);
+        public KeyboardController Keyboard { get; } = new KeyboardController();
 
+        public KeyboardHookController Hooks { get; } = new KeyboardHookController();
 
-        //        StatusVisibility = _status == null ? Visibility.Collapsed : Visibility.Visible;
-        //    }
-        //}
-
-        //private Visibility _statusVisibility = Visibility.Collapsed;
-
-        //public Visibility StatusVisibility
-        //{
-        //    get => _statusVisibility;
-        //    set
-        //    {
-        //        if (_statusVisibility != value)
-        //        {
-        //            SetProperty(ref _statusVisibility, value);
-        //        }
-        //    }
-        //}
-
-        //private SearchItem _SelectedMatch;
-
-        //public SearchItem SelectedMatch
-        //{
-        //    get => _SelectedMatch;
-        //    set => SetProperty(ref _SelectedMatch, value);
-        //}
-
-        //private string _queryError;
-
-        //public string QueryError
-        //{
-        //    get => _queryError;
-        //    set => SetProperty(ref _queryError, value);
-        //}
-
-        //public SearchWindow Window { get; }
-
-        //public TextBox QueryTextBox { get; }        
-
-        public ObservableCollection<SearchItem> Matches { get; }       
-
-        public static SearchViewModel Current;
+        public GlobalHotkeyController Hotkeys { get; } = new GlobalHotkeyController();
 
         public SearchViewModel(
             SearchWindow window,
@@ -103,35 +61,54 @@ namespace Damselfly.ViewModels
             ListBox queryListBox,
             ScrollViewer queryScrollViewer)
         {
+            //InputHub = new InputHub();
+            //InputHub.Register(this);
+            //new IInputSource[]
+            //{
+            //    this,
+            //    HookController,
+            //    HotkeyController,
+            //    HotkeyController
+            //}
+            //    .Iter(InputHub.Register);
+
+
+            
             Current = this;
             Search = new StartSearch();
             Window = window;
-            Matches = new ObservableCollection<SearchItem>();
-            QueryTextBox = queryTextBox;
+            QueryTextBox = queryTextBox;            
             _queryListBox = queryListBox;
-            _queryScrollViewer = queryScrollViewer;
-            _queryScrollViewer.ScrollChanged += QueryScrollViewer_ScrollChanged;
+            _queryScrollViewer = queryScrollViewer;            
             _maxWidth = SystemParameters.PrimaryScreenWidth;
             _minWidth = window.ActualWidth;
             _widthDelta = window.ActualWidth - _queryScrollViewer.ActualWidth;
+
+            _queryScrollViewer.ScrollChanged += QueryScrollViewer_ScrollChanged;
+            //QueryTextBox.PreviewKeyDown += Control_PreviewKeyDown;
+            Hooks.GlobalHotkeyPressed += (o, e) => Hotkeys.HandleGlobalHotkey(e.Key); ;
+            Hooks.WinKeyPressed += (o, e) => SearchOpen = !SearchOpen;            
+            Hooks.Init();
+            
+            Hotkeys.OverwritingKeyBinding += OverwritingKeyBinding;
+            
         }
 
         private void QueryScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e) => UpdateWindowSize();
 
         public void Init()
         {
+            if (Matches  == null)
+            {
+                Matches = new ObservableCollection<SearchItem>();
+            }
+
             Query = "";
             SelectedMatch = Matches.FirstOrDefault();
-            JsonRepository.LoadOrCreate(out _globalBindings);
-        }
-
-        private readonly object _nextQuerySync = new object();
-
-        private string _nextQuery;
+            
+        }        
 
         partial void OnStatusChanged() => StatusVisibility = _Status == null ? Visibility.Collapsed : Visibility.Visible;
-
-        private Thread st = null;
 
         private string FormatStatusQuery(string query) =>
             (query == null || query.Trim().Length == 0) ? "" :
@@ -151,22 +128,14 @@ namespace Damselfly.ViewModels
                     st = null;
                 }
             }
-
             
             Status = $"Executing query {FormatStatusQuery(Query)}";
             StatusFadeIn.Begin();
 
-            //var token = ;
             try
             {
                 void queryHandler(string query, IEnumerable<SearchItem> x)
                 {
-                    //if (!Monitor.TryEnter(_querySync))
-                    {
-
-                        //throw new InvalidOperationException();
-                    }
-
                     try
                     {
                         var x2 = x.ToArray();
@@ -200,18 +169,6 @@ namespace Damselfly.ViewModels
                         {
                             st = null;
                         }
-
-                        //Monitor.Exit(_querySync);
-                        
-
-                        //lock (_nextQuerySync)
-                        //{
-                        //    if (_nextQuery != null)
-                        //    {
-                        //        st = Search.SearchAsync(Query, queryHandler);
-                        //        _nextQuery = null;
-                        //    }
-                        //}
                     }
                 }
 
@@ -366,7 +323,7 @@ namespace Damselfly.ViewModels
 
                 if (foreThread != appThread)
                 {
-                    WriteLine("Using AttachThreadInput()");
+                    //WriteLine("Using AttachThreadInput()");
                     var attached = AttachThreadInput(foreThread, appThread, true);
                     BringWindowToTop(h);
                     ShowWindow(h, ShowWindowCommands.SW_SHOW);
@@ -384,17 +341,17 @@ namespace Damselfly.ViewModels
 
                 if (!SetForegroundWindow(h))
                 {
-                    WriteLine("SetForegroundWindow() failed");
+                    //WriteLine("SetForegroundWindow() failed");
                 }
 
                 if (SetActiveWindow(h) == IntPtr.Zero)
                 {
-                    WriteLine("SetActiveWindow() failed");
+                    //WriteLine("SetActiveWindow() failed");
                 }
 
                 if (SetFocus(h) == IntPtr.Zero)
                 {
-                    WriteLine("SetFocus() failed");
+                    //WriteLine("SetFocus() failed");
                 }
 
                 Window.Focus();
@@ -435,38 +392,21 @@ namespace Damselfly.ViewModels
             }
         }
 
-        public void SetGlobalHotkey(Key key)
+        private void WinKeyPressed(object sender, EventArgs e) => SearchOpen = !SearchOpen;
+
+        private void OverwritingKeyBinding(object sender, HotkeyBindingEventAgs e)
         {
-            var keyStr = key.ToString();
-
-            if (_globalBindings.TryGetValue(keyStr, out var binding))
-            {
-                if (MessageBox.Show(
-                    $"Are you sure you want to overwrite '{key.ToString()}' binding?\r\n\r\n{binding.Command}",
-                    "Confirm",
-                    MessageBoxButton.YesNo) == MessageBoxResult.No)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                _globalBindings.Add(keyStr, binding = new GlobalHotkeyBinding(key));
-            }
-
-            binding.Command = SelectedMatch.GetCommand();
-            JsonRepository.Save(_globalBindings);
-            //Debugger.Break();
-        }
-
-        public void HandleGlobalHotkey(Key key)
-        {
-            if (!_globalBindings.TryGetValue(key.ToString(), out var binding))
+            if (MessageBox.Show(
+                $"Are you sure you want to overwrite '{e.Key.ToString()}' binding?\r\n\r\n{e.Binding}",
+                "Confirm",
+                MessageBoxButton.YesNo) == MessageBoxResult.No)
             {
                 return;
             }
-
-            Launcher.Launch(binding.Command, asAdmin: false);
         }
+
+        public void Listen(IConfirmationSource inputSource) => throw new NotImplementedException();
+
+        public void Listen(IWinKeySource inputSource) => throw new NotImplementedException();
     }
 }

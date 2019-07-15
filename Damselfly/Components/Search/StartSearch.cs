@@ -69,6 +69,7 @@ namespace Damselfly.Components.Search
                     query.Equals(x.Name, StringComparison.OrdinalIgnoreCase) ||
                     query.Equals(x.ItemPath, StringComparison.OrdinalIgnoreCase))
                 .ThenBy(x => x.Name)
+                .Distinct(x => x.Name)
                 .Take(200);
 
         public Thread SearchAsync(string query, Action<string, IEnumerable<SearchItem>> callback) =>

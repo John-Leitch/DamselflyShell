@@ -1,4 +1,6 @@
-﻿namespace Components
+﻿using Utf8Json;
+
+namespace Components
 {
     public static class JsonRepository
     {
@@ -14,5 +16,7 @@
 
         public static void Save<TEntities>(TEntities entities) =>
             new JsonRepository<TEntities>().Save(entities);
+
+        
     }
 }

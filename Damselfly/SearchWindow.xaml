@@ -15,7 +15,8 @@
         BorderBrush="#FFD0D1D7"
         RenderOptions.CachingHint="Cache"
         GotFocus="Window_GotFocus"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        Visibility="{Binding SearchVisibility,Mode=TwoWay}">
     <Window.Resources>
         <Storyboard x:Key="StatusFadeIn">
             <DoubleAnimation Storyboard.TargetProperty="Opacity"
@@ -73,6 +74,6 @@
 
         <TextBox x:Name="QueryTextBox" Grid.Row="2" Height="24" 
                  VerticalContentAlignment="Center" Margin="4"
-                 Text="{Binding Path=Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,Delay=100}" />
+                 Text="{Binding Path=Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,Delay=10}" />
     </Grid>
 </Window>

@@ -1,5 +1,6 @@
 ﻿using Components;
 using Components.PInvoke;
+using Damselfly.Components.Input.Routing;
 using Damselfly.Components.Search;
 using Damselfly.ViewModels;
 using System;
@@ -10,10 +11,15 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Damselfly.Components
+namespace Damselfly.Components.Input
 {
-    public static class KeyboardController
+    public class KeyboardController //: IInputSink<IPreviewKeyDownSource>, ISetGlobalHotkeySource
     {
+        public void Listen(IInputSource inputSource) => throw new NotImplementedException();
+
+        public void Listen(IPreviewKeyDownSource inputSource) =>
+            inputSource.PreviewKeyDown += (o, e) => HandleKey(o, e.Key);
+
         private static void SendKey(Key key, int flags) =>
             User32.keybd_event((byte)KeyInterop.VirtualKeyFromKey(key), 0, flags, IntPtr.Zero);
 
@@ -23,8 +29,13 @@ namespace Damselfly.Components
         public static void SendKeyUp(Key key) =>
             SendKey(key, User32.KEYEVENTF_EXTENDEDKEY | User32.KEYEVENTF_KEYUP);
 
-        public static void HandleKey(SearchViewModel viewModel, Key key)
+        public static void HandleKey(object source, Key key)
         {
+            if (!(source is SearchViewModel viewModel))
+            {
+                return;
+            }
+
             viewModel.IsHandled = false;
 
             var controlShift =
@@ -101,7 +112,7 @@ namespace Damselfly.Components
                 case Key.Escape:
                 {
                     viewModel.Query = "";
-                    viewModel.Window.Hide();
+                    viewModel.SearchOpen = false;
                     break;
                 }
 
@@ -127,7 +138,7 @@ namespace Damselfly.Components
                             {
                                 command = viewModel.SelectedMatch.ItemPath;
                                 viewModel.Query = "";
-                                viewModel.Window.Hide();
+                                viewModel.SearchOpen = false;
 
                                 ThreadPool.QueueUserWorkItem(x =>
                                     LaunchChildSystemItem(viewModel, controlShift, command, match));
@@ -145,7 +156,7 @@ namespace Damselfly.Components
                             viewModel.Query;
 
                         viewModel.Query = "";
-                        viewModel.Window.Hide();
+                        viewModel.SearchOpen = false;
 
                         ThreadPool.QueueUserWorkItem(x =>
                         {
@@ -212,7 +223,7 @@ namespace Damselfly.Components
                 {
                     if (controlAlt)
                     {
-                        viewModel.SetGlobalHotkey(key);
+                        viewModel.Hotkeys.SetGlobalHotkey(key, viewModel.Query);
                     }
 
                     break;
@@ -322,5 +333,6 @@ namespace Damselfly.Components
                 "Error running command",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
+        public void Broadcast(IInputSink inputSource) => throw new NotImplementedException();
     }
 }

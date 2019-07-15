@@ -9,6 +9,7 @@ using static Damselfly.Components.IconLoader;
 using static Damselfly.Components.UsageDatabase;
 using Damselfly.Components;
 using Damselfly.Components.Search;
+using Damselfly.Components.Naming;
 
 namespace Damselfly.ViewModels
 {
@@ -17,7 +18,7 @@ namespace Damselfly.ViewModels
     {
         public SearchItem()
         {
-
+            
         }
 
         public SearchItem(string name, string itemPath, ST type, UsageRecord usage)

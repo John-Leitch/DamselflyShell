@@ -31,7 +31,7 @@ namespace Damselfly.Components.Search
                 .SelectMany(x => Directory.GetFiles(x, "*", SearchOption.AllDirectories))
                 .Where(x => _extensions
                     .Any(y => x.EndsWith("." + y, StringComparison.InvariantCultureIgnoreCase)))
-                .Select(SearchItemBuilder.FromShortcut)
+                .SelectMany(SearchItemBuilder.FromShortcut)
                 .ToList();
     }
 }
