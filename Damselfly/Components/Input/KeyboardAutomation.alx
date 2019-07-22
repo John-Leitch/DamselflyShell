@@ -2,4 +2,4 @@
 #'Automation/Keyboard';
 using Damselfly.Components.Input;
 using System.Test;
-export KeyboardAutomation.Type = @(string text) text |> keyboard.type;
+export KeyboardAutomation.Type = @(string text) text |> keyboard.type; 

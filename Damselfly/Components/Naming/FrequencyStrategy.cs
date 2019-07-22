@@ -11,7 +11,7 @@ namespace Damselfly.Components.Naming
     {
         private long _total;
 
-        private new readonly int[] _frequencyTable = new int[0x100];
+        private readonly int[] _frequencyTable = new int[0x100];
 
         protected override IEnumerable<WeightedName> CallCore(string arg)
         {

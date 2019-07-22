@@ -13,7 +13,8 @@ namespace Damselfly.Components.Naming
         {
             
             if (WindowsPath.IsValidPath(arg) &&
-                Path.GetExtension(arg).Equals(".msc", StringComparison.OrdinalIgnoreCase))
+                Path.GetExtension(arg).Equals(".msc", StringComparison.OrdinalIgnoreCase) &&
+                FileSystemCache.FileExists(arg))
             {
                 var name = MscHelper.GetName(arg);
 
