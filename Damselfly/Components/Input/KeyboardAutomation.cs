@@ -24,149 +24,148 @@ namespace Damselfly.Components.Input {
     }
 }
 
-namespace Damselfly.Components.Input
+
+            namespace Damselfly.Components.Input
+            {
+                /* Test */
+                using global::Components.Aphid.Lexer;
+                using global::Components.Aphid.Parser;
+                using System;
+                using System.Collections.Generic;
+            
+                public static partial class AphidCompilerResources
+                {
+                    
+                    /*fmt*/
+
+                    public static List<AphidExpression> ByteCode_360bdcb5815c182907691e1bb2593d82() =>
+                        ByteCode_360bdcb5815c182907691e1bb2593d82Lazy.Value;
+
+                    private static readonly List<AphidExpression> _empty = new List<AphidExpression>();                    
+
+                    private static System.Lazy<List<AphidExpression>> ByteCode_360bdcb5815c182907691e1bb2593d82Lazy =>
+                        new System.Lazy<List<AphidExpression>>(() =>
+                            new List<AphidExpression>
 {
-    using global::Components.Aphid.Lexer;
-    using global::Components.Aphid.Parser;
-    using System.Collections.Generic;
-    
-    public static partial class AphidCompilerResources
-    {
-        public static List<AphidExpression> ByteCode_360bdcb5815c182907691e1bb2593d82() =>
+    new LoadScriptExpression(
+        new StringExpression(
+            "'Core/Operators'"
+        )
+    ),
+    new LoadScriptExpression(
+        new StringExpression(
+            "'Automation/Keyboard'"
+        )
+    ),
+    new UnaryOperatorExpression(
+        AphidTokenType.usingKeyword,
+        new BinaryOperatorExpression(
+            new BinaryOperatorExpression(
+                new IdentifierExpression(
+                    "Damselfly",
+                    _IdentifierExpressions
+                ),
+                AphidTokenType.MemberOperator,
+                new IdentifierExpression(
+                    "Components",
+                    _IdentifierExpressions
+                )
+            ),
+            AphidTokenType.MemberOperator,
+            new IdentifierExpression(
+                "Input",
+                _IdentifierExpressions
+            )
+        ),
+        false
+    ),
+    new UnaryOperatorExpression(
+        AphidTokenType.usingKeyword,
+        new BinaryOperatorExpression(
+            new IdentifierExpression(
+                "System",
+                _IdentifierExpressions
+            ),
+            AphidTokenType.MemberOperator,
+            new IdentifierExpression(
+                "Test",
+                _IdentifierExpressions
+            )
+        ),
+        false
+    ),
+    new BinaryOperatorExpression(
+        new BinaryOperatorExpression(
+            new IdentifierExpression(
+                "KeyboardAutomation",
+                new List<IdentifierExpression>
+                {
+                    new IdentifierExpression(
+                        "export",
+                        _IdentifierExpressions
+                    ),
+                }
+            ),
+            AphidTokenType.MemberOperator,
+            new IdentifierExpression(
+                "Type",
+                _IdentifierExpressions
+            )
+        ),
+        AphidTokenType.AssignmentOperator,
+        new FunctionExpression(
             new List<AphidExpression>
             {
-                new LoadScriptExpression(
-                    new StringExpression(
-                        "'Core/Operators'"
-                    )
+                new IdentifierExpression(
+                    "text",
+                    new List<IdentifierExpression>
+                    {
+                        new IdentifierExpression(
+                            "string",
+                            _IdentifierExpressions
+                        ),
+                    }
                 ),
-                new LoadScriptExpression(
-                    new StringExpression(
-                        "'Automation/Keyboard'"
-                    )
-                ),
+            },
+            new List<AphidExpression>
+            {
                 new UnaryOperatorExpression(
-                    AphidTokenType.usingKeyword,
+                    AphidTokenType.retKeyword,
                     new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "text",
+                            _IdentifierExpressions
+                        ),
+                        AphidTokenType.PipelineOperator,
                         new BinaryOperatorExpression(
                             new IdentifierExpression(
-                                "Damselfly",
-                                new List<IdentifierExpression>
-                                {
-                                }
+                                "keyboard",
+                                _IdentifierExpressions
                             ),
                             AphidTokenType.MemberOperator,
                             new IdentifierExpression(
-                                "Components",
-                                new List<IdentifierExpression>
-                                {
-                                }
+                                "type",
+                                _IdentifierExpressions
                             )
-                        ),
-                        AphidTokenType.MemberOperator,
-                        new IdentifierExpression(
-                            "Input",
-                            new List<IdentifierExpression>
-                            {
-                            }
                         )
                     ),
                     false
-                ),
-                new UnaryOperatorExpression(
-                    AphidTokenType.usingKeyword,
-                    new BinaryOperatorExpression(
-                        new IdentifierExpression(
-                            "System",
-                            new List<IdentifierExpression>
-                            {
-                            }
-                        ),
-                        AphidTokenType.MemberOperator,
-                        new IdentifierExpression(
-                            "Test",
-                            new List<IdentifierExpression>
-                            {
-                            }
-                        )
-                    ),
-                    false
-                ),
-                new BinaryOperatorExpression(
-                    new BinaryOperatorExpression(
-                        new IdentifierExpression(
-                            "KeyboardAutomation",
-                            new List<IdentifierExpression>
-                            {
-                                new IdentifierExpression(
-                                    "export",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                ),
-                            }
-                        ),
-                        AphidTokenType.MemberOperator,
-                        new IdentifierExpression(
-                            "Type",
-                            new List<IdentifierExpression>
-                            {
-                            }
-                        )
-                    ),
-                    AphidTokenType.AssignmentOperator,
-                    new FunctionExpression(
-                        new List<AphidExpression>
-                        {
-                            new IdentifierExpression(
-                                "text",
-                                new List<IdentifierExpression>
-                                {
-                                    new IdentifierExpression(
-                                        "string",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                }
-                            ),
-                        },
-                        new List<AphidExpression>
-                        {
-                            new UnaryOperatorExpression(
-                                AphidTokenType.retKeyword,
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "text",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.PipelineOperator,
-                                    new BinaryOperatorExpression(
-                                        new IdentifierExpression(
-                                            "keyboard",
-                                            new List<IdentifierExpression>
-                                            {
-                                            }
-                                        ),
-                                        AphidTokenType.MemberOperator,
-                                        new IdentifierExpression(
-                                            "type",
-                                            new List<IdentifierExpression>
-                                            {
-                                            }
-                                        )
-                                    )
-                                ),
-                                false
-                            ),
-                        }
-                    )
                 ),
             }
-;
-    }
+        )
+    ),
 }
 
+                        );
+
+                    
+                        private static readonly List<IdentifierExpression> _IdentifierExpressions = new List<IdentifierExpression>();
+                    
+
+                    
+                    
+                
+                }
+            }
+            
 

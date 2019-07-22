@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,9 @@ namespace Damselfly.Components.Naming
     {
         protected override IEnumerable<WeightedName> CallCore(string arg)
         {
-            if (Path.GetExtension(arg.ToLower()) == ".msc")
+            
+            if (WindowsPath.IsValidPath(arg) &&
+                Path.GetExtension(arg).Equals(".msc", StringComparison.OrdinalIgnoreCase))
             {
                 var name = MscHelper.GetName(arg);
 

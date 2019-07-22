@@ -1,0 +1,16 @@
+﻿
+var expand = @(p) $(var t = p |> Environment.ExpandEnvironmentVariables) p: p, expand(t);
+var paths = '%PATH%' |> expand @() $_.Split(';') -> (@()$_.TrimEnd('\\')) -? @!= '' !?;
+var exts = [ '', '.exe', '.cmd', '.bat' ];
+ 
+var quoteFilename = @(string cmd)
+    (var f = cmd
+        |> ArgLexer.GetTokenInfo
+        -> (@(x) ({
+            token: x,
+            hasArgs: x.EndOffset < cmd.Length,
+            path: hasArgs ? cmd.Remove(x.EndOffset - 1) : cmd
+        }))
+        @aq.first(@(x) File.Exists(x.path))) != null ?
+        '"{0}"{1}' :: [ f.path, f.hasArgs ? cmd.Substring(f.token.EndOffset - 1) : '' ] :
+        cmd;

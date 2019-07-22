@@ -1,8 +1,4 @@
-﻿#'Std';
-#'Data/Xml';
-using Damselfly.Components;
-
-export string MscHelper.GetName = @(string file) {
+﻿export string MscHelper.GetName = @(string file) {
     var r = xdoc.open(file).Root;
     var resolve = @(s) (r.Strings()[0].String()-?(@(x) x.ID() == s.ID()))[0].Value;
     var d = r.String()-?@(x) x.Name() == 'ApplicationTitle';

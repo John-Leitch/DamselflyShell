@@ -2,818 +2,691 @@ using global::Components.Aphid.Parser;
 using global::Components.Aphid.Interpreter;
 
 
-namespace Damselfly.ViewModels
-{
-    using global::Components.Aphid.Lexer;
-    using global::Components.Aphid.Parser;
-    using System.Collections.Generic;
-    
-    public static partial class AphidCompilerResources
-    {
-        public static List<AphidExpression> ByteCode_fe2b570157c4f039b6e6e1feec1c5720() =>
-            new List<AphidExpression>
+
+            namespace Damselfly.ViewModels
             {
-                new FunctionExpression(
-                    new List<AphidExpression>
-                    {
-                    },
-                    new List<AphidExpression>
-                    {
+                /* Test */
+                using global::Components.Aphid.Lexer;
+                using global::Components.Aphid.Parser;
+                using System;
+                using System.Collections.Generic;
+            
+                public static partial class AphidCompilerResources
+                {
+                    
+                    /*fmt*/
+
+                    public static List<AphidExpression> ByteCode_fe2b570157c4f039b6e6e1feec1c5720() =>
+                        ByteCode_fe2b570157c4f039b6e6e1feec1c5720Lazy.Value;
+
+                    private static readonly List<AphidExpression> _empty = new List<AphidExpression>();                    
+
+                    private static System.Lazy<List<AphidExpression>> ByteCode_fe2b570157c4f039b6e6e1feec1c5720Lazy =>
+                        new System.Lazy<List<AphidExpression>>(() =>
+                            new List<AphidExpression>
+{
+    new FunctionExpression(
+        _AphidExpressions,
+        new List<AphidExpression>
+        {
+            new IdentifierExpression(
+                "ViewModel",
+                _IdentifierExpressions
+            ),
+            new UnaryOperatorExpression(
+                AphidTokenType.usingKeyword,
+                new BinaryOperatorExpression(
+                    new IdentifierExpression(
+                        "Damselfly",
+                        _IdentifierExpressions
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "Components",
+                        _IdentifierExpressions
+                    )
+                ),
+                false
+            ),
+            new UnaryOperatorExpression(
+                AphidTokenType.usingKeyword,
+                new BinaryOperatorExpression(
+                    new BinaryOperatorExpression(
                         new IdentifierExpression(
-                            "ViewModel",
-                            new List<IdentifierExpression>
-                            {
-                            }
+                            "Damselfly",
+                            _IdentifierExpressions
                         ),
-                        new UnaryOperatorExpression(
-                            AphidTokenType.usingKeyword,
-                            new BinaryOperatorExpression(
-                                new IdentifierExpression(
-                                    "Damselfly",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "Components",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            ),
-                            false
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "Components",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "Search",
+                        _IdentifierExpressions
+                    )
+                ),
+                false
+            ),
+            new UnaryOperatorExpression(
+                AphidTokenType.usingKeyword,
+                new BinaryOperatorExpression(
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "System",
+                            _IdentifierExpressions
                         ),
-                        new UnaryOperatorExpression(
-                            AphidTokenType.usingKeyword,
-                            new BinaryOperatorExpression(
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Damselfly",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.MemberOperator,
-                                    new IdentifierExpression(
-                                        "Components",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "Search",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            ),
-                            false
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "Collections",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "ObjectModel",
+                        _IdentifierExpressions
+                    )
+                ),
+                false
+            ),
+            new UnaryOperatorExpression(
+                AphidTokenType.usingKeyword,
+                new BinaryOperatorExpression(
+                    new IdentifierExpression(
+                        "System",
+                        _IdentifierExpressions
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "Windows",
+                        _IdentifierExpressions
+                    )
+                ),
+                false
+            ),
+            new UnaryOperatorExpression(
+                AphidTokenType.usingKeyword,
+                new BinaryOperatorExpression(
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "System",
+                            _IdentifierExpressions
                         ),
-                        new UnaryOperatorExpression(
-                            AphidTokenType.usingKeyword,
-                            new BinaryOperatorExpression(
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "System",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.MemberOperator,
-                                    new IdentifierExpression(
-                                        "Collections",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "ObjectModel",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            ),
-                            false
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "Windows",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "Controls",
+                        _IdentifierExpressions
+                    )
+                ),
+                false
+            ),
+            new UnaryOperatorExpression(
+                AphidTokenType.usingKeyword,
+                new BinaryOperatorExpression(
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "System",
+                            _IdentifierExpressions
                         ),
-                        new UnaryOperatorExpression(
-                            AphidTokenType.usingKeyword,
-                            new BinaryOperatorExpression(
-                                new IdentifierExpression(
-                                    "System",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "Windows",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            ),
-                            false
-                        ),
-                        new UnaryOperatorExpression(
-                            AphidTokenType.usingKeyword,
-                            new BinaryOperatorExpression(
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "System",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.MemberOperator,
-                                    new IdentifierExpression(
-                                        "Windows",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "Controls",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            ),
-                            false
-                        ),
-                        new UnaryOperatorExpression(
-                            AphidTokenType.usingKeyword,
-                            new BinaryOperatorExpression(
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "System",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.MemberOperator,
-                                    new IdentifierExpression(
-                                        "Windows",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "Media",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            ),
-                            false
-                        ),
-                        new UnaryOperatorExpression(
-                            AphidTokenType.usingKeyword,
-                            new BinaryOperatorExpression(
-                                new BinaryOperatorExpression(
-                                    new BinaryOperatorExpression(
-                                        new IdentifierExpression(
-                                            "System",
-                                            new List<IdentifierExpression>
-                                            {
-                                            }
-                                        ),
-                                        AphidTokenType.MemberOperator,
-                                        new IdentifierExpression(
-                                            "Windows",
-                                            new List<IdentifierExpression>
-                                            {
-                                            }
-                                        )
-                                    ),
-                                    AphidTokenType.MemberOperator,
-                                    new IdentifierExpression(
-                                        "Media",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "Animation",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            ),
-                            false
-                        ),
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "Windows",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "Media",
+                        _IdentifierExpressions
+                    )
+                ),
+                false
+            ),
+            new UnaryOperatorExpression(
+                AphidTokenType.usingKeyword,
+                new BinaryOperatorExpression(
+                    new BinaryOperatorExpression(
                         new BinaryOperatorExpression(
                             new IdentifierExpression(
-                                "Damselfly",
-                                new List<IdentifierExpression>
-                                {
-                                }
+                                "System",
+                                _IdentifierExpressions
                             ),
                             AphidTokenType.MemberOperator,
                             new IdentifierExpression(
-                                "ViewModels",
-                                new List<IdentifierExpression>
-                                {
-                                }
+                                "Windows",
+                                _IdentifierExpressions
                             )
                         ),
-                        new TernaryOperatorExpression(
-                            AphidTokenType.ConditionalOperator,
-                            new IdentifierExpression(
-                                "show",
-                                new List<IdentifierExpression>
-                                {
-                                }
-                            ),
-                            new BinaryOperatorExpression(
+                        AphidTokenType.MemberOperator,
+                        new IdentifierExpression(
+                            "Media",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "Animation",
+                        _IdentifierExpressions
+                    )
+                ),
+                false
+            ),
+            new BinaryOperatorExpression(
+                new IdentifierExpression(
+                    "Damselfly",
+                    _IdentifierExpressions
+                ),
+                AphidTokenType.MemberOperator,
+                new IdentifierExpression(
+                    "ViewModels",
+                    _IdentifierExpressions
+                )
+            ),
+            new TernaryOperatorExpression(
+                AphidTokenType.ConditionalOperator,
+                new IdentifierExpression(
+                    "show",
+                    _IdentifierExpressions
+                ),
+                new BinaryOperatorExpression(
+                    new IdentifierExpression(
+                        "Visibility",
+                        _IdentifierExpressions
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "Visible",
+                        _IdentifierExpressions
+                    )
+                ),
+                new BinaryOperatorExpression(
+                    new IdentifierExpression(
+                        "Visibility",
+                        _IdentifierExpressions
+                    ),
+                    AphidTokenType.MemberOperator,
+                    new IdentifierExpression(
+                        "Collapsed",
+                        _IdentifierExpressions
+                    )
+                )
+            ),
+            new ObjectExpression(
+                new List<BinaryOperatorExpression>
+                {
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Window",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "SearchWindow",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Window",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "SearchWindow",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "SearchOpen",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "bool",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "SearchOpen",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "bool",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "SearchVisibility",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "show",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "SearchVisibility",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "show",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "QueryTextBox",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "TextBox",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "QueryTextBox",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "TextBox",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Search",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "StartSearch",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Search",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "StartSearch",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "StatusFadeIn",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "Storyboard",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "StatusFadeIn",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "Storyboard",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "StatusFadeOut",
+                            _IdentifierExpressions
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "StatusFadeOut",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "IsHandled",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "bool",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "IsHandled",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "bool",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Query",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "string",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Query",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "string",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "QueryError",
+                            _IdentifierExpressions
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "QueryError",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Output",
+                            _IdentifierExpressions
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Output",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Status",
+                            _IdentifierExpressions
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Status",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "SelectedMatch",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "SearchItem",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "SelectedMatch",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "SearchItem",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Matches",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "SearchItem",
+                                    _IdentifierExpressions
+                                ),
+                                new IdentifierExpression(
+                                    "list",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Matches",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "SearchItem",
+                                    _IdentifierExpressions
+                                ),
+                                new IdentifierExpression(
+                                    "list",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "SearchVisibility",
+                            new List<IdentifierExpression>
+                            {
                                 new IdentifierExpression(
                                     "Visibility",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
+                                    _IdentifierExpressions
                                 ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "Visible",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            ),
-                            new BinaryOperatorExpression(
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "SearchVisibility",
+                            new List<IdentifierExpression>
+                            {
                                 new IdentifierExpression(
                                     "Visibility",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
+                                    _IdentifierExpressions
                                 ),
-                                AphidTokenType.MemberOperator,
-                                new IdentifierExpression(
-                                    "Collapsed",
-                                    new List<IdentifierExpression>
-                                    {
-                                    }
-                                )
-                            )
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "StatusVisibility",
+                            _IdentifierExpressions
                         ),
-                        new ObjectExpression(
-                            new List<BinaryOperatorExpression>
-                            {
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Window",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "SearchWindow",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Window",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "SearchWindow",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "SearchOpen",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "bool",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "SearchOpen",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "bool",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "SearchVisibility",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "show",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "SearchVisibility",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "show",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "QueryTextBox",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "TextBox",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "QueryTextBox",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "TextBox",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Search",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "StartSearch",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Search",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "StartSearch",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "StatusFadeIn",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "Storyboard",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "StatusFadeIn",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "Storyboard",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "StatusFadeOut",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "StatusFadeOut",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "IsHandled",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "bool",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "IsHandled",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "bool",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Query",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "string",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Query",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "string",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "QueryError",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "QueryError",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Output",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Output",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Status",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Status",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "SelectedMatch",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "SearchItem",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "SelectedMatch",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "SearchItem",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Matches",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "SearchItem",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                            new IdentifierExpression(
-                                                "list",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Matches",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "SearchItem",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                            new IdentifierExpression(
-                                                "list",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "SearchVisibility",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "Visibility",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "SearchVisibility",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "Visibility",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "StatusVisibility",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "StatusVisibility",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                            },
-                            new IdentifierExpression(
-                                "SearchViewModel",
-                                new List<IdentifierExpression>
-                                {
-                                    new IdentifierExpression(
-                                        "class",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                }
-                            )
-                        ),
-                        new ObjectExpression(
-                            new List<BinaryOperatorExpression>
-                            {
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "SearchItemSource",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "ImageSource",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "SearchItemSource",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "ImageSource",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Type",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "SearchItemType",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Type",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "SearchItemType",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "ItemPath",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "string",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "ItemPath",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "string",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Name",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Name",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    )
-                                ),
-                                new BinaryOperatorExpression(
-                                    new IdentifierExpression(
-                                        "Usage",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "UsageRecord",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    ),
-                                    AphidTokenType.ColonOperator,
-                                    new IdentifierExpression(
-                                        "Usage",
-                                        new List<IdentifierExpression>
-                                        {
-                                            new IdentifierExpression(
-                                                "UsageRecord",
-                                                new List<IdentifierExpression>
-                                                {
-                                                }
-                                            ),
-                                        }
-                                    )
-                                ),
-                            },
-                            new IdentifierExpression(
-                                "SearchItem",
-                                new List<IdentifierExpression>
-                                {
-                                    new IdentifierExpression(
-                                        "class",
-                                        new List<IdentifierExpression>
-                                        {
-                                        }
-                                    ),
-                                }
-                            )
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "StatusVisibility",
+                            _IdentifierExpressions
+                        )
+                    ),
+                },
+                new IdentifierExpression(
+                    "SearchViewModel",
+                    new List<IdentifierExpression>
+                    {
+                        new IdentifierExpression(
+                            "class",
+                            _IdentifierExpressions
                         ),
                     }
-                ),
-            }
-;
-    }
+                )
+            ),
+            new ObjectExpression(
+                new List<BinaryOperatorExpression>
+                {
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "SearchItemSource",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "ImageSource",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "SearchItemSource",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "ImageSource",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Type",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "SearchItemType",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Type",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "SearchItemType",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "ItemPath",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "string",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "ItemPath",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "string",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Name",
+                            _IdentifierExpressions
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Name",
+                            _IdentifierExpressions
+                        )
+                    ),
+                    new BinaryOperatorExpression(
+                        new IdentifierExpression(
+                            "Usage",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "UsageRecord",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        ),
+                        AphidTokenType.ColonOperator,
+                        new IdentifierExpression(
+                            "Usage",
+                            new List<IdentifierExpression>
+                            {
+                                new IdentifierExpression(
+                                    "UsageRecord",
+                                    _IdentifierExpressions
+                                ),
+                            }
+                        )
+                    ),
+                },
+                new IdentifierExpression(
+                    "SearchItem",
+                    new List<IdentifierExpression>
+                    {
+                        new IdentifierExpression(
+                            "class",
+                            _IdentifierExpressions
+                        ),
+                    }
+                )
+            ),
+        }
+    ),
 }
 
+                        );
+
+                    
+                        private static readonly List<AphidExpression> _AphidExpressions = new List<AphidExpression>();
+                    
+                        private static readonly List<IdentifierExpression> _IdentifierExpressions = new List<IdentifierExpression>();
+                    
+
+                    
+                    
+                
+                }
+            }
+            
 namespace Damselfly.ViewModels
 {
     using Damselfly.Components;
