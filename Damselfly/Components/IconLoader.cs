@@ -1,20 +1,23 @@
-﻿using Components;
-using Components.PInvoke;
-using System;
-using System.Linq;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+
+using Components;
+using Components.PInvoke;
+
+using static System.Drawing.SystemIcons;
 using static Components.PInvoke.Shell32;
+using static Damselfly.Components.FileSystemCache;
+
 using FA = System.IO.FileAttributes;
 using HandleCache = Components.ArgLockingMemoizer<string, System.IntPtr>;
-using static Damselfly.Components.FileSystemCache;
-using ST = Damselfly.Components.Search.SearchItemType;
 using Img = System.Windows.Media.ImageSource;
-using System.IO;
+using Rect = System.Windows.Int32Rect;
+using ST = Damselfly.Components.Search.SearchItemType;
 
 namespace Damselfly.Components
 {
@@ -37,7 +40,11 @@ namespace Damselfly.Components
 
         private static readonly ArgLockingMemoizer<(string, string, ST), Img> _imageSourceMemoizer =
             new ArgLockingMemoizer<(string, string, ST), Img>(
-                new SelectorComparer<(string, string, ST), (string, string)>(x => (x.Item1, x.Item2)));
+                new SelectorComparer<(string, string, ST), (string, string, ST)>(x => (x.Item1, x.Item2, x.Item3)));
+
+        public static Lazy<Img>
+            DefaultImage = new Lazy<Img>(() => LoadSource(Application.Handle)),
+            ErrorImage = new Lazy<Img>(() => LoadSource(Error.Handle));
 
         private static IntPtr GetHandle(string path) => _pathMemoizer.Call(GetHandleCore, path);
 
@@ -71,7 +78,7 @@ namespace Damselfly.Components
             else
             {
                 //Console.WriteLine("Error Icon");
-                return SystemIcons.Error.Handle;
+                return Error.Handle;
 
             }
         }
@@ -80,15 +87,15 @@ namespace Damselfly.Components
         {
             var ptr = GetShellInfo(path, FA.Normal);
 
-            if (IsSystemIcon(ptr))
+            if (IsSystemIconHandle(ptr))
             {
                 try
                 {
                     var icon = Icon.ExtractAssociatedIcon(path);
 
                     if (icon != null && icon.Handle != IntPtr.Zero &&
-                        ((!IsSystemIcon(icon.Handle) ||
-                        (ptr == SystemIcons.Error.Handle && icon.Handle != ptr))))
+                        ((!IsSystemIconHandle(icon.Handle) ||
+                        (ptr == Error.Handle && icon.Handle != ptr))))
                     {
                         return icon.Handle;
                     }
@@ -122,7 +129,7 @@ namespace Damselfly.Components
                     SHGFI_USEFILEATTRIBUTES |
                     SHGFI_ADDOVERLAYS) != IntPtr.Zero ?
                     shinfo.hIcon :
-                    SystemIcons.Application.Handle;
+                    Application.Handle;
         }
 
         private static IntPtr FindIcon((string, string, ST) tupleInner)
@@ -147,7 +154,7 @@ namespace Damselfly.Components
 
             IntPtr h;
 
-            if (itemPath != null && FileExists(itemPath))
+            if (itemPath != null && WindowsPath.IsValidPath(itemPath) && FileExists(itemPath))
             {
                 h = GetFileIcon(itemPath);
             }
@@ -163,7 +170,7 @@ namespace Damselfly.Components
 
                 if (tokens.Length == 0)
                 {
-                    h = SystemIcons.Error.Handle;
+                    h = Error.Handle;
                 }
                 else if (FileExists(tokens[0]))
                 {
@@ -190,7 +197,7 @@ namespace Damselfly.Components
                     }
                     else
                     {
-                        h = SystemIcons.Error.Handle;
+                        h = Error.Handle;
                     }
                 }
             }
@@ -204,12 +211,17 @@ namespace Damselfly.Components
         public static Img LoadSource(IntPtr icon) => _sourceMemoizer.Call(
             x => Imaging
                 .CreateBitmapSourceFromHIcon(
-                    x == IntPtr.Zero ? SystemIcons.Error.Handle : icon,
-                    Int32Rect.Empty,
+                    x == IntPtr.Zero ? Error.Handle : icon,
+                    Rect.Empty,
                     BitmapSizeOptions.FromWidthAndHeight(16, 16))
                 .Do(y => y.Freeze()),
             icon);
 
-        public static bool IsSystemIcon(IntPtr handle) => _systemIconHandles.Contains(handle);
+        public static bool IsSystemIconHandle(IntPtr handle) => _systemIconHandles.Contains(handle);
+
+        public static bool IsDefaultOrError(Img icon) =>
+            icon != null &&
+            ((DefaultImage.IsValueCreated && icon == DefaultImage.Value) ||
+                (ErrorImage.IsValueCreated && icon == ErrorImage.Value));
     }
 }

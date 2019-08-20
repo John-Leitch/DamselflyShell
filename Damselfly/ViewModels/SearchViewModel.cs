@@ -87,7 +87,7 @@ namespace Damselfly.ViewModels
             _queryScrollViewer.ScrollChanged += QueryScrollViewer_ScrollChanged;
             //QueryTextBox.PreviewKeyDown += Control_PreviewKeyDown;
             Hooks.GlobalHotkeyPressed += (o, e) => Hotkeys.HandleGlobalHotkey(e.Key); ;
-            Hooks.WinKeyPressed += (o, e) => SearchOpen = !SearchOpen;            
+            Hooks.WinKeyPressed += (o, e) => SearchOpen = !Window.IsVisible;            
             Hooks.Init();
             
             Hotkeys.OverwritingKeyBinding += OverwritingKeyBinding;
@@ -341,17 +341,17 @@ namespace Damselfly.ViewModels
 
                 if (!SetForegroundWindow(h))
                 {
-                    //WriteLine("SetForegroundWindow() failed");
+                    WriteLine("SetForegroundWindow() failed");
                 }
 
                 if (SetActiveWindow(h) == IntPtr.Zero)
                 {
-                    //WriteLine("SetActiveWindow() failed");
+                    WriteLine("SetActiveWindow() failed");
                 }
 
                 if (SetFocus(h) == IntPtr.Zero)
                 {
-                    //WriteLine("SetFocus() failed");
+                    WriteLine("SetFocus() failed");
                 }
 
                 Window.Focus();

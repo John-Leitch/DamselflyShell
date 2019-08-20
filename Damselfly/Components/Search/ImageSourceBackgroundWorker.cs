@@ -8,6 +8,8 @@ using Img = System.Windows.Media.ImageSource;
 using ST = Damselfly.Components.Search.SearchItemType;
 using System.Drawing;
 using System.Diagnostics;
+using static Damselfly.Components.IconLoader;
+using static System.Drawing.SystemIcons;
 
 namespace Damselfly.Components.Search
 {
@@ -45,13 +47,13 @@ namespace Damselfly.Components.Search
 
                             try
                             {
-                                var img = IconLoader.LoadSource(imgTup);
+                                var img = LoadSource(imgTup);
                                 _dispatcher.Value.BeginInvoke(() => callback(img));
                             }
                             catch (Exception e)
                             {
-                                Trace.WriteLine(string.Format("IconLoader error: {0}", e));
-                                var errImg = IconLoader.LoadSource(SystemIcons.Error.Handle);
+                                Console.WriteLine(string.Format("IconLoader error: {0}", e));
+                                var errImg = LoadSource(Error.Handle);
                                 _dispatcher.Value.BeginInvoke(() => callback(errImg));
                             }
 
@@ -60,9 +62,6 @@ namespace Damselfly.Components.Search
                     .Do(x => x.IsBackground = true)
                     .Do(x => x.Start()))
                     .ToArray();
-
-        public static Lazy<Img> DefaultImage = new Lazy<Img>(() =>
-            IconLoader.LoadSource(SystemIcons.Application.Handle));
 
         public static void LoadAsync(string itemPath, string name, ST type, Action<Img> callback)
         {

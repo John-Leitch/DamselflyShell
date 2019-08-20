@@ -18,15 +18,15 @@ namespace Damselfly.ViewModels
     {
         public SearchItem()
         {
-            
         }
 
         public SearchItem(string name, string itemPath, ST type, UsageRecord usage)
         {
-            Name = name;
-            ItemPath = itemPath;
-            Type = type;
-            Usage = usage;
+            _Name = name;
+            _ItemPath = itemPath;
+            _Type = type;
+            _Usage = usage;
+            QueueLoad(force: true);
         }
 
         public SearchItem(string name, string itemPath, ST type)
@@ -44,51 +44,6 @@ namespace Damselfly.ViewModels
             }
         }
 
-
-        //private Img _searchItemSource;
-
-        //public Img SearchItemSource
-        //{
-        //    get => _searchItemSource ?? DefaultImage.Value;
-        //    set => SetProperty(ref _searchItemSource, value);
-        //}
-
-        //private ST _type;
-
-        //public ST Type
-        //{
-        //    get => _type;
-        //    set
-        //    {
-        //        _type = value;
-        //        QueueLoad();
-        //    }
-        //}
-
-        //private string _itemPath;
-
-        //public string ItemPath
-        //{
-        //    get => _itemPath;
-        //    set
-        //    {
-        //        _itemPath = value;
-        //        QueueLoad();
-        //    }
-        //}
-
-        //private string _name;
-
-        //public string Name
-        //{
-        //    get => _name;
-        //    set
-        //    {
-        //        _name = value;
-        //        QueueLoad();
-        //    }
-        //}
-
         partial void OnTypeChanged() => QueueLoad();
 
         partial void OnItemPathChanged() => QueueLoad();
@@ -97,12 +52,29 @@ namespace Damselfly.ViewModels
 
         //public UsageRecord Usage { get; set; }
 
-        private void QueueLoad() =>
+        private void QueueLoad(bool force = false)
+        {
+            //if (!force && !IsDefaultOrError(SearchItemSource))
+            //{
+            //    return;
+            //}
+
             ImageSourceBackgroundWorker.LoadAsync(
                 ItemPath,
                 Name,
                 Type,
-                x => SearchItemSource = x);
+                x =>
+                {
+                    //if (SearchItemSource == null || IsDefaultOrError(SearchItemSource))
+
+                    //if (x != ErrorImage.Value ||
+                    //SearchItemSource == null ||
+                    //SearchItemSource == DefaultImage.Value)
+                    //{
+                        SearchItemSource = x;
+                    //}
+                });
+        }
 
         public string GetCommand()
         {

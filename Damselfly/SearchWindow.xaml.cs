@@ -64,6 +64,7 @@ namespace Damselfly
             SearchViewModel.Init();
             PreviewKeyDown += SearchViewModel.Control_PreviewKeyDown;
             IsVisibleChanged += SearchViewModel.Control_IsVisibleChanged;
+            IsVisibleChanged += (o, e2) => SetPosition();
             DataContext = SearchViewModel;
         }
 
