@@ -1,0 +1,1 @@
+c:\source\Damselfly\Damselfly\bin\x64\Release\packages\ilmerge.3.0.29\tools\net452\ILMerge.exe /log /closed /wildcards /allowDup /out:Damselfly.Merged.exe Damselfly.orig.exe System.ValueTuple.dll System.Threading.Tasks.Extensions.dll Utf8Json.dll c:\source\Damselfly\Damselfly\bin\x64\Release\packages\Microsoft.Net.Compilers.3.2.0-beta3-final\tools\system*.dll 
