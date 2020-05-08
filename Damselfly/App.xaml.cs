@@ -19,7 +19,7 @@ namespace Damselfly
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            if (!Debugger.IsAttached)
+            if (false && !Debugger.IsAttached)
             {
                 DamselflyErrorReporter.SaveError(e.Exception);
             }

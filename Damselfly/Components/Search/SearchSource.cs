@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Damselfly.ViewModels;
 
@@ -7,7 +8,7 @@ namespace Damselfly.Components.Search
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public abstract class SearchSource
     {
-        private List<SearchItem> _items;
+        private ConcurrentBag<SearchItem> _items;
 
         private readonly object _itemsLock = new object();
 
@@ -22,9 +23,9 @@ namespace Damselfly.Components.Search
         {
         }
 
-        protected abstract List<SearchItem> LoadItems();
+        protected abstract ConcurrentBag<SearchItem> LoadItems();
 
-        public List<SearchItem> GetItems()
+        public ConcurrentBag<SearchItem> GetItems()
         {
             lock (_itemsLock)
             {

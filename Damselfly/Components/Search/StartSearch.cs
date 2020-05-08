@@ -6,12 +6,14 @@ using System.Threading;
 using Components;
 using System.Diagnostics;
 using Damselfly.ViewModels;
+using System.Collections.Concurrent;
 
 namespace Damselfly.Components.Search
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class StartSearch
     {
+
         public UsageDatabase UsageDb { get; } = UsageDatabase.Load();
 
         private readonly SearchHandler[] _handlers = new SearchHandler[]
@@ -27,13 +29,13 @@ namespace Damselfly.Components.Search
             _specialFolderSource = new SpecialFolderSearchSource(),
             _commandSource = new CommandSearchSource();
 
-        public List<SearchItem> StartMenuItems => _startMenuSource.GetItems();
-        public List<SearchItem> Commands => _commandSource.GetItems();
-        public List<SearchItem> SystemFiles => _systemFileSource.GetItems();
-        public List<SearchItem> SpecialFolders => _specialFolderSource.GetItems();
+        public ConcurrentBag<SearchItem> StartMenuItems => _startMenuSource.GetItems();
+        public ConcurrentBag<SearchItem> Commands => _commandSource.GetItems();
+        public ConcurrentBag<SearchItem> SystemFiles => _systemFileSource.GetItems();
+        public ConcurrentBag<SearchItem> SpecialFolders => _specialFolderSource.GetItems();
 
         public IEnumerable<SearchItem> AllItems =>
-            new Func<List<SearchItem>>[]
+            new Func<ConcurrentBag<SearchItem>>[]
             {
                 () => StartMenuItems,
                 () => Commands,
@@ -73,7 +75,11 @@ namespace Damselfly.Components.Search
                 .Take(200);
 
         public Thread SearchAsync(string query, Action<string, IEnumerable<SearchItem>> callback) =>
-            new Thread(x => callback((string)x, Search(Environment.ExpandEnvironmentVariables(query)))).Do(x => x.IsBackground = true).Do(x => x.Start(query));
+            new Thread(x => callback(
+                (string)x,
+                Search(Environment.ExpandEnvironmentVariables(query))))
+            .Do(x => x.IsBackground = true)
+            .Do(x => x.Start(query));
 
         public void Save()
         {

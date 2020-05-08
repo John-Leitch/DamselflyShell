@@ -9,7 +9,7 @@ namespace Damselfly.Components
     {
         public static void Init()
         {
-#if !DEBUG
+#if false && !DEBUG
             
             var aphid = PathHelper.GetExecutingPath(
                     Environment.Is64BitProcess ?

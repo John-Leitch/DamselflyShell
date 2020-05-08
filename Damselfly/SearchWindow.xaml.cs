@@ -42,6 +42,8 @@ namespace Damselfly
         {
             Current = this;
             WindowsPath.JitCompile();
+            var p = Process.GetCurrentProcess();
+            p.PriorityClass = ProcessPriorityClass.High;            
             this.Init();
             InitializeComponent();
             

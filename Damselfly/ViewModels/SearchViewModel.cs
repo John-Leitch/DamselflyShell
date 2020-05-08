@@ -20,6 +20,7 @@ using static Components.PInvoke.User32;
 using static Components.PInvoke.Win32;
 using System.Threading;
 using Damselfly.Components.Input.Routing;
+using System.Collections.Concurrent;
 
 namespace Damselfly.ViewModels
 {
@@ -262,7 +263,7 @@ namespace Damselfly.ViewModels
 
             if (Search.Commands.Contains(_SelectedMatch))
             {
-                actions.Add(() => Search.Commands.Remove(_SelectedMatch));
+                actions.Add(() => new ConcurrentBag<SearchItem>(Search.Commands.Where(x => x != _SelectedMatch)));
             }
 
             if (!Search.UsageDb.TryGetValue(_SelectedMatch.Type, out var records))

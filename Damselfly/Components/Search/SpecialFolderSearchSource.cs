@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,7 +14,7 @@ namespace Damselfly.Components.Search
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
 
-        protected override List<SearchItem> LoadItems()
+        protected override ConcurrentBag<SearchItem> LoadItems()
         {
             var specialFolders = new Environment.SpecialFolder[]
             {
@@ -36,12 +37,12 @@ namespace Damselfly.Components.Search
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 "Downloads");
 
-            return specialFolders
-                .Select(Environment.GetFolderPath)
-                .Concat(new[] { downloads })
-                .Where(x => !string.IsNullOrEmpty(x))
-                .SelectMany(SearchItemBuilder.FromDirectory)
-                .ToList();
+            return new ConcurrentBag<SearchItem>(
+                specialFolders
+                    .Select(Environment.GetFolderPath)
+                    .Concat(new[] { downloads })
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .SelectMany(SearchItemBuilder.FromDirectory));
         }
     }
 }

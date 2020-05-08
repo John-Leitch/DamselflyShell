@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -26,12 +27,12 @@ namespace Damselfly.Components.Search
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
 
-        protected override List<SearchItem> LoadItems() =>
-            _directories
-                .SelectMany(x => Directory.GetFiles(x, "*", SearchOption.AllDirectories))
-                .Where(x => _extensions
-                    .Any(y => x.EndsWith("." + y, StringComparison.InvariantCultureIgnoreCase)))
-                .SelectMany(SearchItemBuilder.FromShortcut)
-                .ToList();
+        protected override ConcurrentBag<SearchItem> LoadItems() =>
+            new ConcurrentBag<SearchItem>(
+                _directories
+                    .SelectMany(x => Directory.GetFiles(x, "*", SearchOption.AllDirectories))
+                    .Where(x => _extensions
+                        .Any(y => x.EndsWith("." + y, StringComparison.InvariantCultureIgnoreCase)))
+                    .SelectMany(SearchItemBuilder.FromShortcut));
     }
 }

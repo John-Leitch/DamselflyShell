@@ -1,6 +1,7 @@
 ﻿using Components.Json;
 using Damselfly.ViewModels;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,14 +19,14 @@ namespace Damselfly.Components.Search
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => ToString();
 
-        protected override List<SearchItem> LoadItems() =>
+        protected override ConcurrentBag<SearchItem> LoadItems() =>
             File.Exists(_cmdFile) ?
-                JsonSerializer
-                    .DeserializeFile<string[]>(_cmdFile)
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .SelectMany(SearchItemBuilder.ManyFromCommand)
-                    .ToList():
-                new List<SearchItem>();
+                new ConcurrentBag<SearchItem>(
+                    JsonSerializer
+                        .DeserializeFile<string[]>(_cmdFile)
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .SelectMany(SearchItemBuilder.ManyFromCommand)) :
+                new ConcurrentBag<SearchItem>();
 
         public override void Save() =>
             JsonSerializer.SerializeToFile(
